@@ -4,6 +4,8 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT;
 const bcrypt = require("bcrypt");
+const User = require(__dirname + "/models/userModel");
+const Task = require(__dirname + "/models/taskModel");
 
 // Parse JSON request body
 app.use(express.json());
@@ -13,24 +15,6 @@ mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((error) => console.error(error));
-
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  passwordHash: String,
-  tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
-});
-
-const taskSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  dueDate: Date,
-  completed: Boolean,
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-});
-
-const User = mongoose.model("User", userSchema);
-const Task = mongoose.model("Task", taskSchema);
 
 // Create user
 app.post("/users", async (req, res) => {
