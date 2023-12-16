@@ -1,18 +1,21 @@
-const path = require("path");
-require("dotenv").config({ path: path.join(__dirname, "../.env") });
-const express = require("express");
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+import { hash, compare } from "bcrypt";
+import User from "./models/userModel.js";
+import Task from "./models/taskModel.js";
+import express, { json } from "express";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+dotenv.config({ path: join(__dirname, "../.env") });
 const app = express();
 const port = process.env.PORT;
-const bcrypt = require("bcrypt");
-const User = require(__dirname + "/models/userModel");
-const Task = require(__dirname + "/models/taskModel");
 
 // Parse JSON request body
-app.use(express.json());
+app.use(json());
 
-const mongoose = require("mongoose");
-mongoose
-  .connect(process.env.MONGODB_URI)
+import { connect } from "mongoose";
+connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((error) => console.error(error));
 
@@ -33,7 +36,7 @@ app.post("/users", async (req, res) => {
 
   try {
     const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
+    const passwordHash = await hash(password, saltRounds);
 
     const newUser = new User({
       name: name,
@@ -99,7 +102,7 @@ app.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).send("User not found.");
 
-    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    const isPasswordValid = await compare(password, user.passwordHash);
     if (!isPasswordValid) return res.status(401).send("Incorrect password.");
 
     res.status(200).send("User logged in successfully.");
@@ -181,3 +184,5 @@ app.delete("/users/:userId/tasks/:taskId", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+export default app;
