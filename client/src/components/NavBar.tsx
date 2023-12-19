@@ -1,8 +1,9 @@
+import { forwardRef, Ref } from "react";
 import { NavLink } from "react-router-dom";
 
-const NavBar = () => {
+const NavBar = forwardRef((_, ref: Ref<HTMLDivElement>) => {
   return (
-    <nav className="navbar navbar-expand-sm" data-bs-theme="dark">
+    <nav ref={ref} className="navbar navbar-expand-sm" data-bs-theme="dark">
       <div className="container-fluid">
         <button
           className="navbar-toggler"
@@ -37,6 +38,6 @@ const NavBar = () => {
       </div>
     </nav>
   );
-};
+});
 
 export default NavBar;
