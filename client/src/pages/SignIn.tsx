@@ -1,8 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { adequatePasswordComplexity, isEmailValid } from "../utils";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    clearErrors();
+  }, [email, password]);
+
+  const clearErrors = () => {
+    setError("");
+  }
+
+  const handleSubmit = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+    e.preventDefault();
+    setError("");
+
+    // Reduce number of clearly invalid requests being sent to server by checking
+    // the email and password fields using the same checks as the sign up form
+    if (!isEmailValid(email)) {
+      setError("Please input a valid email address.");
+      return;
+    }
+
+    const errorMessage = adequatePasswordComplexity(password);
+    if (errorMessage) {
+      setError("Incorrect password. Please try again.");
+      return;
+    }
+
+    // TODO: Send request to login endpoint
+  };
 
   return (
     <form>
@@ -33,6 +63,7 @@ const SignIn = () => {
           type="submit"
           value="Sign in"
           name="Sign in"
+          onClick={(e) => handleSubmit(e)}
           className="submit-button"
         ></input>
       </div>
@@ -42,6 +73,7 @@ const SignIn = () => {
           Forgot your password? <a href="/account-recovery">Reset password</a>
         </p>
       </div>
+      {error && <div className="error-div">{error}</div>}
     </form>
   );
 };
