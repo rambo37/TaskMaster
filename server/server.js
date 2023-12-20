@@ -5,6 +5,7 @@ import { hash, compare } from "bcrypt";
 import User from "./models/userModel.js";
 import Task from "./models/taskModel.js";
 import express, { json } from "express";
+import nodemailer from "nodemailer";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, "../.env") });
@@ -19,9 +20,102 @@ connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((error) => console.error(error));
 
+const transporter = nodemailer.createTransport({
+  service: process.env.MAIL_SERVICE,
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASSWORD,
+  },
+});
+
+const sendVerificationCodeEmail = async (recipient, code) => {
+  const mailOptions = {
+    from: process.env.MAIL_USER,
+    to: recipient,
+    subject: "Verification Code",
+    text: `Your verification code is ${code}.`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+const generateVerificationCode = () => {
+  return Math.floor(Math.random() * 900000) + 100000;
+};
+
+const generateCodeExpirationTime = () => {
+  return new Date(new Date().getTime() + 60 * 60 * 1000);
+};
+
+// Check that a particular email address is available
+app.get("/users", async (req, res) => {
+  const email = req.query.email;
+  try {
+    const user = await User.findOne({ email });
+    if (user) return res.status(200).send("Email already in use.");
+    res.status(404).send("Email address is available.");
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .send("Error verifying whether email is already in use.");
+  }
+});
+
+// Verify user's email address
+app.post("/users/verify", async (req, res) => {
+  const { email, code } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (user.codeExpirationTime < Date.now()) {
+      return res.status(400).json({ error: "Verification code expired." });
+    }
+    if (user.verificationCode !== code) {
+      return res.status(400).json({ error: "Invalid verification code." });
+    }
+
+    user.verified = true;
+    await user.save();
+    res.status(200).send("Email verified successfully.");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+// Resend verification code to user's email address
+app.post("/users/resend-verification", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    const verificationCode = generateVerificationCode();
+    user.verificationCode = verificationCode;
+    user.codeExpirationTime = generateCodeExpirationTime();
+    await user.save();
+
+    const emailSent = await sendVerificationCodeEmail(email, verificationCode);
+    if (!emailSent) {
+      return res
+        .status(500)
+        .json({ error: "Failed to send verification code email." });
+    }
+
+    res.status(200).send("New verification code sent successfully.");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
 // Create user
 app.post("/users", async (req, res) => {
-  const { name, email, password } = req.body;
+  const { email, password } = req.body;
   // Do not allow an account to be created with an email address that is
   // already in use
   try {
@@ -37,19 +131,30 @@ app.post("/users", async (req, res) => {
   try {
     const saltRounds = 10;
     const passwordHash = await hash(password, saltRounds);
-
+    const verificationCode = generateVerificationCode();
     const newUser = new User({
-      name: name,
+      name: "",
       email: email,
       passwordHash: passwordHash,
+      verified: false,
+      verificationCode: verificationCode,
+      codeExpirationTime: generateCodeExpirationTime(),
       tasks: [],
     });
 
     await newUser.save();
+
+    const emailSent = await sendVerificationCodeEmail(email, verificationCode);
+    if (!emailSent) {
+      return res
+        .status(500)
+        .json({ error: "Failed to send verification code email." });
+    }
+
     res.status(201).send("User registered successfully!");
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error registering user.");
+    res.status(500).json({ error: "Internal server error." });
   }
 });
 
@@ -60,7 +165,11 @@ app.get("/users/:userId", async (req, res) => {
       .populate("tasks")
       .lean();
     if (!user) return res.status(404).send("User not found.");
+    // Remove unnecessary attributes from the response
     delete user.passwordHash;
+    delete user.verified;
+    delete user.verificationCode;
+    delete user.codeExpirationTime;
     res.send(user);
   } catch (error) {
     console.error(error);

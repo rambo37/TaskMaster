@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import NavBar from "./NavBar";
+import { ToastContainer } from 'react-toastify';
 
 const Layout = () => {
   const navBarRef = useRef<HTMLDivElement>(null);
@@ -18,6 +19,7 @@ const Layout = () => {
   return (
     <>
       <NavBar ref={navBarRef} />
+      <ToastContainer />
       <div className="content" style={{minHeight: minContentHeight}}>
         <Outlet />
       </div>
