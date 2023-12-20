@@ -4,6 +4,7 @@ import axios from "axios";
 import SignInForm from "../components/SignInForm";
 import Verify from "../components/Verify";
 import { ClipLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const [isVerificationMode, setIsVerificationMode] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     clearErrors();
@@ -47,6 +49,7 @@ const SignIn = () => {
       };
       const response = await axios.post("/login", credentials);
       localStorage.setItem("token", response.data.token);
+      navigate("/dashboard");
     } catch (error: any) {
       console.error(error);
       if (error.response.status === 404) {

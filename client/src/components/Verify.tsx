@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 type VerifyProps = {
@@ -11,6 +12,7 @@ type VerifyProps = {
 
 const Verify = ({ clearErrors, setError, email, setLoading }: VerifyProps) => {
   const [verificationCode, setVerificationCode] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -30,7 +32,7 @@ const Verify = ({ clearErrors, setError, email, setLoading }: VerifyProps) => {
       };
       await axios.post("/users/verify", verificationInfo);
       toast.success("Successfully verified account.");
-      // TODO: Login the user automatically and redirect to account page
+      navigate("/login");
     } catch (error: any) {
       console.error(error);
       const errorMessage =
