@@ -1,7 +1,7 @@
 :root {
-  --primary-color: #FF724C;
+  --primary-color: #ff724c;
   --dark-gray: #333333;
-  --error: #FF4949;
+  --error: #ff4949;
 }
 
 nav {
@@ -15,7 +15,7 @@ nav {
 }
 
 .navbar-nav .nav-link.active {
-  color:var(--primary-color)
+  color: var(--primary-color);
 }
 
 button.navbar-toggler:focus {
@@ -42,12 +42,17 @@ h1 {
   color: var(--primary-color);
 }
 
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 @media (max-width: 767px) {
   h1 {
     font-size: 40px;
   }
-  
+
   .content {
     padding: 30px 15%;
   }
