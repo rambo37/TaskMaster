@@ -54,12 +54,6 @@ const SignUp = () => {
       return;
     }
 
-    const emailAvailable = await emailAddressAvailable();
-    if (!emailAvailable) {
-      setLoading(false);
-      return;
-    }
-
     try {
       const accountInfo = {
         email: email,
@@ -70,32 +64,18 @@ const SignUp = () => {
       setIsVerificationMode(true);
     } catch (error: any) {
       console.error(error);
-      setError("Error creating account. Please try again later.");
+      if (error.response.status === 409) {
+        // Display a specific error message for email already in use
+        setError(
+          "An account with that amail address already exists. Please try " +
+            "with a different email address."
+        );
+      }
+      else {
+        setError("Error creating account. Please try again later.");
+      }
     } finally {
       setLoading(false);
-    }
-  };
-
-  const emailAddressAvailable = async () => {
-    try {
-      // If this request does not return 404, then the email is already
-      // being used
-      await axios.get(`/users?email=${email}`);
-      setError(
-        "An account with that amail address already exists, please use " +
-          "a different email address."
-      );
-      return false;
-    } catch (error: any) {
-      const statusCode = error.response.status;
-      if (statusCode === 404) {
-        // No account exists with that email address
-        return true;
-      } else {
-        console.error(error);
-        setError("Error creating account. Please try again later.");
-        return false;
-      }
     }
   };
 

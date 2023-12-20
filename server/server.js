@@ -53,21 +53,6 @@ const generateCodeExpirationTime = () => {
   return new Date(new Date().getTime() + 60 * 60 * 1000);
 };
 
-// Check that a particular email address is available
-app.get("/users", async (req, res) => {
-  const email = req.query.email;
-  try {
-    const user = await User.findOne({ email });
-    if (user) return res.status(200).send("Email already in use.");
-    res.status(404).send("Email address is available.");
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .send("Error verifying whether email is already in use.");
-  }
-});
-
 // Verify user's email address
 app.post("/users/verify", async (req, res) => {
   const { email, code } = req.body;
@@ -120,7 +105,7 @@ app.post("/users", async (req, res) => {
   // already in use
   try {
     const user = await User.findOne({ email });
-    if (user) return res.status(500).send("Email already in use.");
+    if (user) return res.status(409).send("Email already in use.");
   } catch (error) {
     console.error(error);
     return res
