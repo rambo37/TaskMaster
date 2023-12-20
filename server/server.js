@@ -6,6 +6,7 @@ import User from "./models/userModel.js";
 import Task from "./models/taskModel.js";
 import express, { json } from "express";
 import nodemailer from "nodemailer";
+import jwt from "jsonwebtoken";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, "../.env") });
@@ -51,6 +52,13 @@ const generateVerificationCode = () => {
 
 const generateCodeExpirationTime = () => {
   return new Date(new Date().getTime() + 60 * 60 * 1000);
+};
+
+const generateAuthToken = (user) => {
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+  return token;
 };
 
 // Verify user's email address
@@ -199,7 +207,11 @@ app.post("/login", async (req, res) => {
     const isPasswordValid = await compare(password, user.passwordHash);
     if (!isPasswordValid) return res.status(401).send("Incorrect password.");
 
-    res.status(200).send("User logged in successfully.");
+    if (!user.verified)
+      return res.status(403).send("Account has not been verified.");
+
+    const token = generateAuthToken(user);
+    res.status(200).json({ token });
   } catch (error) {
     console.error(error);
     res.status(500).send("Error logging in user.");

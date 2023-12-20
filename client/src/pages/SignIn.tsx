@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
 import { adequatePasswordComplexity, isEmailValid } from "../utils";
+import axios from "axios";
+import SignInForm from "../components/SignInForm";
+import Verify from "../components/Verify";
+import { ClipLoader } from "react-spinners";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isVerificationMode, setIsVerificationMode] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     clearErrors();
@@ -12,67 +18,86 @@ const SignIn = () => {
 
   const clearErrors = () => {
     setError("");
-  }
+  };
 
-  const handleSubmit = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+  const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
+    setLoading(true);
     setError("");
 
     // Reduce number of clearly invalid requests being sent to server by checking
     // the email and password fields using the same checks as the sign up form
     if (!isEmailValid(email)) {
       setError("Please input a valid email address.");
+      setLoading(false);
       return;
     }
 
     const errorMessage = adequatePasswordComplexity(password);
     if (errorMessage) {
       setError("Incorrect password. Please try again.");
+      setLoading(false);
       return;
     }
 
-    // TODO: Send request to login endpoint
+    try {
+      const credentials = {
+        email: email,
+        password: password,
+      };
+      const response = await axios.post("/login", credentials);
+      localStorage.setItem("token", response.data.token);
+    } catch (error: any) {
+      console.error(error);
+      if (error.response.status === 404) {
+        setError(
+          "The email you entered is not registered with any account. " +
+            "Please make sure you have entered the correct email or sign " +
+            "up for a new account."
+        );
+      } else if (error.response.status === 401) {
+        setError("Incorrect password. Please try again.");
+      } else if (error.response.status === 403) {
+        setError("Please verify your email address before logging in.");
+        setIsVerificationMode(true);
+      } else {
+        setError("Something went wrong. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderContent = () => {
+    if (isVerificationMode) {
+      return (
+        <Verify
+          clearErrors={clearErrors}
+          setError={setError}
+          email={email}
+          setLoading={setLoading}
+        />
+      );
+    }
+    return (
+      <SignInForm
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        handleSubmit={handleSubmit}
+      />
+    );
   };
 
   return (
     <form>
-      <h3 className="form-title ">Sign in</h3>
-      <div className="form-section">
-        <input
-          type="email"
-          id="email"
-          className="max-width-input"
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email address"
-          value={email}
-          autoFocus
-        />
-      </div>
-      <div className="form-section">
-        <input
-          type="password"
-          id="password"
-          className="max-width-input"
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          value={password}
-        />
-      </div>
-      <div className="form-section">
-        <input
-          type="submit"
-          value="Sign in"
-          name="Sign in"
-          onClick={(e) => handleSubmit(e)}
-          className="submit-button"
-        ></input>
-      </div>
-      <div className="form-footer">
-        Don't have an account? <a href="/signup">Sign up</a>
-        <p>
-          Forgot your password? <a href="/account-recovery">Reset password</a>
-        </p>
-      </div>
+      {renderContent()}
+      {loading && (
+        <div className="form-section" style={{ textAlign: "center" }}>
+          <ClipLoader />
+        </div>
+      )}
       {error && <div className="error-div">{error}</div>}
     </form>
   );
