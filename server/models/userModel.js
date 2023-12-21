@@ -7,6 +7,8 @@ const userSchema = new mongoose.Schema({
   verified: Boolean,
   verificationCode: Number,
   codeExpirationTime: Date,
+  resetTokenHash: String,
+  resetTokenExpirationTime: Date,
   tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
 });
 

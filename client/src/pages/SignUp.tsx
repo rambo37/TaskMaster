@@ -114,7 +114,7 @@ const SignUp = () => {
           <ClipLoader />
         </div>
       )}
-      {error && <div className="error-div">{error}</div>}
+      {error && <div className="status error">{error}</div>}
     </form>
   );
 };

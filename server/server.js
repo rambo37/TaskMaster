@@ -7,11 +7,13 @@ import Task from "./models/taskModel.js";
 import express, { json } from "express";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, "../.env") });
 const app = express();
 const port = process.env.PORT;
+const SALT_ROUNDS = 10;
 
 // Parse JSON request body
 app.use(json());
@@ -46,6 +48,24 @@ const sendVerificationCodeEmail = async (recipient, code) => {
   }
 };
 
+const sendPasswordResetEmail = async (recipient, resetToken) => {
+  const url = `${process.env.REACT_APP_FRONTEND_URL}/reset-password?email=${recipient}&token=${resetToken}`;
+  const mailOptions = {
+    from: process.env.MAIL_USER,
+    to: recipient,
+    subject: "Password Reset",
+    text: `Please click on the following link to reset your password: ${url}.`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
 const generateVerificationCode = () => {
   return Math.floor(Math.random() * 900000) + 100000;
 };
@@ -59,6 +79,11 @@ const generateAuthToken = (user) => {
     expiresIn: "1h",
   });
   return token;
+};
+
+const generatePasswordResetToken = () => {
+  const uuid = uuidv4();
+  return uuid;
 };
 
 // Verify user's email address
@@ -123,8 +148,7 @@ app.post("/users", async (req, res) => {
   }
 
   try {
-    const saltRounds = 10;
-    const passwordHash = await hash(password, saltRounds);
+    const passwordHash = await hash(password, SALT_ROUNDS);
     const verificationCode = generateVerificationCode();
     const newUser = new User({
       name: "",
@@ -158,12 +182,14 @@ app.get("/users/:userId", async (req, res) => {
     const user = await User.findById(req.params.userId)
       .populate("tasks")
       .lean();
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) return res.status(404).json({ error: "User not found." });
     // Remove unnecessary attributes from the response
     delete user.passwordHash;
     delete user.verified;
     delete user.verificationCode;
     delete user.codeExpirationTime;
+    delete user.resetTokenHash;
+    delete user.resetTokenExpirationTime;
     res.send(user);
   } catch (error) {
     console.error(error);
@@ -178,7 +204,7 @@ app.patch("/users/:userId", async (req, res) => {
     const user = await User.findByIdAndUpdate(req.params.userId, updates, {
       new: true,
     });
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) return res.status(404).json({ error: "User not found." });
     res.send(user);
   } catch (error) {
     console.error(error);
@@ -190,7 +216,7 @@ app.patch("/users/:userId", async (req, res) => {
 app.delete("/users/:userId", async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.userId);
-    if (!user) return res.status(404).send("User not found");
+    if (!user) return res.status(404).json({ error: "User not found." });
     res.send(user);
   } catch (error) {
     console.log(error);
@@ -203,7 +229,7 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) return res.status(404).json({ error: "User not found." });;
 
     const isPasswordValid = await compare(password, user.passwordHash);
     if (!isPasswordValid) return res.status(401).send("Incorrect password.");
@@ -219,12 +245,68 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// Generate password reset code
+app.post("/password/reset", async (req, res) => {
+  const { email } = req.body;
+  try {
+    let user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found." });
+
+    const resetToken = generatePasswordResetToken();
+    const resetTokenHash = await hash(resetToken, SALT_ROUNDS);
+    user.resetTokenHash = resetTokenHash;
+    user.resetTokenExpirationTime = generateCodeExpirationTime();
+    await user.save();
+
+    const emailSent = await sendPasswordResetEmail(email, resetToken);
+    if (!emailSent) {
+      return res
+        .status(500)
+        .json({ error: "Failed to send password reset email." });
+    }
+
+    res.status(200).send("Password reset email sent successfully.");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+// Reset password
+app.post("/password/update", async (req, res) => {
+  const { email, resetToken, newPassword } = req.body;
+  try {
+    let user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found." });
+
+    if (user.resetTokenExpirationTime < Date.now()) {
+      return res.status(400).json({ error: "Password reset token expired." });
+    }
+
+    const isTokenValid = await compare(resetToken, user.resetTokenHash);
+    if (!isTokenValid) return res.status(401).json({ error: "Invalid token." });
+
+    const SALT_ROUNDS = 10;
+    const newPasswordHash = await hash(newPassword, SALT_ROUNDS);
+
+    user.passwordHash = newPasswordHash;
+    user.resetTokenHash = null;
+    user.resetTokenExpirationTime = null;
+    await user.save();
+
+    res.status(200).send("Password reset successfully.");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
 // Create task
 app.post("/users/:userId/tasks/", async (req, res) => {
   const { title, description, dueDate } = req.body;
   try {
     let user = await User.findById(req.params.userId);
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) return res.status(404).json({ error: "User not found." });
 
     const newTask = new Task({
       title: title,
@@ -252,7 +334,7 @@ app.post("/users/:userId/tasks/", async (req, res) => {
 app.patch("/users/:userId/tasks/:taskId", async (req, res) => {
   try {
     let user = await User.findById(req.params.userId);
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) return res.status(404).json({ error: "User not found." });
 
     const updates = req.body;
     const task = await Task.findByIdAndUpdate(req.params.taskId, updates, {
@@ -269,7 +351,7 @@ app.patch("/users/:userId/tasks/:taskId", async (req, res) => {
 app.delete("/users/:userId/tasks/:taskId", async (req, res) => {
   try {
     let user = await User.findById(req.params.userId);
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) return res.status(404).json({ error: "User not found." });
 
     const task = await Task.findByIdAndDelete(req.params.taskId);
     if (!task) return res.status(404).send("Task not found");
