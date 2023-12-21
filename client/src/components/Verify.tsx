@@ -30,9 +30,10 @@ const Verify = ({ clearErrors, setError, email, setLoading }: VerifyProps) => {
         email: email,
         code: Number(verificationCode),
       };
-      await axios.post("/users/verify", verificationInfo);
+      const response = await axios.post("/users/verify", verificationInfo);
       toast.success("Successfully verified account.");
-      navigate("/login");
+      localStorage.setItem("token", response.data.token);
+      navigate("/dashboard");
     } catch (error: any) {
       console.error(error);
       const errorMessage =

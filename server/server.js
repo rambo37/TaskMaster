@@ -75,7 +75,8 @@ app.post("/users/verify", async (req, res) => {
 
     user.verified = true;
     await user.save();
-    res.status(200).send("Email verified successfully.");
+    const token = generateAuthToken(user);
+    res.status(200).json({ token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error." });
