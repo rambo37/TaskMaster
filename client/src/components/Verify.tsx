@@ -8,9 +8,16 @@ type VerifyProps = {
   setError: (errorMessage: string) => void;
   email: string;
   setLoading: (loading: boolean) => void;
+  setSignedIn: (signedIn: boolean) => void;
 };
 
-const Verify = ({ clearErrors, setError, email, setLoading }: VerifyProps) => {
+const Verify = ({
+  clearErrors,
+  setError,
+  email,
+  setLoading,
+  setSignedIn,
+}: VerifyProps) => {
   const [verificationCode, setVerificationCode] = useState("");
   const navigate = useNavigate();
 
@@ -33,6 +40,7 @@ const Verify = ({ clearErrors, setError, email, setLoading }: VerifyProps) => {
       const response = await axios.post("/users/verify", verificationInfo);
       toast.success("Successfully verified account.");
       localStorage.setItem("token", response.data.token);
+      setSignedIn(true);
       navigate("/dashboard");
     } catch (error: any) {
       console.error(error);

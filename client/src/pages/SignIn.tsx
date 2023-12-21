@@ -5,6 +5,7 @@ import SignInForm from "../components/SignInForm";
 import Verify from "../components/Verify";
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
+import { useSetSignedIn } from "../components/Layout";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ const SignIn = () => {
   const [isVerificationMode, setIsVerificationMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [setSignedIn] = useSetSignedIn();
 
   useEffect(() => {
     clearErrors();
@@ -49,6 +51,7 @@ const SignIn = () => {
       };
       const response = await axios.post("/login", credentials);
       localStorage.setItem("token", response.data.token);
+      setSignedIn(true);
       navigate("/dashboard");
     } catch (error: any) {
       console.error(error);
@@ -79,6 +82,7 @@ const SignIn = () => {
           setError={setError}
           email={email}
           setLoading={setLoading}
+          setSignedIn={setSignedIn}
         />
       );
     }

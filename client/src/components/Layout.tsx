@@ -1,11 +1,13 @@
 import { useRef, useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useOutletContext } from "react-router-dom";
 import NavBar from "./NavBar";
 import { ToastContainer } from 'react-toastify';
+import { isSignedIn } from "../utils";
 
 const Layout = () => {
   const navBarRef = useRef<HTMLDivElement>(null);
   const [minContentHeight, setMinContentHeight] = useState("");
+  const [signedIn, setSignedIn] = useState(isSignedIn())
 
   useEffect(() => {
     if (navBarRef.current) {
@@ -18,13 +20,17 @@ const Layout = () => {
 
   return (
     <>
-      <NavBar ref={navBarRef} />
+      <NavBar ref={navBarRef} signedIn={signedIn} setSignedIn={setSignedIn} />
       <ToastContainer />
       <div className="content" style={{minHeight: minContentHeight}}>
-        <Outlet />
+        <Outlet context={[setSignedIn]} />
       </div>
     </>
   );
 };
 
 export default Layout;
+
+export function useSetSignedIn() {
+  return useOutletContext<[React.Dispatch<boolean>]>();
+}

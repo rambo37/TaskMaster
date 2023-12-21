@@ -1,7 +1,13 @@
 import { forwardRef, Ref } from "react";
 import { NavLink } from "react-router-dom";
+import AccountDropdown from "./AccountDropdown";
 
-const NavBar = forwardRef((_, ref: Ref<HTMLDivElement>) => {
+type NavBarProps = {
+  signedIn: boolean;
+  setSignedIn: (signedIn: boolean) => void;
+};
+
+const NavBar = forwardRef((props: NavBarProps, ref: Ref<HTMLDivElement>) => {
   return (
     <nav ref={ref} className="navbar navbar-expand-sm" data-bs-theme="dark">
       <div className="container-fluid">
@@ -23,16 +29,22 @@ const NavBar = forwardRef((_, ref: Ref<HTMLDivElement>) => {
                 Home
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/signup">
-                Sign up
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/login">
-                Sign in
-              </NavLink>
-            </li>
+            {props.signedIn ? (
+                <AccountDropdown setSignedIn={props.setSignedIn} />
+            ) : (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/signup">
+                    Sign up
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/login">
+                    Sign in
+                  </NavLink>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>
