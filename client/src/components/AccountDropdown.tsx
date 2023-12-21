@@ -26,7 +26,7 @@ const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
   }
 
   return (
-    <li className="nav-item dropdown">
+    <li className="nav-item dropdown" data-bs-theme="light">
       <button
         className={`nav-link dropdown-toggle ${onUserPage ? "active" : ""}`}
         id="navbarDropdown"
