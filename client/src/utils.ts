@@ -3,7 +3,7 @@ import { jwtDecode } from "jwt-decode";
 export const isSignedIn = () => {
   const token = localStorage.getItem("token");
   if (token) {
-    const decodedToken: { exp: Number } = jwtDecode(token);
+    const decodedToken: { exp: number } = jwtDecode(token);
     const currentTime = Date.now() / 1000;
     if (decodedToken.exp < currentTime) return false;
     else return true;

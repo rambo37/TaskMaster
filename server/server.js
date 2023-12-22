@@ -8,6 +8,10 @@ import express, { json } from "express";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
+import {
+  isEmailValid,
+  adequatePasswordComplexity,
+} from "../client/src/utils.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, "../.env") });
@@ -86,11 +90,21 @@ const generatePasswordResetToken = () => {
   return uuid;
 };
 
+const removeSensitiveProperties = (object) => {
+  delete object.passwordHash;
+  delete object.verified;
+  delete object.verificationCode;
+  delete object.codeExpirationTime;
+  delete object.resetTokenHash;
+  delete object.resetTokenExpirationTime;
+}
+
 // Verify user's email address
 app.post("/users/verify", async (req, res) => {
   const { email, code } = req.body;
   try {
     const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found." });
     if (user.codeExpirationTime < Date.now()) {
       return res.status(400).json({ error: "Verification code expired." });
     }
@@ -113,6 +127,7 @@ app.post("/users/resend-verification", async (req, res) => {
   const { email } = req.body;
   try {
     const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found." });
     const verificationCode = generateVerificationCode();
     user.verificationCode = verificationCode;
     user.codeExpirationTime = generateCodeExpirationTime();
@@ -125,7 +140,9 @@ app.post("/users/resend-verification", async (req, res) => {
         .json({ error: "Failed to send verification code email." });
     }
 
-    res.status(200).send("New verification code sent successfully.");
+    res
+      .status(200)
+      .json({ message: "New verification code sent successfully." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error." });
@@ -135,16 +152,26 @@ app.post("/users/resend-verification", async (req, res) => {
 // Create user
 app.post("/users", async (req, res) => {
   const { email, password } = req.body;
+
+  if (!isEmailValid(email)) {
+    return res.status(400).json({ error: "Invalid email." });
+  }
+
+  const errorMessage = adequatePasswordComplexity(password);
+  if (errorMessage) {
+    return res.status(400).json({ error: "Invalid password." });
+  }
+
   // Do not allow an account to be created with an email address that is
   // already in use
   try {
     const user = await User.findOne({ email });
-    if (user) return res.status(409).send("Email already in use.");
+    if (user) return res.status(409).json({ error: "Email already in use." });
   } catch (error) {
     console.error(error);
     return res
       .status(500)
-      .send("Error verifying whether email is already in use.");
+      .json({ error: "Error verifying whether email is already in use." });
   }
 
   try {
@@ -157,6 +184,8 @@ app.post("/users", async (req, res) => {
       verified: false,
       verificationCode: verificationCode,
       codeExpirationTime: generateCodeExpirationTime(),
+      resetTokenHash: null,
+      resetTokenExpirationTime: null,
       tasks: [],
     });
 
@@ -169,7 +198,7 @@ app.post("/users", async (req, res) => {
         .json({ error: "Failed to send verification code email." });
     }
 
-    res.status(201).send("User registered successfully!");
+    res.status(201).json({ message: "User registered successfully!" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error." });
@@ -184,16 +213,11 @@ app.get("/users/:userId", async (req, res) => {
       .lean();
     if (!user) return res.status(404).json({ error: "User not found." });
     // Remove unnecessary attributes from the response
-    delete user.passwordHash;
-    delete user.verified;
-    delete user.verificationCode;
-    delete user.codeExpirationTime;
-    delete user.resetTokenHash;
-    delete user.resetTokenExpirationTime;
-    res.send(user);
+    removeSensitiveProperties(user);
+    res.json(user);
   } catch (error) {
     console.error(error);
-    return res.status(500).send("Failed to get user information.");
+    return res.status(500).json({ error: "Failed to get user information." });
   }
 });
 
@@ -201,26 +225,31 @@ app.get("/users/:userId", async (req, res) => {
 app.patch("/users/:userId", async (req, res) => {
   try {
     const updates = req.body;
+    removeSensitiveProperties(updates)
     const user = await User.findByIdAndUpdate(req.params.userId, updates, {
       new: true,
-    });
+    }).lean();
     if (!user) return res.status(404).json({ error: "User not found." });
-    res.send(user);
+    removeSensitiveProperties(user)
+    res.json(user);
   } catch (error) {
     console.error(error);
-    return res.status(500).send("Failed to update user information.");
+    return res
+      .status(500)
+      .json({ error: "Failed to update user information." });
   }
 });
 
 // Delete user
 app.delete("/users/:userId", async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.userId);
+    const user = await User.findByIdAndDelete(req.params.userId).lean();
     if (!user) return res.status(404).json({ error: "User not found." });
-    res.send(user);
+    removeSensitiveProperties(user)
+    res.json(user);
   } catch (error) {
     console.log(error);
-    res.status(500).send(error);
+    res.status(500).json({ error });
   }
 });
 
@@ -229,19 +258,20 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ error: "User not found." });;
+    if (!user) return res.status(404).json({ error: "User not found." });
 
     const isPasswordValid = await compare(password, user.passwordHash);
-    if (!isPasswordValid) return res.status(401).send("Incorrect password.");
+    if (!isPasswordValid)
+      return res.status(401).json({ error: "Incorrect password." });
 
     if (!user.verified)
-      return res.status(403).send("Account has not been verified.");
+      return res.status(403).json({ error: "Account has not been verified." });
 
     const token = generateAuthToken(user);
     res.status(200).json({ token });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error logging in user.");
+    res.status(500).json({ error: "Error logging in user." });
   }
 });
 
@@ -265,7 +295,9 @@ app.post("/password/reset", async (req, res) => {
         .json({ error: "Failed to send password reset email." });
     }
 
-    res.status(200).send("Password reset email sent successfully.");
+    res
+      .status(200)
+      .json({ message: "Password reset email sent successfully." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error." });
@@ -275,6 +307,12 @@ app.post("/password/reset", async (req, res) => {
 // Reset password
 app.post("/password/update", async (req, res) => {
   const { email, resetToken, newPassword } = req.body;
+
+  const errorMessage = adequatePasswordComplexity(newPassword);
+  if (errorMessage) {
+    return res.status(400).json({ error: "Invalid password." });
+  }
+
   try {
     let user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: "User not found." });
@@ -294,7 +332,7 @@ app.post("/password/update", async (req, res) => {
     user.resetTokenExpirationTime = null;
     await user.save();
 
-    res.status(200).send("Password reset successfully.");
+    res.status(200).json({ error: "Password reset successfully." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error." });
@@ -323,10 +361,10 @@ app.post("/users/:userId/tasks/", async (req, res) => {
     const updatedTasks = { tasks: tasks };
 
     await User.findByIdAndUpdate(req.params.userId, updatedTasks);
-    res.send(newTask);
+    res.json(newTask);
   } catch (error) {
     console.error(error);
-    return res.status(500).send("Error creating task.");
+    return res.status(500).json({ error: "Error creating task." });
   }
 });
 
@@ -340,10 +378,11 @@ app.patch("/users/:userId/tasks/:taskId", async (req, res) => {
     const task = await Task.findByIdAndUpdate(req.params.taskId, updates, {
       new: true,
     });
-    if (!task) return res.status(404).send("Task not found.");
-    res.send(task);
+    if (!task) return res.status(404).json({ error: "Task not found." });
+    res.json(task);
   } catch (error) {
-    return res.status(500).send(error);
+    console.error(error);
+    return res.status(500).json({ error });
   }
 });
 
@@ -354,7 +393,7 @@ app.delete("/users/:userId/tasks/:taskId", async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found." });
 
     const task = await Task.findByIdAndDelete(req.params.taskId);
-    if (!task) return res.status(404).send("Task not found");
+    if (!task) return res.status(404).json({ error: "Task not found." });
 
     const tasks = user.tasks.slice();
     const index = tasks.indexOf(req.params.taskId);
@@ -363,10 +402,10 @@ app.delete("/users/:userId/tasks/:taskId", async (req, res) => {
 
     await User.findByIdAndUpdate(req.params.userId, updatedTasks);
 
-    res.send(task);
+    res.json(task);
   } catch (error) {
     console.log(error);
-    return res.status(500).send("Error deleting task");
+    return res.status(500).json({ error: "Error deleting task." });
   }
 });
 
