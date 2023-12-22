@@ -97,7 +97,7 @@ const removeSensitiveProperties = (object) => {
   delete object.codeExpirationTime;
   delete object.resetTokenHash;
   delete object.resetTokenExpirationTime;
-}
+};
 
 // Verify user's email address
 app.post("/users/verify", async (req, res) => {
@@ -148,6 +148,40 @@ app.post("/users/resend-verification", async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
+
+// Middleware function to validate JWT
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ error: "Unauthorized - No token provided." });
+  }
+
+  try {
+    // Auth header should begin with "Bearer "
+    const token = authHeader.substring(7);
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const tokenUserId = decodedToken.userId; // the userId of the token
+    const reqId = req.params.userId; // the userId of the request
+
+    // If there is a mismatch of Ids, then the request is illegal
+    if (tokenUserId !== reqId) {
+      return res.status(403).json({
+        error: "Forbidden - User does not have necessary permissions.",
+      });
+    }
+
+    // Since the JWT is valid and for the correct user, invoke the next function
+    next();
+  } catch (error) {
+    console.error(error);
+    console.log(error.message);
+    if (error.message.includes("expired")) {
+      return res.status(401).json({ error: "Unauthorized - Token expired." });
+    }
+
+    res.status(401).json({ error: "Unauthorized - Invalid token." });
+  }
+};
 
 // Create user
 app.post("/users", async (req, res) => {
@@ -206,7 +240,7 @@ app.post("/users", async (req, res) => {
 });
 
 // Read user
-app.get("/users/:userId", async (req, res) => {
+app.get("/users/:userId", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId)
       .populate("tasks")
@@ -222,15 +256,15 @@ app.get("/users/:userId", async (req, res) => {
 });
 
 // Update user
-app.patch("/users/:userId", async (req, res) => {
+app.patch("/users/:userId", authMiddleware, async (req, res) => {
   try {
     const updates = req.body;
-    removeSensitiveProperties(updates)
+    removeSensitiveProperties(updates);
     const user = await User.findByIdAndUpdate(req.params.userId, updates, {
       new: true,
     }).lean();
     if (!user) return res.status(404).json({ error: "User not found." });
-    removeSensitiveProperties(user)
+    removeSensitiveProperties(user);
     res.json(user);
   } catch (error) {
     console.error(error);
@@ -241,11 +275,11 @@ app.patch("/users/:userId", async (req, res) => {
 });
 
 // Delete user
-app.delete("/users/:userId", async (req, res) => {
+app.delete("/users/:userId", authMiddleware, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.userId).lean();
     if (!user) return res.status(404).json({ error: "User not found." });
-    removeSensitiveProperties(user)
+    removeSensitiveProperties(user);
     res.json(user);
   } catch (error) {
     console.log(error);
@@ -340,7 +374,7 @@ app.post("/password/update", async (req, res) => {
 });
 
 // Create task
-app.post("/users/:userId/tasks/", async (req, res) => {
+app.post("/users/:userId/tasks/", authMiddleware, async (req, res) => {
   const { title, description, dueDate } = req.body;
   try {
     let user = await User.findById(req.params.userId);
@@ -369,7 +403,7 @@ app.post("/users/:userId/tasks/", async (req, res) => {
 });
 
 // Update task
-app.patch("/users/:userId/tasks/:taskId", async (req, res) => {
+app.patch("/users/:userId/tasks/:taskId", authMiddleware, async (req, res) => {
   try {
     let user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found." });
@@ -387,7 +421,7 @@ app.patch("/users/:userId/tasks/:taskId", async (req, res) => {
 });
 
 // Delete task
-app.delete("/users/:userId/tasks/:taskId", async (req, res) => {
+app.delete("/users/:userId/tasks/:taskId", authMiddleware, async (req, res) => {
   try {
     let user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found." });

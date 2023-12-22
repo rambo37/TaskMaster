@@ -20,7 +20,11 @@ const Account = () => {
     if (isSignedIn()) {
       const id = getUserIdFromToken();
       axios
-        .get(`/users/${id}`)
+        .get(`/users/${id}`, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
         .then((response) => {
           setUser(response.data);
         })
