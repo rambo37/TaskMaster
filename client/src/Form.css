@@ -68,27 +68,3 @@ input[type="submit"]:hover {
   cursor: pointer;
   transition-duration: 0.5s;
 }
-
-form div.status {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: 2px solid #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-form div.status.success {
-  background-color: var(--success);
-  color: black;
-
-}
-
-form div.status.error {
-  background-color: var(--error);
-  color: white;
-}

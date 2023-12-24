@@ -4,7 +4,7 @@ import AccountDropdown from "./AccountDropdown";
 
 type NavBarProps = {
   signedIn: boolean;
-  setSignedIn: (signedIn: boolean) => void;
+  setSignedIn: React.Dispatch<boolean>;
 };
 
 const NavBar = forwardRef((props: NavBarProps, ref: Ref<HTMLDivElement>) => {

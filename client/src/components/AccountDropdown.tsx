@@ -2,28 +2,28 @@ import { useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 type AccountDropdownProps = {
-  setSignedIn: (signedIn: boolean) => void;
+  setSignedIn: React.Dispatch<boolean>;
 };
 
 const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const userPages = ["/dashboard"]
+  const userPages = ["/dashboard", "/settings"];
   const isOnUserPage = () => {
-    return userPages.includes(location.pathname)
-  }
+    return userPages.includes(location.pathname);
+  };
 
-  const [onUserPage, setOnUserPage] = useState(isOnUserPage())
+  const [onUserPage, setOnUserPage] = useState(isOnUserPage());
 
   useEffect(() => {
-    setOnUserPage(isOnUserPage())
+    setOnUserPage(isOnUserPage());
   }, [location.pathname]);
 
   const logOut = () => {
     localStorage.removeItem("token");
     setSignedIn(false);
     navigate("/");
-  }
+  };
 
   return (
     <li className="nav-item dropdown" data-bs-theme="light">
@@ -36,11 +36,16 @@ const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
         Account
       </button>
       <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-        <li className="nav-item">
-          <NavLink className="dropdown-item" to="/dashboard">
-            Dashboard
-          </NavLink>
-        </li>
+        {userPages.map((pageRoute, index) => {
+          return (
+            <li className="nav-item" key={index}>
+              <NavLink className="dropdown-item" to={pageRoute}>
+                {pageRoute.substring(1, 2).toUpperCase() +
+                  pageRoute.substring(2)}
+              </NavLink>
+            </li>
+          );
+        })}
         <li>
           <hr className="dropdown-divider" />
         </li>

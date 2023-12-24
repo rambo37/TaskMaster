@@ -1,10 +1,10 @@
-import { useUser } from "../components/Account";
+import { useAccountContext } from "../components/Account";
 
 const Dashboard = () => {
-  const [user, setUser] = useUser();
+  const [user] = useAccountContext();
     return (
       <>
-        <h1>Welcome {user.name ? user.name : user.email}!</h1>
+        <h1>Welcome, {user.name ? user.name : user.email}!</h1>
       </>
     );
 };

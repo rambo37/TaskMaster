@@ -342,12 +342,11 @@ app.post("/password/reset", async (req, res) => {
 app.post("/password/update", async (req, res) => {
   const { email, resetToken, newPassword } = req.body;
 
-  const errorMessage = adequatePasswordComplexity(newPassword);
-  if (errorMessage) {
-    return res.status(400).json({ error: "Invalid password." });
-  }
-
   try {
+    const errorMessage = adequatePasswordComplexity(newPassword);
+    if (errorMessage) {
+      return res.status(400).json({ error: errorMessage });
+    }
     let user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: "User not found." });
 
@@ -358,15 +357,44 @@ app.post("/password/update", async (req, res) => {
     const isTokenValid = await compare(resetToken, user.resetTokenHash);
     if (!isTokenValid) return res.status(401).json({ error: "Invalid token." });
 
-    const SALT_ROUNDS = 10;
     const newPasswordHash = await hash(newPassword, SALT_ROUNDS);
-
     user.passwordHash = newPasswordHash;
     user.resetTokenHash = null;
     user.resetTokenExpirationTime = null;
     await user.save();
 
-    res.status(200).json({ error: "Password reset successfully." });
+    res.status(200).json({ message: "Password reset successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+// Update password (for authenticated users)
+app.patch("/users/:userId/password", authMiddleware, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    const errorMessage = adequatePasswordComplexity(newPassword);
+    if (errorMessage) {
+      return res
+        .status(400)
+        .json({ error: "New p" + errorMessage.substring(1) });
+    }
+
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ error: "User not found." });
+
+    const isPasswordValid = await compare(currentPassword, user.passwordHash);
+    if (!isPasswordValid)
+      return res.status(401).json({ error: "Incorrect current password." });
+
+    const newPasswordHash = await hash(newPassword, SALT_ROUNDS);
+    user.passwordHash = newPasswordHash;
+    await user.save();
+
+    removeSensitiveProperties(user);
+    res.status(200).json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error." });

@@ -4,16 +4,19 @@ import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loading from "../components/Loading";
 import { getUserIdFromToken, isSignedIn } from "../utils";
+import { useSetSignedIn } from "./Layout";
 
-interface User {
+export interface User {
   name: String;
   email: String;
   tasks: [];
+  _id: String;
 }
 
 const Account = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [setSignedIn] = useSetSignedIn();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -43,7 +46,7 @@ const Account = () => {
   if (user) {
     return (
       <>
-        <Outlet context={[user, setUser]} />
+        <Outlet context={[user, setUser, setSignedIn]} />
       </>
     );
   }
@@ -53,6 +56,8 @@ const Account = () => {
 
 export default Account;
 
-export function useUser() {
-  return useOutletContext<[User, React.Dispatch<User>]>();
+export function useAccountContext() {
+  return useOutletContext<
+    [User, React.Dispatch<User>, React.Dispatch<boolean>]
+  >();
 }

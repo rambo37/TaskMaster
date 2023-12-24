@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Account from "./components/Account";
 import AccountRecovery from "./pages/AccountRecovery";
 import ResetPassword from "./pages/ResetPassword";
+import Settings from "./pages/Settings";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<Account />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Route>
