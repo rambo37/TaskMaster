@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { ClipLoader } from "react-spinners";
-import { User } from "./Account";
 import { toast } from "react-toastify";
 import { adequatePasswordComplexity } from "../utils";
 import { useNavigate } from "react-router-dom";
+import { ContentProps } from "./SettingsPageSection";
 
-type ChangeDisplayNameProps = {
-  user: User;
-  setSignedIn: React.Dispatch<boolean>;
-};
-
-const ChangePassword = ({ user, setSignedIn }: ChangeDisplayNameProps) => {
-  const [loading, setLoading] = useState(false);
+const ChangePassword = ({
+  setLoading,
+  setError,
+  user,
+  setSignedIn,
+}: ContentProps) => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [error, setError] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
@@ -63,7 +60,7 @@ const ChangePassword = ({ user, setSignedIn }: ChangeDisplayNameProps) => {
   };
 
   return (
-    <section>
+    <>
       <h3>Delete account</h3>
       <p>
         Warning: this action cannot be undone. All saved data will be
@@ -97,13 +94,7 @@ const ChangePassword = ({ user, setSignedIn }: ChangeDisplayNameProps) => {
           ></input>
         </>
       )}
-      {loading && (
-        <div style={{ textAlign: "center" }}>
-          <ClipLoader />
-        </div>
-      )}
-      {error && <div className="status error">{error}</div>}
-    </section>
+    </>
   );
 };
 

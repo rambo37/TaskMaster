@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ClipLoader } from "react-spinners";
-import { User } from "./Account";
 import { toast } from "react-toastify";
 import { adequatePasswordComplexity } from "../utils";
+import { ContentProps } from "./SettingsPageSection";
 
-type ChangeDisplayNameProps = {
-  user: User;
-};
-
-const ChangePassword = ({ user }: ChangeDisplayNameProps) => {
+const ChangePassword = ({ setLoading, setError, user }: ContentProps) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     checkPasswords();
@@ -81,7 +74,7 @@ const ChangePassword = ({ user }: ChangeDisplayNameProps) => {
   };
 
   return (
-    <section>
+    <>
       <h3>Change password</h3>
       <input
         type="password"
@@ -111,13 +104,7 @@ const ChangePassword = ({ user }: ChangeDisplayNameProps) => {
         onClick={(e) => handleUpdatePasswordSubmit(e)}
         className="submit-button"
       ></input>
-      {loading && (
-        <div style={{ textAlign: "center" }}>
-          <ClipLoader />
-        </div>
-      )}
-      {error && <div className="status error">{error}</div>}
-    </section>
+    </>
   );
 };
 

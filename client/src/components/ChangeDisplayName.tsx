@@ -1,18 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { ClipLoader } from "react-spinners";
-import { User } from "./Account";
 import { toast } from "react-toastify";
+import { ContentProps } from "./SettingsPageSection";
 
-type ChangeDisplayNameProps = {
-  user: User;
-  setUser: React.Dispatch<User>;
-};
-
-const ChangeDisplayName = ({ user, setUser }: ChangeDisplayNameProps) => {
+const ChangeDisplayName = ({
+  setLoading,
+  setError,
+  user,
+  setUser,
+}: ContentProps) => {
   const [displayName, setDisplayName] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const handleUpdateDisplayNameSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -39,7 +36,7 @@ const ChangeDisplayName = ({ user, setUser }: ChangeDisplayNameProps) => {
   };
 
   return (
-    <section>
+    <>
       <h3>Set display name</h3>
       <p>Your current display name is: {user.name ? user.name : user.email}</p>
       <input
@@ -55,13 +52,7 @@ const ChangeDisplayName = ({ user, setUser }: ChangeDisplayNameProps) => {
         onClick={handleUpdateDisplayNameSubmit}
         className="submit-button"
       ></input>
-      {loading && (
-        <div style={{ textAlign: "center" }}>
-          <ClipLoader />
-        </div>
-      )}
-      {error && <div className="status error">{error}</div>}
-    </section>
+    </>
   );
 };
 
