@@ -101,7 +101,7 @@ const SignIn = () => {
     <form>
       {renderContent()}
       {loading && (
-        <div className="form-section" style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "center" }}>
           <ClipLoader />
         </div>
       )}

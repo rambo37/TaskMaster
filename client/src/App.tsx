@@ -9,6 +9,7 @@ import Account from "./components/Account";
 import AccountRecovery from "./pages/AccountRecovery";
 import ResetPassword from "./pages/ResetPassword";
 import Settings from "./pages/Settings";
+import CreateTask from "./pages/CreateTask";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
         <Route element={<Account />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/tasks/create" element={<CreateTask />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Route>

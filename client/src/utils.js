@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.adequatePasswordComplexity = exports.isEmailValid = exports.getUserIdFromToken = exports.isSignedIn = void 0;
+exports.isFutureDate = exports.isInvalidDate = exports.adequatePasswordComplexity = exports.isEmailValid = exports.getUserIdFromToken = exports.isSignedIn = void 0;
 var jwt_decode_1 = require("jwt-decode");
 var isSignedIn = function () {
     var token = localStorage.getItem("token");
@@ -60,3 +60,12 @@ var adequatePasswordComplexity = function (password) {
     return "";
 };
 exports.adequatePasswordComplexity = adequatePasswordComplexity;
+var isInvalidDate = function (date) {
+    return isNaN(date.getTime());
+};
+exports.isInvalidDate = isInvalidDate;
+var isFutureDate = function (date) {
+    var currentDate = new Date();
+    return currentDate < date;
+};
+exports.isFutureDate = isFutureDate;

@@ -85,7 +85,6 @@ const ResetPassword = () => {
   return (
     <form>
       <p>Please enter your new password.</p>
-      <div className="form-section">
         <input
           type="password"
           id="password"
@@ -94,8 +93,6 @@ const ResetPassword = () => {
           placeholder="Password"
           value={password}
         />
-      </div>
-      <div className="form-section">
         <input
           type="password"
           id="confirmPassword"
@@ -104,17 +101,14 @@ const ResetPassword = () => {
           placeholder="Confirm password"
           value={confirmPassword}
         />
-      </div>
-      <div className="form-section">
         <input
           type="submit"
           value="Update password"
           className="max-width-input"
           onClick={(e) => updatePassword(e)}
         ></input>
-      </div>
       {loading && (
-        <div className="form-section" style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "center" }}>
           <ClipLoader />
         </div>
       )}

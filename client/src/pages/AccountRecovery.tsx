@@ -48,7 +48,6 @@ const AccountRecovery = () => {
   return (
     <form>
       <p>Please enter your email address to reset your password.</p>
-      <div className="form-section">
         <input
           type="email"
           id="email"
@@ -58,17 +57,14 @@ const AccountRecovery = () => {
           value={email}
           autoFocus
         />
-      </div>
-      <div className="form-section">
         <input
           type="submit"
           value="Send recovery email"
           className="max-width-input"
           onClick={(e) => sendRecoveryEmail(e)}
         ></input>
-      </div>
       {loading && (
-        <div className="form-section" style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "center" }}>
           <ClipLoader />
         </div>
       )}

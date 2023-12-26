@@ -8,9 +8,14 @@ type AccountDropdownProps = {
 const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const userPages = ["/dashboard", "/settings"];
+  const userPagesMap = new Map([
+    ["/dashboard", "Dashboard"],
+    ["/settings", "Settings"],
+    ["/tasks/create", "Create task"],
+  ]);
+  const userPages = Array.from(userPagesMap);
   const isOnUserPage = () => {
-    return userPages.includes(location.pathname);
+    return Array.from(userPagesMap.keys()).includes(location.pathname);
   };
 
   const [onUserPage, setOnUserPage] = useState(isOnUserPage());
@@ -36,12 +41,11 @@ const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
         Account
       </button>
       <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-        {userPages.map((pageRoute, index) => {
+        {userPages.map((page, index) => {
           return (
             <li className="nav-item" key={index}>
-              <NavLink className="dropdown-item" to={pageRoute}>
-                {pageRoute.substring(1, 2).toUpperCase() +
-                  pageRoute.substring(2)}
+              <NavLink className="dropdown-item" to={page[0]}>
+                {page[1]}
               </NavLink>
             </li>
           );

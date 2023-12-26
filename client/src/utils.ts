@@ -59,3 +59,12 @@ export const adequatePasswordComplexity = (password: string) => {
 
   return "";
 };
+
+export const isInvalidDate = (date: Date): boolean => {
+  return isNaN(date.getTime());
+};
+
+export const isFutureDate = (date: Date): boolean => {
+  const currentDate = new Date();
+  return currentDate < date;
+};
