@@ -11,9 +11,9 @@ const CreateTask = () => {
   const [dueDate, setDueDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [user] = useAccountContext();
+  const [user, setUser] = useAccountContext();
 
-  const handleTaskCreateSubmit = (e: React.MouseEvent) => {
+  const handleTaskCreateSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -45,13 +45,30 @@ const CreateTask = () => {
         dueDate: date,
       };
 
-      axios.post(`/users/${user._id}/tasks`, taskDetails, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
+      const response = await axios.post(
+        `/users/${user._id}/tasks`,
+        taskDetails,
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
 
       toast.success("Task created successfully.");
+      setTitle("");
+      setDescription("");
+      setDueDate("");
+      // Update the user's task array with the details of this newly created
+      // task so it is visible throughout the application without the user
+      // having to refresh their browser
+      const updatedTasks = user.tasks.slice();
+      updatedTasks.push(response.data);
+      const updatedUser = {
+        ...user,
+        tasks: [...user.tasks, response.data],
+      };
+      setUser(updatedUser);
     } catch (error: any) {
       console.error(error);
       setError("Something went wrong. Please try again later.");

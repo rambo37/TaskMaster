@@ -11,6 +11,7 @@ const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
   const userPagesMap = new Map([
     ["/dashboard", "Dashboard"],
     ["/settings", "Settings"],
+    ["/tasks", "View all tasks"],
     ["/tasks/create", "Create task"],
   ]);
   const userPages = Array.from(userPagesMap);
@@ -44,7 +45,7 @@ const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
         {userPages.map((page, index) => {
           return (
             <li className="nav-item" key={index}>
-              <NavLink className="dropdown-item" to={page[0]}>
+              <NavLink className="dropdown-item" to={page[0]} end>
                 {page[1]}
               </NavLink>
             </li>

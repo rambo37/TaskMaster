@@ -1,0 +1,46 @@
+.task-card {
+  height: 200px;
+  width: 400px;
+  padding: 20px;
+  border: 3px solid var(--primary-color);
+  border-radius: 10px;
+}
+
+.task-card .title-div {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 15px;
+}
+
+.task-card .title-div h3 {
+  flex: 1;
+}
+
+.task-card .title-div i {
+  font-size: 30px;
+  margin-left: 10px;
+}
+
+.task-card .title-div i:hover {
+  cursor: pointer;
+}
+
+.bi-pencil:hover {
+  color: green;
+}
+
+.bi-trash:hover {
+  color: red;
+}
+
+.task-card * {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media only screen and (max-width: 768px) {
+  .task-card {
+    max-width: 100%;
+  }
+}

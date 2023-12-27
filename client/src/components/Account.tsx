@@ -7,10 +7,17 @@ import { getUserIdFromToken, isSignedIn } from "../utils";
 import { useSetSignedIn } from "./Layout";
 
 export interface User {
-  name: String;
-  email: String;
-  tasks: [];
-  _id: String;
+  name: string;
+  email: string;
+  tasks: Task[];
+  _id: string;
+}
+
+export interface Task {
+  title: string;
+  description: string;
+  dueDate: string;
+  completed: boolean;
 }
 
 const Account = () => {

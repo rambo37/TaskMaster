@@ -1,0 +1,29 @@
+.task-list-page {
+  max-width: 100%;
+  min-width: 100%;
+}
+
+.task-list-page h1 {
+  margin-bottom: 70px;
+}
+
+.task-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.task-list > .task-card {
+  margin: 20px;
+}
+
+@media only screen and (max-width: 768px) {
+  .task-list {
+    flex-direction: column;
+  }
+
+  .task-list > .task-card {
+    margin: 20px 0px;
+  }
+}
