@@ -1,11 +1,46 @@
-import { Task } from "./Account";
+import axios from "axios";
+import { useState } from "react";
+import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
+import { Task, User } from "./Account";
 
 type TaskCardProps = {
+  user: User;
+  setUser: React.Dispatch<User>;
   task: Task;
-  thresholdHours: number
+  thresholdHours: number;
 };
 
-const TaskCard = ({ task, thresholdHours }: TaskCardProps) => {
+const TaskCard = ({ user, setUser, task, thresholdHours }: TaskCardProps) => {
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleTaskDelete = async () => {
+    setLoading(true);
+    try {
+      await axios.delete(`/users/${user._id}/tasks/${task._id}`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+
+      // Remove this task in the frontend by updating the tasks array
+      // of the user object
+      const updatedTasks = user.tasks.slice();
+      updatedTasks.splice(user.tasks.indexOf(task), 1);
+      const updatedUser = {
+        ...user,
+        tasks: updatedTasks,
+      };
+      setUser(updatedUser);
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Failed to delete task. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   let status = "neutral";
 
   if (task.completed) {
@@ -30,13 +65,35 @@ const TaskCard = ({ task, thresholdHours }: TaskCardProps) => {
       <div className="title-div">
         <h3>{task.title}</h3>
         <i className="bi bi-pencil"></i>
-        <i className="bi bi-trash"></i>
+        <i
+          className="bi bi-trash"
+          onClick={() => setShowDeleteConfirmation(true)}
+        ></i>
       </div>
-      <p className="description">
-        {task.description || "No description provided."}
-      </p>
-      <p>Due: {new Date(task.dueDate).toLocaleString()}</p>
-      <p>{`Status: ${task.completed ? "Completed" : "Not completed"}.`}</p>
+      <div className="content-div">
+        {showDeleteConfirmation ? (
+          <>
+            <p>Are you sure you want to delete this task?</p>
+            <button onClick={() => handleTaskDelete()}>Yes</button>
+            <button onClick={() => setShowDeleteConfirmation(false)}>No</button>
+            {loading && (
+              <div style={{ textAlign: "center" }}>
+                <ClipLoader />
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <p className="description">
+              {task.description || "No description provided."}
+            </p>
+            <p>Due: {new Date(task.dueDate).toLocaleString().slice(0, -3)}</p>
+            <p>{`Status: ${
+              task.completed ? "Completed" : "Not completed"
+            }.`}</p>
+          </>
+        )}
+      </div>
     </div>
   );
 };

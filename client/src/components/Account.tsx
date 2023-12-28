@@ -18,6 +18,7 @@ export interface Task {
   description: string;
   dueDate: string;
   completed: boolean;
+  _id: string;
 }
 
 const Account = () => {

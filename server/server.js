@@ -457,13 +457,7 @@ app.delete("/users/:userId/tasks/:taskId", authMiddleware, async (req, res) => {
     const task = await Task.findByIdAndDelete(req.params.taskId);
     if (!task) return res.status(404).json({ error: "Task not found." });
 
-    const tasks = user.tasks.slice();
-    const index = tasks.indexOf(req.params.taskId);
-    tasks.splice(index, 1);
-    const updatedTasks = { tasks: tasks };
-
-    await User.findByIdAndUpdate(req.params.userId, updatedTasks);
-
+    await User.findByIdAndUpdate(user._id, { $pull: { tasks: task._id } });
     res.json(task);
   } catch (error) {
     console.log(error);

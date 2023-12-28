@@ -3,7 +3,7 @@ import Legend from "../components/Legend";
 import TaskCard from "../components/TaskCard";
 
 const TaskList = () => {
-  const [user] = useAccountContext();
+  const [user, setUser] = useAccountContext();
   const thresholdHours = 6;
 
   return (
@@ -11,9 +11,15 @@ const TaskList = () => {
       <h1>Tasks</h1>
       <Legend thresholdHours={thresholdHours} />
       <div className="task-list">
-        {user.tasks.map((task, index) => {
+        {user.tasks.map((task) => {
           return (
-            <TaskCard task={task} key={index} thresholdHours={thresholdHours} />
+            <TaskCard
+              user={user}
+              setUser={setUser}
+              task={task}
+              key={task._id}
+              thresholdHours={thresholdHours}
+            />
           );
         })}
       </div>
