@@ -41,6 +41,7 @@ const Account = () => {
         .catch((error) => console.error(error))
         .finally(() => setLoading(false));
     } else {
+      setSignedIn(false);
       navigate("/");
       toast.error("You must log in to access this page.");
     }
