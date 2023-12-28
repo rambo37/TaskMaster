@@ -3,6 +3,10 @@
   --dark-gray: #333333;
   --error: #ff4949;
   --success: #40fd88;
+  --complete: #c9fbd3;
+  --neutral: #ffffbb;
+  --urgent: #ff6666;
+  --expired: #f9d0d0;
 }
 
 nav {
@@ -75,6 +79,22 @@ div.status.success {
 div.status.error {
   background-color: var(--error);
   color: white;
+}
+
+.complete {
+  background-color: var(--complete);
+}
+
+.neutral {
+  background-color: var(--neutral);
+}
+
+.urgent {
+  background-color: var(--urgent);
+}
+
+.expired {
+  background-color: var(--expired);
 }
 
 @media (max-width: 767px) {

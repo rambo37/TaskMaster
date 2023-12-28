@@ -7,6 +7,7 @@ import "./Settings.css";
 import "./CreateTask.css";
 import "./TaskList.css";
 import "./TaskCard.css";
+import "./Legend.css";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
