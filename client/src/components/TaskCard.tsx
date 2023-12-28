@@ -33,7 +33,7 @@ const TaskCard = ({ task, thresholdHours }: TaskCardProps) => {
         <i className="bi bi-trash"></i>
       </div>
       <p className="description">
-        {task.description ? task.description : "No description provided."}
+        {task.description || "No description provided."}
       </p>
       <p>Due: {new Date(task.dueDate).toLocaleString()}</p>
       <p>{`Status: ${task.completed ? "Completed" : "Not completed"}.`}</p>

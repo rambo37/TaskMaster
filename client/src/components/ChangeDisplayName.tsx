@@ -19,12 +19,16 @@ const ChangeDisplayName = ({
       const updates = {
         name: displayName,
       };
-      const response = await axios.patch(`/users/${user._id}`, updates, {
+      await axios.patch(`/users/${user._id}`, updates, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      setUser(response.data);
+      const updatedUser = {
+        ...user,
+        name: displayName,
+      };
+      setUser(updatedUser);
       toast.success("Display name updated.");
       setDisplayName("");
     } catch (error) {
