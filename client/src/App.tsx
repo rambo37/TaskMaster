@@ -11,6 +11,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Settings from "./pages/Settings";
 import CreateTask from "./pages/CreateTask";
 import TaskList from "./pages/TaskList";
+import EditTask from "./pages/EditTask";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
           <Route path="/settings" element={<Settings />} />
           <Route path="/tasks" element={<TaskList />} />
           <Route path="/tasks/create" element={<CreateTask />} />
+          <Route path="/tasks/:taskId" element={<EditTask />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Route>

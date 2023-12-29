@@ -1,0 +1,11 @@
+.edit-task-page {
+  max-width: 100%;
+}
+
+.edit-task-page h1 {
+  margin-bottom: 70px;
+}
+
+.edit-task-page textarea {
+  height: 250px;
+}

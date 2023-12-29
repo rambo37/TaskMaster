@@ -26,11 +26,12 @@ form {
   }
 }
 
-form > *:not(:last-child){
+form > *:not(:last-child) {
   margin-bottom: 20px;
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   outline-color: var(--primary-color);
 }
 
@@ -51,6 +52,10 @@ input:focus, textarea:focus {
   border-radius: 5px;
   border: 1px solid #ccc;
   font-size: 16px;
+}
+
+select.max-width-input {
+  margin-bottom: 60px;
 }
 
 input[type="submit"]:hover {

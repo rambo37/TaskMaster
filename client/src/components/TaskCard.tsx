@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { Task, User } from "./Account";
@@ -14,6 +15,7 @@ type TaskCardProps = {
 const TaskCard = ({ user, setUser, task, thresholdHours }: TaskCardProps) => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleTaskDelete = async () => {
     setLoading(true);
@@ -64,7 +66,10 @@ const TaskCard = ({ user, setUser, task, thresholdHours }: TaskCardProps) => {
     <div className={`task-card ${status}`}>
       <div className="title-div">
         <h3>{task.title}</h3>
-        <i className="bi bi-pencil"></i>
+        <i
+          className="bi bi-pencil"
+          onClick={() => navigate(`/tasks/${task._id}`)}
+        ></i>
         <i
           className="bi bi-trash"
           onClick={() => setShowDeleteConfirmation(true)}
