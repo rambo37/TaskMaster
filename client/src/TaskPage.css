@@ -1,11 +1,11 @@
-.edit-task-page {
+.task-page {
   max-width: 100%;
 }
 
-.edit-task-page h1 {
+.task-page h1 {
   margin-bottom: 70px;
 }
 
-.edit-task-page textarea {
+.task-page textarea {
   height: 250px;
 }

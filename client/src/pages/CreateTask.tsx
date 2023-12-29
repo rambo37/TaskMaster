@@ -78,7 +78,7 @@ const CreateTask = () => {
   };
 
   return (
-    <div className="create-task-page">
+    <div className="task-page">
       <h1>Create task</h1>
       <form>
         <input

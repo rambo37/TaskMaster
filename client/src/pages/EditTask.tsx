@@ -125,7 +125,7 @@ const EditTask = () => {
   };
 
   return (
-    <div className="edit-task-page">
+    <div className="task-page">
       <h1>Edit task</h1>
       <form>
         <input
