@@ -1,3 +1,6 @@
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
+
 type SignUpFormProps = {
   email: string;
   setEmail: (email: string) => void;
@@ -16,23 +19,25 @@ const SignInForm = ({
   return (
     <>
       <h3 className="form-title ">Sign in</h3>
-      <input
-        type="email"
-        id="email"
-        className="max-width-input"
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email address"
-        value={email}
-        autoFocus
-      />
-      <input
-        type="password"
-        id="password"
-        className="max-width-input"
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        value={password}
-      />
+      <FloatingLabel label="Email address" className="mb-3">
+        <Form.Control
+          type="email"
+          placeholder="Email address"
+          className="max-width-input"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoFocus
+        />
+      </FloatingLabel>
+      <FloatingLabel label="Password" className="mb-3">
+        <Form.Control
+          type="password"
+          placeholder="Password"
+          className="max-width-input"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </FloatingLabel>
       <input
         type="submit"
         value="Sign in"

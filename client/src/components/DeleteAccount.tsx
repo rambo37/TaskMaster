@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import { adequatePasswordComplexity } from "../utils";
 import { useNavigate } from "react-router-dom";
 import { ContentProps } from "./SettingsPageSection";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
 
 const ChangePassword = ({
   setLoading,
@@ -78,13 +80,15 @@ const ChangePassword = ({
           <p>
             Please enter your password and press the button below to proceed.
           </p>
-          <input
-            type="password"
-            className="max-width-input"
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            value={password}
-          />
+          <FloatingLabel label="Password" className="mb-3">
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              className="max-width-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </FloatingLabel>
           <input
             type="submit"
             value="Confirm account deletion"

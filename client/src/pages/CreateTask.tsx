@@ -4,6 +4,8 @@ import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { useAccountContext } from "../components/Account";
 import { isFutureDate, isInvalidDate } from "../utils";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
 
 const CreateTask = () => {
   const [title, setTitle] = useState("");
@@ -81,25 +83,32 @@ const CreateTask = () => {
     <div className="task-page">
       <h1>Create task</h1>
       <form>
-        <input
-          type="text"
-          placeholder="Title"
-          className="max-width-input"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        ></input>
-        <textarea
-          className="max-width-input"
-          placeholder="Description (optional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        ></textarea>
-        <input
-          className="max-width-input"
-          type="datetime-local"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-        ></input>
+      <FloatingLabel label="Title" className="mb-3">
+          <Form.Control
+            type="text"
+            placeholder="Title"
+            className="max-width-input"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </FloatingLabel>
+        <FloatingLabel label="Description (optional)" className="mb-3">
+          <Form.Control
+            as="textarea"
+            placeholder="Description (optional)"
+            className="max-width-input"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </FloatingLabel>
+        <FloatingLabel label="Due date" className="mb-3">
+          <Form.Control
+            type="datetime-local" 
+            className="max-width-input"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+          />
+        </FloatingLabel>
         <input
           type="submit"
           className="submit-button"

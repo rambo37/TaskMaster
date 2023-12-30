@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import { isFutureDate, isInvalidDate } from "../utils";
 import axios from "axios";
 import { toast } from "react-toastify";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
 
 const EditTask = () => {
   const { taskId } = useParams();
@@ -128,33 +130,42 @@ const EditTask = () => {
     <div className="task-page">
       <h1>Edit task</h1>
       <form>
-        <input
-          type="text"
-          placeholder="Title"
-          className="max-width-input"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        ></input>
-        <textarea
-          className="max-width-input"
-          placeholder="Description (optional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        ></textarea>
-        <input
-          className="max-width-input"
-          type="datetime-local"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-        ></input>
-        <select
-          value={selectedOption}
-          onChange={(e) => setSelectedOption(e.target.value)}
-          className="max-width-input"
-        >
-          <option>{statusCompleted}</option>
-          <option>{statusNotCompleted}</option>
-        </select>
+        <FloatingLabel label="Title" className="mb-3">
+          <Form.Control
+            type="text"
+            placeholder="Title"
+            className="max-width-input"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </FloatingLabel>
+        <FloatingLabel label="Description (optional)" className="mb-3">
+          <Form.Control
+            as="textarea"
+            placeholder="Description (optional)"
+            className="max-width-input"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </FloatingLabel>
+        <FloatingLabel label="Due date" className="mb-3">
+          <Form.Control
+            type="datetime-local"
+            className="max-width-input"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+          />
+        </FloatingLabel>
+        <FloatingLabel label="Task status">
+          <Form.Select
+            value={selectedOption}
+            onChange={(e) => setSelectedOption(e.target.value)}
+            className="max-width-input"
+          >
+            <option>{statusCompleted}</option>
+            <option>{statusNotCompleted}</option>
+          </Form.Select>
+        </FloatingLabel>
         <input
           type="submit"
           className="submit-button"

@@ -6,6 +6,6 @@
   margin-bottom: 70px;
 }
 
-.task-page textarea {
+.task-page textarea.form-control {
   height: 250px;
 }

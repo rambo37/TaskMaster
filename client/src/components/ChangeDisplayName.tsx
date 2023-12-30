@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ContentProps } from "./SettingsPageSection";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
 
 const ChangeDisplayName = ({
   setLoading,
@@ -43,12 +45,15 @@ const ChangeDisplayName = ({
     <>
       <h3>Set display name</h3>
       <p>Your current display name is: {user.name ? user.name : user.email}</p>
-      <input
-        className="max-width-input"
-        onChange={(e) => setDisplayName(e.target.value)}
-        placeholder="Display name"
-        value={displayName}
-      />
+      <FloatingLabel label="Display name" className="mb-3">
+          <Form.Control
+            type="text"
+            placeholder="Display name"
+            className="max-width-input"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+          />
+        </FloatingLabel>
       <input
         type="submit"
         value="Update display name"

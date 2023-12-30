@@ -2,6 +2,8 @@ import { useState } from "react";
 import { isEmailValid } from "../utils";
 import { ClipLoader } from "react-spinners";
 import axios from "axios";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
 
 const AccountRecovery = () => {
   const [email, setEmail] = useState("");
@@ -48,21 +50,22 @@ const AccountRecovery = () => {
   return (
     <form>
       <p>Please enter your email address to reset your password.</p>
-        <input
+      <FloatingLabel label="Email address" className="mb-3">
+        <Form.Control
           type="email"
-          id="email"
-          className="max-width-input"
-          onChange={(e) => setEmail(e.target.value)}
           placeholder="Email address"
+          className="max-width-input"
           value={email}
+          onChange={(e) => setEmail(e.target.value)}
           autoFocus
         />
-        <input
-          type="submit"
-          value="Send recovery email"
-          className="max-width-input"
-          onClick={(e) => sendRecoveryEmail(e)}
-        ></input>
+      </FloatingLabel>
+      <input
+        type="submit"
+        value="Send recovery email"
+        className="max-width-input"
+        onClick={(e) => sendRecoveryEmail(e)}
+      />
       {loading && (
         <div style={{ textAlign: "center" }}>
           <ClipLoader />

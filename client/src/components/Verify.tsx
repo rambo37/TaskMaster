@@ -2,6 +2,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
 
 type VerifyProps = {
   clearErrors: () => void;
@@ -80,29 +82,28 @@ const Verify = ({
         A verification code has been sent to {email}. Please enter the code
         below to complete account creation.
       </p>
-      <input
-        type="string"
-        id="code"
-        className="max-width-input"
-        onChange={(e) => setVerificationCode(e.target.value)}
-        placeholder="Verification code"
-        value={verificationCode}
-      />
-      <p />
+      <FloatingLabel label="Verification code" className="mb-3">
+        <Form.Control
+          type="text"
+          placeholder="Verification code"
+          className="max-width-input"
+          value={verificationCode}
+          onChange={(e) => setVerificationCode(e.target.value)}
+          autoFocus
+        />
+      </FloatingLabel>
       <input
         type="submit"
         value="Verify"
         onClick={(e) => handleSubmit(e)}
         className="max-width-input"
       ></input>
-      <p />
       <input
         type="submit"
         value="Resend code"
         onClick={(e) => resendConfirmationCode(e)}
         className="max-width-input"
       ></input>
-      <p />
     </>
   );
 };

@@ -4,6 +4,8 @@ import { ClipLoader } from "react-spinners";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -85,28 +87,30 @@ const ResetPassword = () => {
   return (
     <form>
       <p>Please enter your new password.</p>
-        <input
+      <FloatingLabel label="Password" className="mb-3">
+        <Form.Control
           type="password"
-          id="password"
-          className="max-width-input"
-          onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
+          className="max-width-input"
           value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
-        <input
+      </FloatingLabel>
+      <FloatingLabel label="Confirm password" className="mb-3">
+        <Form.Control
           type="password"
-          id="confirmPassword"
+          placeholder="Confirm Password"
           className="max-width-input"
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Confirm password"
           value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
         />
-        <input
-          type="submit"
-          value="Update password"
-          className="max-width-input"
-          onClick={(e) => updatePassword(e)}
-        ></input>
+      </FloatingLabel>
+      <input
+        type="submit"
+        value="Update password"
+        className="max-width-input"
+        onClick={(e) => updatePassword(e)}
+      ></input>
       {loading && (
         <div style={{ textAlign: "center" }}>
           <ClipLoader />

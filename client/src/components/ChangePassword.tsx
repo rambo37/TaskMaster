@@ -3,6 +3,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { adequatePasswordComplexity } from "../utils";
 import { ContentProps } from "./SettingsPageSection";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Form from "react-bootstrap/Form";
 
 const ChangePassword = ({ setLoading, setError, user }: ContentProps) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -76,27 +78,33 @@ const ChangePassword = ({ setLoading, setError, user }: ContentProps) => {
   return (
     <>
       <h3>Change password</h3>
-      <input
-        type="password"
-        className="max-width-input"
-        onChange={(e) => setCurrentPassword(e.target.value)}
-        placeholder="Current password"
-        value={currentPassword}
-      />
-      <input
-        type="password"
-        className="max-width-input"
-        onChange={(e) => setNewPassword(e.target.value)}
-        placeholder="New password"
-        value={newPassword}
-      />
-      <input
-        type="password"
-        className="max-width-input"
-        onChange={(e) => setConfirmNewPassword(e.target.value)}
-        placeholder="Confirm new password"
-        value={confirmNewPassword}
-      />
+      <FloatingLabel label="Current password" className="mb-3">
+        <Form.Control
+          type="password"
+          placeholder="Current password"
+          className="max-width-input"
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+        />
+      </FloatingLabel>
+      <FloatingLabel label="New password" className="mb-3">
+        <Form.Control
+          type="password"
+          placeholder="New password"
+          className="max-width-input"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
+      </FloatingLabel>
+      <FloatingLabel label="Confirm new password" className="mb-3">
+        <Form.Control
+          type="password"
+          placeholder="Confirm new password"
+          className="max-width-input"
+          value={confirmNewPassword}
+          onChange={(e) => setConfirmNewPassword(e.target.value)}
+        />
+      </FloatingLabel>
       <input
         type="submit"
         value="Update password"
