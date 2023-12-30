@@ -45,6 +45,7 @@ form > *:not(:last-child) {
 input[type="checkbox"] {
   height: 20px;
   width: 20px;
+  border-color: var(--dark-gray);
 }
 
 .form-check-input:checked {

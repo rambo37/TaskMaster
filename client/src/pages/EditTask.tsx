@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
-import { Task, useAccountContext } from "../components/Account";
+import { useAccountContext } from "../components/Account";
 import { useParams } from "react-router-dom";
 import { isFutureDate, isInvalidDate } from "../utils";
 import axios from "axios";
 import { toast } from "react-toastify";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
+import { Task } from "../taskUtils";
 
 const EditTask = () => {
   const { taskId } = useParams();

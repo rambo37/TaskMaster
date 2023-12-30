@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loading from "../components/Loading";
+import { Task } from "../taskUtils";
 import { getUserIdFromToken, isSignedIn } from "../utils";
 import { useSetSignedIn } from "./Layout";
 
@@ -10,14 +11,6 @@ export interface User {
   name: string;
   email: string;
   tasks: Task[];
-  _id: string;
-}
-
-export interface Task {
-  title: string;
-  description: string;
-  dueDate: string;
-  completed: boolean;
   _id: string;
 }
 

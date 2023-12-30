@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { Task, useAccountContext } from "../components/Account";
+import { useAccountContext } from "../components/Account";
 import Legend from "../components/Legend";
 import TaskCard from "../components/TaskCard";
 import Form from "react-bootstrap/Form";
+import { getTaskStatus } from "../taskUtils";
+import { Task } from "../taskUtils";
 
 const TaskList = () => {
   const [user, setUser] = useAccountContext();
@@ -18,7 +20,7 @@ const TaskList = () => {
 
   const filterTasks = useCallback(() => {
     const newTasks = user.tasks.filter((task) => {
-      const taskStatus = getTaskStatus(task);
+      const taskStatus = getTaskStatus(task, thresholdHours);
       const isCompleted = taskStatus === "completed";
       const isMoreThanThresholdHours = taskStatus === "neutral";
       const isLessThanThresholdHours = taskStatus === "urgent";
@@ -45,43 +47,6 @@ const TaskList = () => {
     filterTasks();
   }, [filterTasks]);
 
-  const showOrHideCompletedTasks = (show: boolean) => {
-    setShowCompleted(show);
-  };
-
-  const showOrHideMoreThanThresholdHoursTasks = (show: boolean) => {
-    setShowMoreThanThresholdHours(show);
-  };
-
-  const showOrHideLessThanThresholdHoursTasks = (show: boolean) => {
-    setShowLessThanThresholdHours(show);
-  };
-
-  const showOrHideExpiredTasks = (show: boolean) => {
-    setShowExpired(show);
-  };
-
-  const getTaskStatus = (task: Task) => {
-    let status = "neutral";
-    if (task.completed) {
-      status = "completed";
-    } else {
-      const currentDate = new Date().valueOf();
-      const taskDueDate = new Date(task.dueDate).valueOf();
-      const threshold = 1000 * 60 * 60 * thresholdHours;
-
-      // Expired task
-      if (currentDate > taskDueDate) {
-        status = "expired";
-      }
-      // Task has less than threshold hours left
-      else if (currentDate + threshold > taskDueDate) {
-        status = "urgent";
-      }
-    }
-    return status;
-  };
-
   return (
     <div className="task-list-page">
       <h1>Tasks</h1>
@@ -96,14 +61,14 @@ const TaskList = () => {
           type="checkbox"
           label="Show completed"
           checked={showCompleted}
-          onChange={() => showOrHideCompletedTasks(!showCompleted)}
+          onChange={() => setShowCompleted(!showCompleted)}
         />
         <Form.Check
           type="checkbox"
           label={`Show more than ${thresholdHours} hours left`}
           checked={showMoreThanThresholdHours}
           onChange={() =>
-            showOrHideMoreThanThresholdHoursTasks(!showMoreThanThresholdHours)
+            setShowMoreThanThresholdHours(!showMoreThanThresholdHours)
           }
         />
         <Form.Check
@@ -111,14 +76,14 @@ const TaskList = () => {
           label={`Show less than ${thresholdHours} hours left`}
           checked={showLessThanThresholdHours}
           onChange={() =>
-            showOrHideLessThanThresholdHoursTasks(!showLessThanThresholdHours)
+            setShowLessThanThresholdHours(!showLessThanThresholdHours)
           }
         />
         <Form.Check
           type="checkbox"
           label="Show expired"
           checked={showExpired}
-          onChange={() => showOrHideExpiredTasks(!showExpired)}
+          onChange={() => setShowExpired(!showExpired)}
         />
       </div>
       {showLegend && <Legend thresholdHours={thresholdHours} />}

@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
-import { Task, User } from "./Account";
+import { User } from "./Account";
+import { getTaskStatus, Task } from "../taskUtils";
 
 type TaskCardProps = {
   user: User;
@@ -43,24 +44,7 @@ const TaskCard = ({ user, setUser, task, thresholdHours }: TaskCardProps) => {
     }
   };
 
-  let status = "neutral";
-
-  if (task.completed) {
-    status = "completed";
-  } else {
-    const currentDate = new Date().valueOf();
-    const taskDueDate = new Date(task.dueDate).valueOf();
-    const threshold = 1000 * 60 * 60 * thresholdHours;
-
-    // Expired task
-    if (currentDate > taskDueDate) {
-      status = "expired";
-    }
-    // Task has less than threshold hours left
-    else if (currentDate + threshold > taskDueDate) {
-      status = "urgent";
-    }
-  }
+  const status = getTaskStatus(task, thresholdHours);
 
   return (
     <div className={`task-card ${status}`}>
