@@ -12,6 +12,17 @@
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.task-list-options {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+
+.task-list-options > * {
+  margin: 0 20px;
 }
 
 .task-list > .task-card {
@@ -23,7 +34,15 @@
     flex-direction: column;
   }
 
+  .task-list-options {
+    flex-direction: column;
+  }
+
   .task-list > .task-card {
     margin: 20px 0px;
+  }
+
+  .task-list-options > * {
+    margin: 0 0 10px 0;
   }
 }

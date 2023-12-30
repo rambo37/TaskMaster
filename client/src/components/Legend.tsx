@@ -8,8 +8,8 @@ const Legend = ({ thresholdHours }: LegendProps) => {
       <h4>Legend</h4>
       <div>
         <div className="legend-item">
-          <div className="square complete"></div>
-          <p>Complete</p>
+          <div className="square completed"></div>
+          <p>Completed</p>
         </div>
 
         <div className="legend-item">

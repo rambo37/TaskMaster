@@ -46,7 +46,7 @@ const TaskCard = ({ user, setUser, task, thresholdHours }: TaskCardProps) => {
   let status = "neutral";
 
   if (task.completed) {
-    status = "complete";
+    status = "completed";
   } else {
     const currentDate = new Date().valueOf();
     const taskDueDate = new Date(task.dueDate).valueOf();

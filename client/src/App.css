@@ -1,9 +1,10 @@
 :root {
   --primary-color: #ff724c;
   --dark-gray: #333333;
+  --light-gray: #fafafa;
   --error: #ff4949;
   --success: #40fd88;
-  --complete: #c9fbd3;
+  --completed: #c9fbd3;
   --neutral: #ffffbb;
   --urgent: #ff6666;
   --expired: #f9d0d0;
@@ -81,8 +82,8 @@ div.status.error {
   color: white;
 }
 
-.complete {
-  background-color: var(--complete);
+.completed {
+  background-color: var(--completed);
 }
 
 .neutral {
