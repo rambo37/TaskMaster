@@ -1,9 +1,10 @@
+import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
 export const isSignedIn = () => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    const decodedToken: { exp: number } = jwtDecode(token);
+  const accessToken = localStorage.getItem("accessToken");
+  if (accessToken) {
+    const decodedToken: { exp: number } = jwtDecode(accessToken);
     const currentTime = Date.now() / 1000;
     if (decodedToken.exp < currentTime) return false;
     else return true;
@@ -12,10 +13,10 @@ export const isSignedIn = () => {
 };
 
 export const getUserIdFromToken = () => {
-  const token = localStorage.getItem("token");
-  if (token) {
+  const accessToken = localStorage.getItem("accessToken");
+  if (accessToken) {
     try {
-      const decodedToken: { userId: string } = jwtDecode(token);
+      const decodedToken: { userId: string } = jwtDecode(accessToken);
       return decodedToken.userId;
     } catch (error) {
       console.error("Invalid token");
@@ -25,39 +26,22 @@ export const getUserIdFromToken = () => {
   return null;
 };
 
-export const isEmailValid = (email: string) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-// Eventually add checks against common/easily guessed passwords
-export const adequatePasswordComplexity = (password: string) => {
-  // At least 8 characters
-  if (password.length < 8) {
-    return "Password must be at least 8 characters long.";
+export const getAuthHeader = async () => {
+  // Generate a fresh access token first if necessary
+  if (!isSignedIn()) {
+    const refreshToken = localStorage.getItem("refreshToken");
+    const response = await axios.post("/refresh-token", { refreshToken });
+    const { accessToken } = response.data;
+    localStorage.setItem("accessToken", accessToken);
   }
 
-  // At least one uppercase letter
-  if (!/[A-Z]/.test(password)) {
-    return "Password must contain at least one uppercase letter.";
-  }
+  const accessToken = localStorage.getItem("accessToken");
 
-  // At least one lowercase letter
-  if (!/[a-z]/.test(password)) {
-    return "Password must contain at least one lowercase letter.";
+  return { 
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
   }
-
-  // At least one digit
-  if (!/[0-9]/.test(password)) {
-    return "Password must contain at least one number.";
-  }
-
-  // At least one special character
-  if (!/[!@#$%^&*]/.test(password)) {
-    return "Password must contain at least one special character.";
-  }
-
-  return "";
 };
 
 export const isInvalidDate = (date: Date): boolean => {

@@ -41,7 +41,9 @@ const Verify = ({
       };
       const response = await axios.post("/users/verify", verificationInfo);
       toast.success("Successfully verified account.");
-      localStorage.setItem("token", response.data.token);
+      const { accessToken, refreshToken } = response.data;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
       setSignedIn(true);
       navigate("/dashboard");
     } catch (error: any) {

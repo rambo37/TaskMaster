@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { useAccountContext } from "../components/Account";
-import { isFutureDate, isInvalidDate } from "../utils";
+import { getAuthHeader, isFutureDate, isInvalidDate } from "../utils";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 
@@ -50,11 +50,7 @@ const CreateTask = () => {
       const response = await axios.post(
         `/users/${user._id}/tasks`,
         taskDetails,
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
+        await getAuthHeader()
       );
 
       toast.success("Task created successfully.");
@@ -83,7 +79,7 @@ const CreateTask = () => {
     <div className="task-page">
       <h1>Create task</h1>
       <form>
-      <FloatingLabel label="Title" className="mb-3">
+        <FloatingLabel label="Title" className="mb-3">
           <Form.Control
             type="text"
             placeholder="Title"
@@ -103,7 +99,7 @@ const CreateTask = () => {
         </FloatingLabel>
         <FloatingLabel label="Due date" className="mb-3">
           <Form.Control
-            type="datetime-local" 
+            type="datetime-local"
             className="max-width-input"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}

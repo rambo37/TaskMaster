@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useAccountContext } from "../components/Account";
 import { useParams } from "react-router-dom";
-import { isFutureDate, isInvalidDate } from "../utils";
+import { getAuthHeader, isFutureDate, isInvalidDate } from "../utils";
 import axios from "axios";
 import { toast } from "react-toastify";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -98,11 +98,7 @@ const EditTask = () => {
       const response = await axios.patch(
         `/users/${user._id}/tasks/${taskId}`,
         updates,
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }
+        await getAuthHeader()
       );
 
       toast.success("Task updated successfully.");

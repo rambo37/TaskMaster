@@ -4,7 +4,6 @@ import Legend from "../components/Legend";
 import TaskCard from "../components/TaskCard";
 import Form from "react-bootstrap/Form";
 import { getTaskStatus } from "../taskUtils";
-import { Task } from "../taskUtils";
 
 const TaskList = () => {
   const [user, setUser] = useAccountContext();

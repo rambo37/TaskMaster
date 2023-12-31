@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { adequatePasswordComplexity, isEmailValid } from "../utils";
+import {
+  adequatePasswordComplexity,
+  isEmailValid,
+} from "../shared/sharedUtils.mjs";
 import axios from "axios";
 import SignInForm from "../components/SignInForm";
 import Verify from "../components/Verify";
@@ -50,7 +53,9 @@ const SignIn = () => {
         password: password,
       };
       const response = await axios.post("/login", credentials);
-      localStorage.setItem("token", response.data.token);
+      const { accessToken, refreshToken } = response.data;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
       setSignedIn(true);
       navigate("/dashboard");
     } catch (error: any) {

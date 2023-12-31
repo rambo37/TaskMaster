@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { ContentProps } from "./SettingsPageSection";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
+import { getAuthHeader } from "../utils";
 
 const ChangeDisplayName = ({
   setLoading,
@@ -21,11 +22,7 @@ const ChangeDisplayName = ({
       const updates = {
         name: displayName,
       };
-      await axios.patch(`/users/${user._id}`, updates, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
+      await axios.patch(`/users/${user._id}`, updates, await getAuthHeader());
       const updatedUser = {
         ...user,
         name: displayName,
@@ -46,14 +43,14 @@ const ChangeDisplayName = ({
       <h3>Set display name</h3>
       <p>Your current display name is: {user.name ? user.name : user.email}</p>
       <FloatingLabel label="Display name" className="mb-3">
-          <Form.Control
-            type="text"
-            placeholder="Display name"
-            className="max-width-input"
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-          />
-        </FloatingLabel>
+        <Form.Control
+          type="text"
+          placeholder="Display name"
+          className="max-width-input"
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+        />
+      </FloatingLabel>
       <input
         type="submit"
         value="Update display name"

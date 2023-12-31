@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { adequatePasswordComplexity } from "../utils";
+import { getAuthHeader } from "../utils";
+import { adequatePasswordComplexity } from "../shared/sharedUtils.mjs";
 import { ContentProps } from "./SettingsPageSection";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
@@ -54,11 +55,11 @@ const ChangePassword = ({ setLoading, setError, user }: ContentProps) => {
         currentPassword: currentPassword,
         newPassword: newPassword,
       };
-      await axios.patch(`/users/${user._id}/password`, passwordInfo, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
+      await axios.patch(
+        `/users/${user._id}/password`,
+        passwordInfo,
+        await getAuthHeader()
+      );
       toast.success("Password updated.");
       setCurrentPassword("");
       setNewPassword("");

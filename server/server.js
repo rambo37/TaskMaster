@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
   isEmailValid,
   adequatePasswordComplexity,
-} from "../client/src/utils.js";
+} from "../client/src/shared/sharedUtils.mjs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, "../.env") });
@@ -78,11 +78,23 @@ const generateCodeExpirationTime = () => {
   return new Date(new Date().getTime() + 60 * 60 * 1000);
 };
 
-const generateAuthToken = (user) => {
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
+const generateAuthToken = (user, expiration, tokenType) => {
+  const token = jwt.sign(
+    { userId: user._id, type: tokenType },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: expiration,
+    }
+  );
   return token;
+};
+
+const generateAccessToken = (user) => {
+  return generateAuthToken(user, "1h", "access");
+};
+
+const generateRefreshToken = (user) => {
+  return generateAuthToken(user, "30d", "refresh");
 };
 
 const generatePasswordResetToken = () => {
@@ -99,6 +111,24 @@ const removeSensitiveProperties = (object) => {
   delete object.resetTokenExpirationTime;
 };
 
+// Returns a fresh access token using the refresh token
+app.post("/refresh-token", async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    const decodedToken = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    const userId = decodedToken.userId;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: "User not found." });
+
+    const accessToken = generateAccessToken(user);
+    res.status(200).json({ accessToken });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error refreshing token." });
+  }
+});
+
 // Verify user's email address
 app.post("/users/verify", async (req, res) => {
   const { email, code } = req.body;
@@ -114,8 +144,9 @@ app.post("/users/verify", async (req, res) => {
 
     user.verified = true;
     await user.save();
-    const token = generateAuthToken(user);
-    res.status(200).json({ token });
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    res.status(200).json({ accessToken, refreshToken });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error." });
@@ -160,6 +191,15 @@ const authMiddleware = (req, res, next) => {
     // Auth header should begin with "Bearer "
     const token = authHeader.substring(7);
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Verify the correct type of token has been provided (i.e., access token
+    // rather than refresh token)
+    if (decodedToken.type !== "access") {
+      return res.status(403).json({
+        error: "Forbidden - Incorrect type of token provided.",
+      });
+    }
+
     const tokenUserId = decodedToken.userId; // the userId of the token
     const reqId = req.params.userId; // the userId of the request
 
@@ -301,8 +341,9 @@ app.post("/login", async (req, res) => {
     if (!user.verified)
       return res.status(403).json({ error: "Account has not been verified." });
 
-    const token = generateAuthToken(user);
-    res.status(200).json({ token });
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    res.status(200).json({ accessToken, refreshToken });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error logging in user." });

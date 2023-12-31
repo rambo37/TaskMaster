@@ -22,6 +22,7 @@ const SignInForm = ({
       <FloatingLabel label="Email address" className="mb-3">
         <Form.Control
           type="email"
+          name="email"
           placeholder="Email address"
           className="max-width-input"
           value={email}

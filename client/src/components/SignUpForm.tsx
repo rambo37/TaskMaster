@@ -26,10 +26,12 @@ const SignUpForm = ({
       <FloatingLabel label="Email address" className="mb-3">
         <Form.Control
           type="email"
+          name="email"
           placeholder="Email address"
           className="max-width-input"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          autoFocus
         />
       </FloatingLabel>
       <FloatingLabel label="Password" className="mb-3">

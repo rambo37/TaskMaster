@@ -4,7 +4,7 @@ import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loading from "../components/Loading";
 import { Task } from "../taskUtils";
-import { getUserIdFromToken, isSignedIn } from "../utils";
+import { getAuthHeader, getUserIdFromToken, isSignedIn } from "../utils";
 import { useSetSignedIn } from "./Layout";
 
 export interface User {
@@ -21,24 +21,28 @@ const Account = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
-    if (isSignedIn()) {
-      const id = getUserIdFromToken();
-      axios
-        .get(`/users/${id}`, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        })
-        .then((response) => {
+    const fetchData = async () => {
+      if (isSignedIn()) {
+        const id = getUserIdFromToken();
+        try {
+          const response = await axios.get(
+            `/users/${id}`,
+            await getAuthHeader()
+          );
           setUser(response.data);
-        })
-        .catch((error) => console.error(error))
-        .finally(() => setLoading(false));
-    } else {
-      setSignedIn(false);
-      navigate("/");
-      toast.error("You must log in to access this page.");
-    }
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setSignedIn(false);
+        navigate("/");
+        toast.error("You must log in to access this page.");
+      }
+    };
+
+    fetchData();
   }, []);
 
   if (loading) {

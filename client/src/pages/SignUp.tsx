@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { adequatePasswordComplexity, isEmailValid } from "../utils";
+import { adequatePasswordComplexity, isEmailValid } from "../shared/sharedUtils.mjs";
 import axios from "axios";
 import SignUpForm from "../components/SignUpForm";
 import Verify from "../components/Verify";
