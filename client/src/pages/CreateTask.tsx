@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { useAccountContext } from "../components/Account";
-import { getAuthHeader, isFutureDate, isInvalidDate } from "../utils";
+import { getAuthHeader, isInvalidDate } from "../utils";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 
@@ -31,12 +31,6 @@ const CreateTask = () => {
 
       if (isInvalidDate(date)) {
         setError("Please provide the date and time that the task is due.");
-        setLoading(false);
-        return;
-      }
-
-      if (!isFutureDate(date)) {
-        setError("Please input a date and time in the future.");
         setLoading(false);
         return;
       }

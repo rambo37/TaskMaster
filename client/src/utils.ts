@@ -37,18 +37,13 @@ export const getAuthHeader = async () => {
 
   const accessToken = localStorage.getItem("accessToken");
 
-  return { 
+  return {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
-  }
+  };
 };
 
 export const isInvalidDate = (date: Date): boolean => {
   return isNaN(date.getTime());
-};
-
-export const isFutureDate = (date: Date): boolean => {
-  const currentDate = new Date();
-  return currentDate < date;
 };
