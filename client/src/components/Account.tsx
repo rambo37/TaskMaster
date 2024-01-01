@@ -4,7 +4,7 @@ import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loading from "../components/Loading";
 import { Task } from "../taskUtils";
-import { getAuthHeader, getUserIdFromToken, isSignedIn } from "../utils";
+import { getUserId, isSignedIn } from "../utils";
 import { useSetSignedIn } from "./Layout";
 
 export interface User {
@@ -22,13 +22,11 @@ const Account = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
-      if (isSignedIn()) {
-        const id = getUserIdFromToken();
+      if (await isSignedIn()) {
+        const id = getUserId();
+        console.log(id);
         try {
-          const response = await axios.get(
-            `/users/${id}`,
-            await getAuthHeader()
-          );
+          const response = await axios.get(`/users/${id}`);
           setUser(response.data);
         } catch (error) {
           console.error(error);
@@ -36,8 +34,10 @@ const Account = () => {
           setLoading(false);
         }
       } else {
+        sessionStorage.removeItem("userId");
+        axios.get("/logout");
         setSignedIn(false);
-        navigate("/");
+        navigate("/login");
         toast.error("You must log in to access this page.");
       }
     };

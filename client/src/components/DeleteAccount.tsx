@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { getAuthHeader } from "../utils";
 import { adequatePasswordComplexity } from "../shared/sharedUtils.mjs";
 import { useNavigate } from "react-router-dom";
 import { ContentProps } from "./SettingsPageSection";
@@ -45,7 +44,7 @@ const ChangePassword = ({
 
     // Now attempt to delete the account as the password is correct
     try {
-      await axios.delete(`/users/${user._id}`, await getAuthHeader());
+      await axios.delete(`/users/${user._id}`);
       localStorage.removeItem("token");
       setSignedIn(false);
       toast.success("Account deleted.");

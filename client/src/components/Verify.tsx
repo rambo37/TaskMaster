@@ -40,10 +40,9 @@ const Verify = ({
         code: Number(verificationCode),
       };
       const response = await axios.post("/users/verify", verificationInfo);
+      const { userId } = response.data
+      sessionStorage.setItem("userId", userId)
       toast.success("Successfully verified account.");
-      const { accessToken, refreshToken } = response.data;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
       setSignedIn(true);
       navigate("/dashboard");
     } catch (error: any) {

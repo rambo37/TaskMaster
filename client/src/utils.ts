@@ -1,47 +1,19 @@
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 
-export const isSignedIn = () => {
-  const accessToken = localStorage.getItem("accessToken");
-  if (accessToken) {
-    const decodedToken: { exp: number } = jwtDecode(accessToken);
-    const currentTime = Date.now() / 1000;
-    if (decodedToken.exp < currentTime) return false;
-    else return true;
+export const isSignedIn = async () => {
+  // Reduce the number of requests sent to the server
+  if (!getUserId()) return false;
+  try {
+    await axios.get("/check-auth");
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
   }
-  return false;
 };
 
-export const getUserIdFromToken = () => {
-  const accessToken = localStorage.getItem("accessToken");
-  if (accessToken) {
-    try {
-      const decodedToken: { userId: string } = jwtDecode(accessToken);
-      return decodedToken.userId;
-    } catch (error) {
-      console.error("Invalid token");
-      return null;
-    }
-  }
-  return null;
-};
-
-export const getAuthHeader = async () => {
-  // Generate a fresh access token first if necessary
-  if (!isSignedIn()) {
-    const refreshToken = localStorage.getItem("refreshToken");
-    const response = await axios.post("/refresh-token", { refreshToken });
-    const { accessToken } = response.data;
-    localStorage.setItem("accessToken", accessToken);
-  }
-
-  const accessToken = localStorage.getItem("accessToken");
-
-  return {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  };
+export const getUserId = () => {
+  return sessionStorage.getItem("userId");
 };
 
 export const isInvalidDate = (date: Date): boolean => {

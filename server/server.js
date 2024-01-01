@@ -8,6 +8,8 @@ import express, { json } from "express";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import {
   isEmailValid,
   adequatePasswordComplexity,
@@ -21,6 +23,13 @@ const SALT_ROUNDS = 10;
 
 // Parse JSON request body
 app.use(json());
+app.use(cookieParser());
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.REACT_APP_FRONTEND_URL,
+  })
+);
 
 import { connect } from "mongoose";
 connect(process.env.MONGODB_URI)
@@ -78,9 +87,9 @@ const generateCodeExpirationTime = () => {
   return new Date(new Date().getTime() + 60 * 60 * 1000);
 };
 
-const generateAuthToken = (user, expiration, tokenType) => {
+const generateAuthToken = (userId, expiration, tokenType) => {
   const token = jwt.sign(
-    { userId: user._id, type: tokenType },
+    { userId: userId, type: tokenType },
     process.env.JWT_SECRET,
     {
       expiresIn: expiration,
@@ -89,12 +98,12 @@ const generateAuthToken = (user, expiration, tokenType) => {
   return token;
 };
 
-const generateAccessToken = (user) => {
-  return generateAuthToken(user, "1h", "access");
+const generateAccessToken = (userId) => {
+  return generateAuthToken(userId, "1h", "access");
 };
 
-const generateRefreshToken = (user) => {
-  return generateAuthToken(user, "30d", "refresh");
+const generateRefreshToken = (userId) => {
+  return generateAuthToken(userId, "30d", "refresh");
 };
 
 const generatePasswordResetToken = () => {
@@ -111,21 +120,39 @@ const removeSensitiveProperties = (object) => {
   delete object.resetTokenExpirationTime;
 };
 
-// Returns a fresh access token using the refresh token
-app.post("/refresh-token", async (req, res) => {
+// Throws an error if there is any issue with the token (token expired,
+// token for the incorrect user or invalid token)
+const verifyToken = (token, secret, reqId) => {
   try {
-    const { refreshToken } = req.body;
-    const decodedToken = jwt.verify(refreshToken, process.env.JWT_SECRET);
-    const userId = decodedToken.userId;
+    const decodedToken = jwt.verify(token, secret);
+    const tokenUserId = decodedToken.userId;
 
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ error: "User not found." });
-
-    const accessToken = generateAccessToken(user);
-    res.status(200).json({ accessToken });
+    // If there is a mismatch of Ids, then the request is illegal
+    if (tokenUserId !== reqId) {
+      throw new Error("Forbidden");
+    }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error refreshing token." });
+    if (error.message.includes("expired")) {
+      throw new Error("Token expired");
+    } else {
+      throw new Error("Invalid token");
+    }
+  }
+};
+
+// Checks whether there is a logged in user
+app.get("/check-auth", (req, res) => {
+  try {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+      return res.status(401).json({ error: "Not authenticated." });
+    }
+    jwt.verify(accessToken, process.env.JWT_SECRET);
+    res.status(200).json({ message: "Authenticated." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error authenticating user." });
   }
 });
 
@@ -144,9 +171,16 @@ app.post("/users/verify", async (req, res) => {
 
     user.verified = true;
     await user.save();
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-    res.status(200).json({ accessToken, refreshToken });
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+    });
+
+    res.status(200).json({ userId: user._id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error." });
@@ -180,46 +214,68 @@ app.post("/users/resend-verification", async (req, res) => {
   }
 });
 
-// Middleware function to validate JWT
-const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({ error: "Unauthorized - No token provided." });
+// Middleware function to validate JWTs stored as HTTP-only cookies
+const authMiddleware = async (req, res, next) => {
+  const accessToken = req.cookies.accessToken;
+  const refreshToken = req.cookies.refreshToken;
+  const reqId = req.params.userId;
+
+  if (!accessToken) {
+    return res
+      .status(401)
+      .json({ error: "Unauthorized - No access token provided." });
   }
 
+  if (!refreshToken) {
+    return res
+      .status(401)
+      .json({ error: "Unauthorized - No refresh token provided." });
+  }
+
+  let accessTokenExpired = false;
+
   try {
-    // Auth header should begin with "Bearer "
-    const token = authHeader.substring(7);
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Verify the correct type of token has been provided (i.e., access token
-    // rather than refresh token)
-    if (decodedToken.type !== "access") {
-      return res.status(403).json({
-        error: "Forbidden - Incorrect type of token provided.",
-      });
-    }
-
-    const tokenUserId = decodedToken.userId; // the userId of the token
-    const reqId = req.params.userId; // the userId of the request
-
-    // If there is a mismatch of Ids, then the request is illegal
-    if (tokenUserId !== reqId) {
+    verifyToken(accessToken, process.env.JWT_SECRET, reqId);
+    // Since the token is valid and for the correct user, invoke the next function
+    next();
+  } catch (error) {
+    if (error.message === "Token expired") {
+      // Do not return an error response yet, try first to use the refresh token
+      accessTokenExpired = true;
+    } else if (error.message === "Forbidden") {
       return res.status(403).json({
         error: "Forbidden - User does not have necessary permissions.",
       });
+    } else {
+      return res.status(401).json({ error: "Unauthorized - Invalid token." });
     }
+  }
 
-    // Since the JWT is valid and for the correct user, invoke the next function
-    next();
-  } catch (error) {
-    console.error(error);
-    console.log(error.message);
-    if (error.message.includes("expired")) {
-      return res.status(401).json({ error: "Unauthorized - Token expired." });
+  if (accessTokenExpired) {
+    try {
+      verifyToken(refreshToken, process.env.JWT_SECRET, reqId);
+      // Generate a new access token for the user since the provided one expired
+      const accessToken = generateAccessToken(reqId);
+      res.clearCookie("accessToken");
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+      });
+
+      // Since the token is valid and for the correct user, invoke the next function
+      next();
+    } catch (error) {
+      if (error.message === "Token expired") {
+        return res
+          .status(401)
+          .json({ error: "Unauthorized - Refresh token expired." });
+      } else if (error.message === "Forbidden") {
+        return res.status(403).json({
+          error: "Forbidden - User does not have necessary permissions.",
+        });
+      } else {
+        return res.status(401).json({ error: "Unauthorized - Invalid token." });
+      }
     }
-
-    res.status(401).json({ error: "Unauthorized - Invalid token." });
   }
 };
 
@@ -341,13 +397,29 @@ app.post("/login", async (req, res) => {
     if (!user.verified)
       return res.status(403).json({ error: "Account has not been verified." });
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-    res.status(200).json({ accessToken, refreshToken });
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+
+    res.status(200).json({ userId: user._id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error logging in user." });
   }
+});
+
+// Logout user
+app.get("/logout", async (req, res) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  res.status(200).json({ success: true });
 });
 
 // Generate password reset code

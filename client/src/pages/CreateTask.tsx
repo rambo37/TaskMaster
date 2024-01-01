@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { useAccountContext } from "../components/Account";
-import { getAuthHeader, isInvalidDate } from "../utils";
+import { isInvalidDate } from "../utils";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 
@@ -43,8 +43,7 @@ const CreateTask = () => {
 
       const response = await axios.post(
         `/users/${user._id}/tasks`,
-        taskDetails,
-        await getAuthHeader()
+        taskDetails
       );
 
       toast.success("Task created successfully.");

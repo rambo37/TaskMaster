@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
@@ -26,7 +27,8 @@ const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
   }, [location.pathname]);
 
   const logOut = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("userId");
+    axios.get("/logout");
     setSignedIn(false);
     navigate("/");
   };

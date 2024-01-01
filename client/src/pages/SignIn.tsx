@@ -53,9 +53,8 @@ const SignIn = () => {
         password: password,
       };
       const response = await axios.post("/login", credentials);
-      const { accessToken, refreshToken } = response.data;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      const { userId } = response.data
+      sessionStorage.setItem("userId", userId)
       setSignedIn(true);
       navigate("/dashboard");
     } catch (error: any) {

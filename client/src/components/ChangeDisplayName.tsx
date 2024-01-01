@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import { ContentProps } from "./SettingsPageSection";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
-import { getAuthHeader } from "../utils";
 
 const ChangeDisplayName = ({
   setLoading,
@@ -22,7 +21,7 @@ const ChangeDisplayName = ({
       const updates = {
         name: displayName,
       };
-      await axios.patch(`/users/${user._id}`, updates, await getAuthHeader());
+      await axios.patch(`/users/${user._id}`, updates);
       const updatedUser = {
         ...user,
         name: displayName,

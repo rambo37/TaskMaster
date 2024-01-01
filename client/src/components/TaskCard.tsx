@@ -5,7 +5,6 @@ import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { User } from "./Account";
 import { getTaskStatus, Task } from "../taskUtils";
-import { getAuthHeader } from "../utils";
 
 type TaskCardProps = {
   user: User;
@@ -22,10 +21,7 @@ const TaskCard = ({ user, setUser, task, thresholdHours }: TaskCardProps) => {
   const handleTaskDelete = async () => {
     setLoading(true);
     try {
-      await axios.delete(
-        `/users/${user._id}/tasks/${task._id}`,
-        await getAuthHeader()
-      );
+      await axios.delete(`/users/${user._id}/tasks/${task._id}`);
 
       // Remove this task in the frontend by updating the tasks array
       // of the user object
