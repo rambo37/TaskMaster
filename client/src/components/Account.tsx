@@ -24,7 +24,6 @@ const Account = () => {
     const fetchData = async () => {
       if (await isSignedIn()) {
         const id = getUserId();
-        console.log(id);
         try {
           const response = await axios.get(`/users/${id}`);
           setUser(response.data);
