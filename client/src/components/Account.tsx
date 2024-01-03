@@ -34,7 +34,12 @@ const Account = () => {
         }
       } else {
         sessionStorage.removeItem("userId");
-        axios.get("/logout");
+        try {
+          await axios.get("/logout");
+        } catch (error) {
+          console.error(error);
+        }
+
         setSignedIn(false);
         navigate("/login");
         toast.error("You must log in to access this page.");

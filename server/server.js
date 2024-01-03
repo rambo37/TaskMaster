@@ -118,6 +118,8 @@ const removeSensitiveProperties = (object) => {
   delete object.codeExpirationTime;
   delete object.resetTokenHash;
   delete object.resetTokenExpirationTime;
+  delete object.accessTokenHash;
+  delete object.refreshTokenHash;
 };
 
 // Throws an error if there is any issue with the token (token expired,
@@ -170,9 +172,14 @@ app.post("/users/verify", async (req, res) => {
     }
 
     user.verified = true;
-    await user.save();
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
+    const accessTokenHash = await hash(accessToken, SALT_ROUNDS);
+    const refreshTokenHash = await hash(refreshToken, SALT_ROUNDS);
+    user.accessTokenHash = accessTokenHash;
+    user.refreshTokenHash = refreshTokenHash;
+    await user.save();
+
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
     });
@@ -232,6 +239,24 @@ const authMiddleware = async (req, res, next) => {
       .json({ error: "Unauthorized - No refresh token provided." });
   }
 
+  const user = await User.findById(reqId);
+  if (!user) return res.status(404).json({ error: "User not found." });
+
+  const validAccessToken = await compare(accessToken, user.accessTokenHash);
+  const validRefreshToken = await compare(refreshToken, user.refreshTokenHash);
+
+  if (!validAccessToken) {
+    return res.status(401).json({
+      error: "Unauthorized - The provided access token has been invalidated.",
+    });
+  }
+
+  if (!validRefreshToken) {
+    return res.status(401).json({
+      error: "Unauthorized - The provided refresh token has been invalidated.",
+    });
+  }
+
   let accessTokenExpired = false;
 
   try {
@@ -254,16 +279,28 @@ const authMiddleware = async (req, res, next) => {
   if (accessTokenExpired) {
     try {
       verifyToken(refreshToken, process.env.JWT_SECRET, reqId);
-      // Generate a new access token for the user since the provided one expired
-      const accessToken = generateAccessToken(reqId);
+      // Generate a new access token for the user since the provided one expired.
+      // Also generate a new refresh token for extra security.
+      const newAccessToken = generateAccessToken(reqId);
+      const newRefreshToken = generateRefreshToken(reqId);
+      const accessTokenHash = await hash(newAccessToken, SALT_ROUNDS);
+      const refreshTokenHash = await hash(newRefreshToken, SALT_ROUNDS);
+      user.accessTokenHash = accessTokenHash;
+      user.refreshTokenHash = refreshTokenHash;
+      await user.save();
+
       res.clearCookie("accessToken");
-      res.cookie("accessToken", accessToken, {
+      res.cookie("accessToken", newAccessToken, {
         httpOnly: true,
       });
-
+      res.clearCookie("refreshToken");
+      res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+      });
       // Since the token is valid and for the correct user, invoke the next function
       next();
     } catch (error) {
+      console.error(error);
       if (error.message === "Token expired") {
         return res
           .status(401)
@@ -316,6 +353,8 @@ app.post("/users", async (req, res) => {
       codeExpirationTime: generateCodeExpirationTime(),
       resetTokenHash: null,
       resetTokenExpirationTime: null,
+      accessTokenHash: null,
+      refreshTokenHash: null,
       tasks: [],
     });
 
@@ -399,10 +438,18 @@ app.post("/login", async (req, res) => {
 
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
+    const accessTokenHash = await hash(accessToken, SALT_ROUNDS);
+    const refreshTokenHash = await hash(refreshToken, SALT_ROUNDS);
+    user.accessTokenHash = accessTokenHash;
+    user.refreshTokenHash = refreshTokenHash;
+    await user.save();
+
+    res.clearCookie("accessToken");
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       sameSite: "strict",
     });
+    res.clearCookie("refreshToken");
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "strict",
@@ -417,9 +464,24 @@ app.post("/login", async (req, res) => {
 
 // Logout user
 app.get("/logout", async (req, res) => {
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
-  res.status(200).json({ success: true });
+  try {
+    const accessToken = req.cookies.accessToken;
+    const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+    const userId = decodedToken.userId;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: "User not found." });
+
+    user.accessTokenHash = null;
+    user.refreshTokenHash = null;
+    await user.save();
+
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
 });
 
 // Generate password reset code
