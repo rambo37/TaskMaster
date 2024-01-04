@@ -29,6 +29,11 @@
   margin: 20px;
 }
 
+.task-list-page .unfocussed {
+  opacity: 40%;
+  pointer-events: none;
+}
+
 @media only screen and (max-width: 768px) {
   .task-list {
     flex-direction: column;

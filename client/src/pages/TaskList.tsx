@@ -3,7 +3,7 @@ import { useAccountContext } from "../components/Account";
 import Legend from "../components/Legend";
 import TaskCard from "../components/TaskCard";
 import Form from "react-bootstrap/Form";
-import { getTaskStatus } from "../taskUtils";
+import { getTaskStatus, Task } from "../taskUtils";
 
 const TaskList = () => {
   const [user, setUser] = useAccountContext();
@@ -16,6 +16,7 @@ const TaskList = () => {
     useState(true);
   const [showExpired, setShowExpired] = useState(true);
   const thresholdHours = 6;
+  const [expandedTask, setExpandedTask] = useState<Task | null>(null);
 
   const filterTasks = useCallback(() => {
     const newTasks = user.tasks.filter((task) => {
@@ -46,10 +47,16 @@ const TaskList = () => {
     filterTasks();
   }, [filterTasks]);
 
+  const updateExpandedTask = (task: Task) => {
+    if (!expandedTask) setExpandedTask(task);
+  };
+
   return (
     <div className="task-list-page">
       <h1>Tasks</h1>
-      <div className="task-list-options">
+      <div
+        className={`task-list-options ${expandedTask ? "unfocussed" : ""}`}
+      >
         <Form.Check
           type="checkbox"
           label="Show legend"
@@ -86,7 +93,9 @@ const TaskList = () => {
         />
       </div>
       {showLegend && <Legend thresholdHours={thresholdHours} />}
-      <div className="task-list">
+      <div
+        className={`task-list ${expandedTask ? "unfocussed" : ""}`}
+      >
         {tasks.map((task) => {
           return (
             <TaskCard
@@ -95,10 +104,26 @@ const TaskList = () => {
               task={task}
               key={task._id}
               thresholdHours={thresholdHours}
+              expanded={false}
+              handleClick={() => updateExpandedTask(task)}
+              setExpandedTask={setExpandedTask}
             />
           );
         })}
       </div>
+      {expandedTask ? (
+        <TaskCard
+          user={user}
+          setUser={setUser}
+          task={expandedTask}
+          thresholdHours={thresholdHours}
+          expanded={true}
+          handleClick={() => updateExpandedTask(expandedTask)}
+          setExpandedTask={setExpandedTask}
+        />
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
