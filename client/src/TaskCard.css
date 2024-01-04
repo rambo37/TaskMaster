@@ -2,7 +2,7 @@
   height: 200px;
   width: 400px;
   padding: 10px 15px;
-  border: 2px solid var(--dark-gray);
+  border: 1px solid var(--dark-gray);
   border-radius: 10px;
 }
 
@@ -10,6 +10,7 @@
   display: flex;
   align-items: baseline;
   margin-bottom: 15px;
+  line-height: normal;
 }
 
 .task-card .title-div h3 {
@@ -26,11 +27,11 @@
 }
 
 .bi-pencil:hover {
-  color: green;
+  border-bottom: 2px solid blue;
 }
 
 .bi-trash:hover {
-  color: red;
+  border-bottom: 2px solid red;
 }
 
 .task-card .content-div button {
