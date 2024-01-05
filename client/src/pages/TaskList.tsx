@@ -54,9 +54,7 @@ const TaskList = () => {
   return (
     <div className="task-list-page">
       <h1>Tasks</h1>
-      <div
-        className={`task-list-options ${expandedTask ? "unfocussed" : ""}`}
-      >
+      <div className={`task-list-options ${expandedTask ? "unfocussed" : ""}`}>
         <Form.Check
           type="checkbox"
           label="Show legend"
@@ -93,23 +91,29 @@ const TaskList = () => {
         />
       </div>
       {showLegend && <Legend thresholdHours={thresholdHours} />}
-      <div
-        className={`task-list ${expandedTask ? "unfocussed" : ""}`}
-      >
-        {tasks.map((task) => {
-          return (
-            <TaskCard
-              user={user}
-              setUser={setUser}
-              task={task}
-              key={task._id}
-              thresholdHours={thresholdHours}
-              expanded={false}
-              handleClick={() => updateExpandedTask(task)}
-              setExpandedTask={setExpandedTask}
-            />
-          );
-        })}
+      <div className={`task-list ${expandedTask ? "unfocussed" : ""}`}>
+        {tasks.length === 0 ? (
+          <p style={{ marginTop: "50px" }}>
+            {user.tasks.length === 0
+              ? "You do not have any tasks yet."
+              : "You do not have any tasks that meet the search criteria."}
+          </p>
+        ) : (
+          tasks.map((task) => {
+            return (
+              <TaskCard
+                user={user}
+                setUser={setUser}
+                task={task}
+                key={task._id}
+                thresholdHours={thresholdHours}
+                expanded={false}
+                handleClick={() => updateExpandedTask(task)}
+                setExpandedTask={setExpandedTask}
+              />
+            );
+          })
+        )}
       </div>
       {expandedTask ? (
         <TaskCard
