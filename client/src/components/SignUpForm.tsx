@@ -60,7 +60,7 @@ const SignUpForm = ({
         className="submit-button"
       ></input>
       <p className="form-footer">
-        Already have an account? <a href="/login">Log in</a>
+        Already have an account? <a href="/login">Sign in</a>
       </p>
     </>
   );

@@ -108,7 +108,7 @@ const ResetPassword = () => {
       <input
         type="submit"
         value="Update password"
-        className="max-width-input"
+        className="submit-button"
         onClick={(e) => updatePassword(e)}
       ></input>
       {loading && (
