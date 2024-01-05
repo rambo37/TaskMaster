@@ -414,7 +414,13 @@ app.delete("/users/:userId", authMiddleware, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.userId).lean();
     if (!user) return res.status(404).json({ error: "User not found." });
+
+    // Delete tasks associated with the user
+    await Task.deleteMany({ _id: { $in: user.tasks } });
+
     removeSensitiveProperties(user);
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
     res.json(user);
   } catch (error) {
     console.log(error);
