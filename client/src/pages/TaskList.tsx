@@ -17,6 +17,7 @@ const TaskList = () => {
   const [showExpired, setShowExpired] = useState(true);
   const thresholdHours = 6;
   const [expandedTask, setExpandedTask] = useState<Task | null>(null);
+  const [searchText, setSearchText] = useState("");
 
   const filterTasks = useCallback(() => {
     const newTasks = user.tasks.filter((task) => {
@@ -30,7 +31,8 @@ const TaskList = () => {
         (showCompleted || !isCompleted) &&
         (showMoreThanThresholdHours || !isMoreThanThresholdHours) &&
         (showLessThanThresholdHours || !isLessThanThresholdHours) &&
-        (showExpired || !isExpired)
+        (showExpired || !isExpired) &&
+        taskContainsSearchText(task)
       );
     });
 
@@ -41,6 +43,7 @@ const TaskList = () => {
     showMoreThanThresholdHours,
     showLessThanThresholdHours,
     showExpired,
+    searchText,
   ]);
 
   useEffect(() => {
@@ -49,6 +52,14 @@ const TaskList = () => {
 
   const updateExpandedTask = (task: Task) => {
     if (!expandedTask) setExpandedTask(task);
+  };
+
+  const taskContainsSearchText = (task: Task) => {
+    if (!searchText.trim()) return true;
+    return (
+      task.title.toLowerCase().includes(searchText.toLowerCase()) ||
+      task.description.toLowerCase().includes(searchText.toLowerCase())
+    );
   };
 
   return (
@@ -89,6 +100,15 @@ const TaskList = () => {
           checked={showExpired}
           onChange={() => setShowExpired(!showExpired)}
         />
+        <div>
+          <input
+            className="form-control me-2"
+            type="search"
+            placeholder="Search tasks"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+          ></input>
+        </div>
       </div>
       {showLegend && <Legend thresholdHours={thresholdHours} />}
       <div className={`task-list ${expandedTask ? "unfocussed" : ""}`}>
@@ -115,7 +135,7 @@ const TaskList = () => {
           })
         )}
       </div>
-      {expandedTask ? (
+      {expandedTask && (
         <TaskCard
           user={user}
           setUser={setUser}
@@ -125,8 +145,6 @@ const TaskList = () => {
           handleClick={() => updateExpandedTask(expandedTask)}
           setExpandedTask={setExpandedTask}
         />
-      ) : (
-        <></>
       )}
     </div>
   );

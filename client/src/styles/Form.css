@@ -48,13 +48,18 @@ input[type="checkbox"] {
   border-color: var(--dark-gray);
 }
 
+.form-check {
+  display: flex;
+  align-items: center;
+}
+
 .form-check-input:checked {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
 }
 
 .form-check > label {
-  margin-left: 3px;
+  margin-left: 8px;
 }
 
 .form-title {

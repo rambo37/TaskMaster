@@ -18,11 +18,13 @@
 .task-list-options {
   display: flex;
   justify-content: center;
+  align-content: center;
+  flex-wrap: wrap;
   margin-bottom: 50px;
 }
 
 .task-list-options > * {
-  margin: 0 20px;
+  margin: 20px;
 }
 
 .task-list > .task-card {
@@ -48,6 +50,6 @@
   }
 
   .task-list-options > * {
-    margin: 0 0 10px 0;
+    margin: 0 0 15px 0;
   }
 }
