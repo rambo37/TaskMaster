@@ -6,6 +6,7 @@
   margin: auto;
   padding: 10px;
   border: 1px solid var(--dark-gray);
+  border-radius: 10px;
   background-color: var(--light-gray);
 }
 

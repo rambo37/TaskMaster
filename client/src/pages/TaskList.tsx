@@ -4,6 +4,7 @@ import Legend from "../components/Legend";
 import TaskCard from "../components/TaskCard";
 import Form from "react-bootstrap/Form";
 import { getTaskStatus, Task } from "../taskUtils";
+import { FloatingLabel } from "react-bootstrap";
 
 const TaskList = () => {
   const [user, setUser] = useAccountContext();
@@ -15,9 +16,12 @@ const TaskList = () => {
   const [showLessThanThresholdHours, setShowLessThanThresholdHours] =
     useState(true);
   const [showExpired, setShowExpired] = useState(true);
-  const thresholdHours = 6;
   const [expandedTask, setExpandedTask] = useState<Task | null>(null);
   const [searchText, setSearchText] = useState("");
+  const [showSettings, setShowSettings] = useState(false);
+  const [thresholdHours, setThresholdHours] = useState(6);
+  const [selectedDateFormat, setSelectedDateFormat] = useState("Numeric");
+  const [selectedTimeFormat, setSelectedTimeFormat] = useState("24 hours");
 
   const filterTasks = useCallback(() => {
     const newTasks = user.tasks.filter((task) => {
@@ -64,51 +68,95 @@ const TaskList = () => {
 
   return (
     <div className="task-list-page">
-      <h1>Tasks</h1>
-      <div className={`task-list-options ${expandedTask ? "unfocussed" : ""}`}>
-        <Form.Check
-          type="checkbox"
-          label="Show legend"
-          checked={showLegend}
-          onChange={() => setShowLegend(!showLegend)}
-        />
-        <Form.Check
-          type="checkbox"
-          label="Show completed"
-          checked={showCompleted}
-          onChange={() => setShowCompleted(!showCompleted)}
-        />
-        <Form.Check
-          type="checkbox"
-          label={`Show more than ${thresholdHours} hours left`}
-          checked={showMoreThanThresholdHours}
-          onChange={() =>
-            setShowMoreThanThresholdHours(!showMoreThanThresholdHours)
-          }
-        />
-        <Form.Check
-          type="checkbox"
-          label={`Show less than ${thresholdHours} hours left`}
-          checked={showLessThanThresholdHours}
-          onChange={() =>
-            setShowLessThanThresholdHours(!showLessThanThresholdHours)
-          }
-        />
-        <Form.Check
-          type="checkbox"
-          label="Show expired"
-          checked={showExpired}
-          onChange={() => setShowExpired(!showExpired)}
-        />
-        <div>
-          <input
-            className="form-control me-2"
-            type="search"
-            placeholder="Search tasks"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          ></input>
+      <div className={`heading-div ${expandedTask ? "unfocussed" : ""}`}>
+        <h1>Tasks</h1>
+        <button onClick={() => setShowSettings(!showSettings)}>Settings</button>
+      </div>
+      {showSettings && (
+        <div
+          className={`task-list-page-settings ${
+            expandedTask ? "unfocussed" : ""
+          }`}
+        >
+          <h4>Settings</h4>
+          <Form.Check
+            type="checkbox"
+            label="Show legend"
+            checked={showLegend}
+            onChange={() => setShowLegend(!showLegend)}
+          />
+          <FloatingLabel label="Threshold hours">
+            <Form.Control
+              type="number"
+              placeholder="Threshold hours"
+              min={0}
+              value={thresholdHours}
+              onChange={(e) => setThresholdHours(Number(e.target.value))}
+            />
+          </FloatingLabel>
+          <FloatingLabel label="Date format">
+            <Form.Select
+              value={selectedDateFormat}
+              onChange={(e) => setSelectedDateFormat(e.target.value)}
+            >
+              <option>{"Numeric"}</option>
+              <option>{"Written"}</option>
+            </Form.Select>
+          </FloatingLabel>
+          <FloatingLabel label="Time format">
+            <Form.Select
+              value={selectedTimeFormat}
+              onChange={(e) => setSelectedTimeFormat(e.target.value)}
+            >
+              <option>{"12 hours"}</option>
+              <option>{"24 hours"}</option>
+            </Form.Select>
+          </FloatingLabel>
         </div>
+      )}
+      <div className={`task-list-options ${expandedTask ? "unfocussed" : ""}`}>
+        <h4>Search options</h4>
+        <div>
+          <Form.Check
+            type="checkbox"
+            label="Show completed"
+            checked={showCompleted}
+            onChange={() => setShowCompleted(!showCompleted)}
+          />
+          <Form.Check
+            type="checkbox"
+            label={`Show more than ${thresholdHours} hour${
+              thresholdHours !== 1 ? "s" : ""
+            } left`}
+            checked={showMoreThanThresholdHours}
+            onChange={() =>
+              setShowMoreThanThresholdHours(!showMoreThanThresholdHours)
+            }
+          />
+          <Form.Check
+            type="checkbox"
+            label={`Show less than ${thresholdHours} hour${
+              thresholdHours !== 1 ? "s" : ""
+            } left`}
+            checked={showLessThanThresholdHours}
+            onChange={() =>
+              setShowLessThanThresholdHours(!showLessThanThresholdHours)
+            }
+          />
+          <Form.Check
+            type="checkbox"
+            label="Show expired"
+            checked={showExpired}
+            onChange={() => setShowExpired(!showExpired)}
+          />
+        </div>
+        <input
+          className="form-control search-bar"
+          type="search"
+          placeholder="Search tasks"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        ></input>
       </div>
       {showLegend && <Legend thresholdHours={thresholdHours} />}
       <div className={`task-list ${expandedTask ? "unfocussed" : ""}`}>
@@ -130,6 +178,8 @@ const TaskList = () => {
                 expanded={false}
                 handleClick={() => updateExpandedTask(task)}
                 setExpandedTask={setExpandedTask}
+                selectedDateFormat={selectedDateFormat}
+                selectedTimeFormat={selectedTimeFormat}
               />
             );
           })
@@ -144,6 +194,8 @@ const TaskList = () => {
           expanded={true}
           handleClick={() => updateExpandedTask(expandedTask)}
           setExpandedTask={setExpandedTask}
+          selectedDateFormat={selectedDateFormat}
+          selectedTimeFormat={selectedTimeFormat}
         />
       )}
     </div>

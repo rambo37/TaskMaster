@@ -14,6 +14,8 @@ type TaskCardProps = {
   expanded: boolean;
   handleClick: (task: Task) => void;
   setExpandedTask: React.Dispatch<Task | null>;
+  selectedDateFormat: string;
+  selectedTimeFormat: string;
 };
 
 const TaskCard = ({
@@ -24,6 +26,8 @@ const TaskCard = ({
   expanded,
   handleClick,
   setExpandedTask,
+  selectedDateFormat,
+  selectedTimeFormat,
 }: TaskCardProps) => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,6 +53,7 @@ const TaskCard = ({
         tasks: updatedTasks,
       };
       setUser(updatedUser);
+      setExpandedTask(null); // Hide the expanded task in case it was showing
     } catch (error: any) {
       console.error(error);
       toast.error("Failed to delete task. Please try again later.");
@@ -63,6 +68,25 @@ const TaskCard = ({
   };
 
   const status = getTaskStatus(task, thresholdHours);
+
+  const getDateTimeString = () => {
+    const date = new Date(task.dueDate);
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: selectedTimeFormat === "12 hours" ? true : false,
+    };
+
+    if (selectedDateFormat === "Written") {
+      options.weekday = "long";
+      options.month = "long";
+    }
+
+    return date.toLocaleString(undefined, options);
+  };
 
   return (
     <div
@@ -97,7 +121,7 @@ const TaskCard = ({
             <p className="description">
               {task.description || "No description provided."}
             </p>
-            <p>Due: {new Date(task.dueDate).toLocaleString().slice(0, -3)}</p>
+            <p>Due: {getDateTimeString()}</p>
             <p>{`Status: ${
               task.completed ? "Completed" : "Not completed"
             }.`}</p>

@@ -3,8 +3,19 @@
   min-width: 100%;
 }
 
-.task-list-page h1 {
+.task-list-page > .heading-div {
+  display: flex;
+  align-items: center;
   margin-bottom: 70px;
+}
+
+.task-list-page > .heading-div > h1 {
+  margin: auto;
+}
+
+.task-list-page > .heading-div > button {
+  position: absolute;
+  right: 5%;
 }
 
 .task-list {
@@ -15,16 +26,55 @@
   margin-top: 20px;
 }
 
+.task-list-page-settings {
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 50px;
+  border: 1px solid black;
+  padding: 10px 20px;
+  border: 1px solid var(--dark-gray);
+  border-radius: 10px;
+  background-color: var(--light-gray);
+}
+
+.task-list-page-settings > * {
+  margin-bottom: 20px;
+}
+
 .task-list-options {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 50px;
+  border: 1px solid black;
+  padding: 10px;
+  border: 1px solid var(--dark-gray);
+  border-radius: 10px;
+  background-color: var(--light-gray);
+}
+
+.task-list-options > div {
   display: flex;
   justify-content: center;
   align-content: center;
   flex-wrap: wrap;
-  margin-bottom: 50px;
+  display: flex;
 }
 
-.task-list-options > * {
+.task-list-options > div > * {
   margin: 20px;
+}
+
+.task-list-options .search-bar {
+  width: calc(100% - 40px);
+  margin: 10px 0;
 }
 
 .task-list > .task-card {
@@ -37,11 +87,25 @@
 }
 
 @media only screen and (max-width: 768px) {
+  .task-list-page > .heading-div {
+    justify-content: space-between;
+  }
+
+  .task-list-page > .heading-div > button {
+    margin-right: 0;
+    position: initial;
+    right: initial;
+  }
+
+  .task-list-page-settings {
+    width: fit-content;
+  }
+
   .task-list {
     flex-direction: column;
   }
 
-  .task-list-options {
+  .task-list-options > div {
     flex-direction: column;
   }
 
@@ -49,7 +113,16 @@
     margin: 20px 0px;
   }
 
-  .task-list-options > * {
+  .task-list-options > h4 {
+    margin-bottom: 15px;
+  }
+
+  .task-list-options > div > * {
     margin: 0 0 15px 0;
+  }
+
+  .task-list-options .search-bar {
+    width: 100%;
+    margin: 10px 0;
   }
 }
