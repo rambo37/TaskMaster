@@ -1,0 +1,24 @@
+.task-list-page-settings {
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 50px;
+  border: 1px solid black;
+  padding: 10px 20px;
+  border: 1px solid var(--dark-gray);
+  border-radius: 10px;
+  background-color: var(--light-gray);
+}
+
+.task-list-page-settings > * {
+  margin-bottom: 20px;
+}
+
+@media only screen and (max-width: 768px) {
+  .task-list-page-settings {
+    width: fit-content;
+  }
+}

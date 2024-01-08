@@ -2,12 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useAccountContext } from "../components/Account";
 import Legend from "../components/Legend";
 import TaskCard from "../components/TaskCard";
-import Form from "react-bootstrap/Form";
 import { getTaskStatus, Task } from "../taskUtils";
-import { FloatingLabel } from "react-bootstrap";
-import axios from "axios";
-import { toast } from "react-toastify";
-import { ClipLoader } from "react-spinners";
+import TaskListSettings from "../components/TaskListSettings";
+import TaskListOptions from "../components/TaskListOptions";
 
 const TaskList = () => {
   const [user, setUser] = useAccountContext();
@@ -25,8 +22,6 @@ const TaskList = () => {
   const [thresholdHours, setThresholdHours] = useState(user.thresholdHours);
   const [selectedDateFormat, setSelectedDateFormat] = useState(user.dateFormat);
   const [selectedTimeFormat, setSelectedTimeFormat] = useState(user.timeFormat);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const filterTasks = useCallback(() => {
     const newTasks = user.tasks.filter((task) => {
@@ -71,36 +66,6 @@ const TaskList = () => {
     );
   };
 
-  const handleSettingsSaveSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const updates = {
-        thresholdHours: thresholdHours,
-        dateFormat: selectedDateFormat,
-        timeFormat: selectedTimeFormat,
-      };
-
-      await axios.patch(`/users/${user._id}`, updates);
-      toast.success("Settings updated successfully.");
-
-      const updatedUser = {
-        ...user,
-        thresholdHours: thresholdHours,
-        dateFormat: selectedDateFormat,
-        timeFormat: selectedTimeFormat,
-      };
-      setUser(updatedUser);
-    } catch (error: any) {
-      console.error(error);
-      setError("Something went wrong. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="task-list-page">
       <div className={`heading-div ${expandedTask ? "unfocussed" : ""}`}>
@@ -108,103 +73,34 @@ const TaskList = () => {
         <button onClick={() => setShowSettings(!showSettings)}>Settings</button>
       </div>
       {showSettings && (
-        <div
-          className={`task-list-page-settings ${
-            expandedTask ? "unfocussed" : ""
-          }`}
-        >
-          <h4>Settings</h4>
-          <Form.Check
-            type="checkbox"
-            label="Show legend"
-            checked={showLegend}
-            onChange={() => setShowLegend(!showLegend)}
-          />
-          <FloatingLabel label="Threshold hours">
-            <Form.Control
-              type="number"
-              placeholder="Threshold hours"
-              min={0}
-              value={thresholdHours}
-              onChange={(e) => setThresholdHours(Number(e.target.value))}
-            />
-          </FloatingLabel>
-          <FloatingLabel label="Date format">
-            <Form.Select
-              value={selectedDateFormat}
-              onChange={(e) => setSelectedDateFormat(e.target.value)}
-            >
-              <option>{"Numeric"}</option>
-              <option>{"Written"}</option>
-            </Form.Select>
-          </FloatingLabel>
-          <FloatingLabel label="Time format">
-            <Form.Select
-              value={selectedTimeFormat}
-              onChange={(e) => setSelectedTimeFormat(e.target.value)}
-            >
-              <option>{"12 hours"}</option>
-              <option>{"24 hours"}</option>
-            </Form.Select>
-          </FloatingLabel>
-          <button
-            className="submit-button"
-            onClick={(e) => handleSettingsSaveSubmit(e)}
-          >
-            Save settings
-          </button>
-          {loading && (
-            <div style={{ textAlign: "center" }}>
-              <ClipLoader />
-            </div>
-          )}
-          {error && <div className="status error">{error}</div>}
-        </div>
+        <TaskListSettings
+          user={user}
+          setUser={setUser}
+          expandedTask={expandedTask}
+          showLegend={showLegend}
+          setShowLegend={setShowLegend}
+          thresholdHours={thresholdHours}
+          setThresholdHours={setThresholdHours}
+          selectedDateFormat={selectedDateFormat}
+          setSelectedDateFormat={setSelectedDateFormat}
+          selectedTimeFormat={selectedTimeFormat}
+          setSelectedTimeFormat={setSelectedTimeFormat}
+        />
       )}
-      <div className={`task-list-options ${expandedTask ? "unfocussed" : ""}`}>
-        <h4>Search options</h4>
-        <div>
-          <Form.Check
-            type="checkbox"
-            label="Show completed"
-            checked={showCompleted}
-            onChange={() => setShowCompleted(!showCompleted)}
-          />
-          <Form.Check
-            type="checkbox"
-            label={`Show more than ${thresholdHours} hour${
-              thresholdHours !== 1 ? "s" : ""
-            } left`}
-            checked={showMoreThanThresholdHours}
-            onChange={() =>
-              setShowMoreThanThresholdHours(!showMoreThanThresholdHours)
-            }
-          />
-          <Form.Check
-            type="checkbox"
-            label={`Show less than ${thresholdHours} hour${
-              thresholdHours !== 1 ? "s" : ""
-            } left`}
-            checked={showLessThanThresholdHours}
-            onChange={() =>
-              setShowLessThanThresholdHours(!showLessThanThresholdHours)
-            }
-          />
-          <Form.Check
-            type="checkbox"
-            label="Show expired"
-            checked={showExpired}
-            onChange={() => setShowExpired(!showExpired)}
-          />
-        </div>
-        <input
-          className="form-control search-bar"
-          type="search"
-          placeholder="Search tasks"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-        ></input>
-      </div>
+      <TaskListOptions
+        expandedTask={expandedTask}
+        thresholdHours={thresholdHours}
+        showCompleted={showCompleted}
+        setShowCompleted={setShowCompleted}
+        showMoreThanThresholdHours={showMoreThanThresholdHours}
+        setShowMoreThanThresholdHours={setShowMoreThanThresholdHours}
+        showLessThanThresholdHours={showLessThanThresholdHours}
+        setShowLessThanThresholdHours={setShowLessThanThresholdHours}
+        showExpired={showExpired}
+        setShowExpired={setShowExpired}
+        searchText={searchText}
+        setSearchText={setSearchText}
+      />
       {showLegend && <Legend thresholdHours={thresholdHours} />}
       <div className={`task-list ${expandedTask ? "unfocussed" : ""}`}>
         {tasks.length === 0 ? (
