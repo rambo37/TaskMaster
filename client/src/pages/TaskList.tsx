@@ -5,6 +5,9 @@ import TaskCard from "../components/TaskCard";
 import Form from "react-bootstrap/Form";
 import { getTaskStatus, Task } from "../taskUtils";
 import { FloatingLabel } from "react-bootstrap";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { ClipLoader } from "react-spinners";
 
 const TaskList = () => {
   const [user, setUser] = useAccountContext();
@@ -19,9 +22,11 @@ const TaskList = () => {
   const [expandedTask, setExpandedTask] = useState<Task | null>(null);
   const [searchText, setSearchText] = useState("");
   const [showSettings, setShowSettings] = useState(false);
-  const [thresholdHours, setThresholdHours] = useState(6);
-  const [selectedDateFormat, setSelectedDateFormat] = useState("Numeric");
-  const [selectedTimeFormat, setSelectedTimeFormat] = useState("24 hours");
+  const [thresholdHours, setThresholdHours] = useState(user.thresholdHours);
+  const [selectedDateFormat, setSelectedDateFormat] = useState(user.dateFormat);
+  const [selectedTimeFormat, setSelectedTimeFormat] = useState(user.timeFormat);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const filterTasks = useCallback(() => {
     const newTasks = user.tasks.filter((task) => {
@@ -64,6 +69,36 @@ const TaskList = () => {
       task.title.toLowerCase().includes(searchText.toLowerCase()) ||
       task.description.toLowerCase().includes(searchText.toLowerCase())
     );
+  };
+
+  const handleSettingsSaveSubmit = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const updates = {
+        thresholdHours: thresholdHours,
+        dateFormat: selectedDateFormat,
+        timeFormat: selectedTimeFormat,
+      };
+
+      await axios.patch(`/users/${user._id}`, updates);
+      toast.success("Settings updated successfully.");
+
+      const updatedUser = {
+        ...user,
+        thresholdHours: thresholdHours,
+        dateFormat: selectedDateFormat,
+        timeFormat: selectedTimeFormat,
+      };
+      setUser(updatedUser);
+    } catch (error: any) {
+      console.error(error);
+      setError("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -112,6 +147,18 @@ const TaskList = () => {
               <option>{"24 hours"}</option>
             </Form.Select>
           </FloatingLabel>
+          <button
+            className="submit-button"
+            onClick={(e) => handleSettingsSaveSubmit(e)}
+          >
+            Save settings
+          </button>
+          {loading && (
+            <div style={{ textAlign: "center" }}>
+              <ClipLoader />
+            </div>
+          )}
+          {error && <div className="status error">{error}</div>}
         </div>
       )}
       <div className={`task-list-options ${expandedTask ? "unfocussed" : ""}`}>

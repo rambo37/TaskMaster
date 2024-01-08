@@ -12,6 +12,9 @@ export interface User {
   email: string;
   tasks: Task[];
   _id: string;
+  thresholdHours: number;
+  dateFormat: string;
+  timeFormat: string;
 }
 
 const Account = () => {

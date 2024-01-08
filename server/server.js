@@ -355,6 +355,9 @@ app.post("/users", async (req, res) => {
       resetTokenExpirationTime: null,
       accessTokenHash: null,
       refreshTokenHash: null,
+      thresholdHours: 6,
+      dateFormat: "Numeric",
+      timeFormat: "24 hours",
       tasks: [],
     });
 
