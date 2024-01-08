@@ -14,12 +14,16 @@ const Legend = ({ thresholdHours }: LegendProps) => {
 
         <div className="legend-item">
           <div className="square neutral"></div>
-          <p>More than {thresholdHours} hours left</p>
+          <p>{`More than ${thresholdHours} hour${
+            thresholdHours !== 1 ? "s" : ""
+          } left`}</p>
         </div>
 
         <div className="legend-item">
           <div className="square urgent"></div>
-          <p>Less than {thresholdHours} hours left</p>
+          <p>{`Less than ${thresholdHours} hour${
+            thresholdHours !== 1 ? "s" : ""
+          } left`}</p>
         </div>
 
         <div className="legend-item">
