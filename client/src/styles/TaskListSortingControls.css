@@ -1,0 +1,21 @@
+
+.task-list-sorting-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.task-list-sorting-controls > * {
+  margin-right: 20px;
+}
+
+@media only screen and (max-width: 768px) {
+  .task-list-sorting-controls {
+    flex-direction: column;
+  }
+
+  .task-list-sorting-controls > * {
+    margin-right: 0px;
+    margin-bottom: 15px;
+  }
+}

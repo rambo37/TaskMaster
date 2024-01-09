@@ -10,6 +10,7 @@ import "./styles/TaskCard.css";
 import "./styles/Legend.css";
 import "./styles/TaskListSettings.css";
 import "./styles/TaskListOptions.css";
+import "./styles/TaskListSortingControls.css";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
