@@ -170,7 +170,7 @@ const TaskList = () => {
           handleSortOrderChange={handleSortOrderChange}
         />
         {tasks.length === 0 ? (
-          <p style={{ marginTop: "50px" }}>
+          <p className="no-tasks-message">
             {user.tasks.length === 0
               ? "You do not have any tasks yet."
               : "You do not have any tasks that meet the search criteria."}
