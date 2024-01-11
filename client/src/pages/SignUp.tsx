@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
-import { adequatePasswordComplexity, isEmailValid } from "../shared/sharedUtils.mjs";
+import {
+  adequatePasswordComplexity,
+  isEmailValid,
+} from "../shared/sharedUtils.mjs";
 import axios from "axios";
 import SignUpForm from "../components/SignUpForm";
 import Verify from "../components/Verify";
@@ -13,7 +16,7 @@ const SignUp = () => {
   const [error, setError] = useState("");
   const [isVerificationMode, setIsVerificationMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [setSignedIn] = useLayoutContext();
+  const { setSignedIn } = useLayoutContext();
 
   useEffect(() => {
     checkPasswords();
@@ -72,8 +75,7 @@ const SignUp = () => {
           "An account with that amail address already exists. Please try " +
             "with a different email address."
         );
-      }
-      else {
+      } else {
         setError("Error creating account. Please try again later.");
       }
     } finally {

@@ -20,7 +20,7 @@ export interface User {
 const Account = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const [setSignedIn, unsavedChanges, setUnsavedChanges] = useLayoutContext();
+  const { setSignedIn, setUnsavedChanges } = useLayoutContext();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -59,7 +59,7 @@ const Account = () => {
   if (user) {
     return (
       <>
-        <Outlet context={[user, setUser, setSignedIn, setUnsavedChanges]} />
+        <Outlet context={{ user, setUser, setSignedIn, setUnsavedChanges }} />
       </>
     );
   }
@@ -70,12 +70,10 @@ const Account = () => {
 export default Account;
 
 export function useAccountContext() {
-  return useOutletContext<
-    [
-      User,
-      React.Dispatch<User>,
-      React.Dispatch<boolean>,
-      React.Dispatch<boolean>
-    ]
-  >();
+  return useOutletContext<{
+    user: User;
+    setUser: React.Dispatch<User>;
+    setSignedIn: React.Dispatch<boolean>;
+    setUnsavedChanges: React.Dispatch<boolean>;
+  }>();
 }

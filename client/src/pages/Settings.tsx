@@ -5,7 +5,7 @@ import DeleteAccount from "../components/DeleteAccount";
 import SettingsPageSection from "../components/SettingsPageSection";
 
 const Settings = () => {
-  const [user, setUser, setSignedIn] = useAccountContext();
+  const { user, setUser, setSignedIn } = useAccountContext();
   return (
     <div className="settings-page">
       <h1>Settings</h1>

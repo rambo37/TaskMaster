@@ -11,7 +11,7 @@ import { Task } from "../taskUtils";
 
 const EditTask = () => {
   const { taskId } = useParams();
-  const [user, setUser, setSignedIn, setUnsavedChanges] = useAccountContext();
+  const { user, setUser, setUnsavedChanges } = useAccountContext();
   const [task, setTask] = useState<Task | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");

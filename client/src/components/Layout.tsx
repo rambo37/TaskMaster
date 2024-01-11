@@ -69,7 +69,7 @@ const Layout = () => {
       />
       <ToastContainer />
       <div className="content" style={{ minHeight: minContentHeight }}>
-        <Outlet context={[setSignedIn, unsavedChanges, setUnsavedChanges]} />
+        <Outlet context={{ setSignedIn, unsavedChanges, setUnsavedChanges }} />
       </div>
     </>
   );
@@ -78,7 +78,9 @@ const Layout = () => {
 export default Layout;
 
 export function useLayoutContext() {
-  return useOutletContext<
-    [React.Dispatch<boolean>, boolean, React.Dispatch<boolean>]
-  >();
+  return useOutletContext<{
+    setSignedIn: React.Dispatch<boolean>;
+    unsavedChanges: boolean;
+    setUnsavedChanges: React.Dispatch<boolean>;
+  }>();
 }

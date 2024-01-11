@@ -13,7 +13,7 @@ const CreateTask = () => {
   const [dueDate, setDueDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [user, setUser, setSignedIn, setUnsavedChanges] = useAccountContext();
+  const { user, setUser, setUnsavedChanges } = useAccountContext();
 
   // Update the unsavedChanges state variable in the Layout component
   // whenever the input fields are changed so that the user will be warned

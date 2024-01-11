@@ -17,7 +17,7 @@ const SignIn = () => {
   const [isVerificationMode, setIsVerificationMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [setSignedIn] = useLayoutContext();
+  const { setSignedIn } = useLayoutContext();
 
   useEffect(() => {
     clearErrors();
@@ -53,8 +53,8 @@ const SignIn = () => {
         password: password,
       };
       const response = await axios.post("/login", credentials);
-      const { userId } = response.data
-      sessionStorage.setItem("userId", userId)
+      const { userId } = response.data;
+      sessionStorage.setItem("userId", userId);
       setSignedIn(true);
       navigate("/dashboard");
     } catch (error: any) {

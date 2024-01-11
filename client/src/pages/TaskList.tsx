@@ -32,7 +32,7 @@ const getSortOrderEnumValue = (sortOrder: string) => {
 };
 
 const TaskList = () => {
-  const [user, setUser, setSignedIn, setUnsavedChanges] = useAccountContext();
+  const { user, setUser, setUnsavedChanges } = useAccountContext();
   const [tasks, setTasks] = useState(user.tasks);
   const [showLegend, setShowLegend] = useState(false);
   const [showCompleted, setShowCompleted] = useState(true);
