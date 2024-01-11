@@ -88,12 +88,6 @@ const TaskListSettings = ({
       className={`task-list-page-settings ${expandedTask ? "unfocussed" : ""}`}
     >
       <h4>Settings</h4>
-      <Form.Check
-        type="checkbox"
-        label="Show legend"
-        checked={showLegend}
-        onChange={() => setShowLegend(!showLegend)}
-      />
       <FloatingLabel label="Threshold hours">
         <Form.Control
           type="number"
@@ -119,6 +113,15 @@ const TaskListSettings = ({
         >
           <option>{"12 hours"}</option>
           <option>{"24 hours"}</option>
+        </Form.Select>
+      </FloatingLabel>
+      <FloatingLabel label="Show legend">
+        <Form.Select
+          value={showLegend ? "true" : "false"}
+          onChange={(e) => setShowLegend(e.target.value === "true")}
+        >
+          <option value="true">Yes</option>
+          <option value="false">No</option>
         </Form.Select>
       </FloatingLabel>
       <button
