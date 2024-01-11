@@ -18,6 +18,10 @@
   right: 5%;
 }
 
+.task-list-wrapper {
+  margin-top: 50px;
+}
+
 .task-list {
   display: flex;
   justify-content: center;

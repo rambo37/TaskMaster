@@ -163,7 +163,7 @@ const TaskList = () => {
         setSearchText={setSearchText}
       />
       {showLegend && <Legend thresholdHours={thresholdHours} />}
-      <div className={`${expandedTask ? "unfocussed" : ""}`}>
+      <div className={`task-list-wrapper ${expandedTask ? "unfocussed" : ""}`}>
         <TaskListSortingControls
           selectedSortCriterion={selectedSortCriterion}
           handleSortCriteriaChange={handleSortCriteriaChange}
