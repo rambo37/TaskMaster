@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FloatingLabel, Form } from "react-bootstrap";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
@@ -18,6 +18,7 @@ type TaskListSettingsProps = {
   setSelectedDateFormat: React.Dispatch<string>;
   selectedTimeFormat: string;
   setSelectedTimeFormat: React.Dispatch<string>;
+  setUnsavedChanges: React.Dispatch<boolean>;
 };
 
 const TaskListSettings = ({
@@ -32,9 +33,25 @@ const TaskListSettings = ({
   setSelectedDateFormat,
   selectedTimeFormat,
   setSelectedTimeFormat,
+  setUnsavedChanges,
 }: TaskListSettingsProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Update the unsavedChanges state variable in the Layout component
+  // whenever the settings are changed so that the user will be warned
+  // of losing unsaved changes if they attempt to leave the site.
+  useEffect(() => {
+    if (
+      user.thresholdHours !== thresholdHours ||
+      user.dateFormat !== selectedDateFormat ||
+      user.timeFormat !== selectedTimeFormat
+    ) {
+      setUnsavedChanges(true);
+    } else {
+      setUnsavedChanges(false);
+    }
+  }, [thresholdHours, selectedDateFormat, selectedTimeFormat]);
 
   const handleSettingsSaveSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();

@@ -4,9 +4,13 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 type AccountDropdownProps = {
   setSignedIn: React.Dispatch<boolean>;
+  checkAndWarnForUnsavedChanges: (e: React.MouseEvent) => boolean;
 };
 
-const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
+const AccountDropdown = ({
+  setSignedIn,
+  checkAndWarnForUnsavedChanges,
+}: AccountDropdownProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const userPagesMap = new Map([
@@ -16,6 +20,7 @@ const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
     ["/tasks/create", "Create task"],
   ]);
   const userPages = Array.from(userPagesMap);
+  
   const isOnUserPage = () => {
     return Array.from(userPagesMap.keys()).includes(location.pathname);
   };
@@ -26,11 +31,13 @@ const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
     setOnUserPage(isOnUserPage());
   }, [location.pathname]);
 
-  const logOut = () => {
-    sessionStorage.removeItem("userId");
-    axios.get("/logout");
-    setSignedIn(false);
-    navigate("/");
+  const logOut = (event: React.MouseEvent) => {
+    if (checkAndWarnForUnsavedChanges(event)) {
+      sessionStorage.removeItem("userId");
+      axios.get("/logout");
+      setSignedIn(false);
+      navigate("/");
+    }
   };
 
   return (
@@ -47,7 +54,12 @@ const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
         {userPages.map((page, index) => {
           return (
             <li className="nav-item" key={index}>
-              <NavLink className="dropdown-item" to={page[0]} end>
+              <NavLink
+                className="dropdown-item"
+                to={page[0]}
+                end
+                onClick={(e) => checkAndWarnForUnsavedChanges(e)}
+              >
                 {page[1]}
               </NavLink>
             </li>
@@ -57,7 +69,7 @@ const AccountDropdown = ({ setSignedIn }: AccountDropdownProps) => {
           <hr className="dropdown-divider" />
         </li>
         <li className="nav-item">
-          <div className="dropdown-item log-out" onClick={() => logOut()}>
+          <div className="dropdown-item log-out" onClick={(e) => logOut(e)}>
             Log out
           </div>
         </li>

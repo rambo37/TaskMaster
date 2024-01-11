@@ -4,7 +4,7 @@ import axios from "axios";
 import SignUpForm from "../components/SignUpForm";
 import Verify from "../components/Verify";
 import { ClipLoader } from "react-spinners";
-import { useSetSignedIn } from "../components/Layout";
+import { useLayoutContext } from "../components/Layout";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -13,7 +13,7 @@ const SignUp = () => {
   const [error, setError] = useState("");
   const [isVerificationMode, setIsVerificationMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [setSignedIn] = useSetSignedIn();
+  const [setSignedIn] = useLayoutContext();
 
   useEffect(() => {
     checkPasswords();

@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { useAccountContext } from "../components/Account";
@@ -13,7 +13,18 @@ const CreateTask = () => {
   const [dueDate, setDueDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [user, setUser] = useAccountContext();
+  const [user, setUser, setSignedIn, setUnsavedChanges] = useAccountContext();
+
+  // Update the unsavedChanges state variable in the Layout component
+  // whenever the input fields are changed so that the user will be warned
+  // of losing unsaved changes if they attempt to leave the site.
+  useEffect(() => {
+    if (title || description || dueDate) {
+      setUnsavedChanges(true);
+    } else {
+      setUnsavedChanges(false);
+    }
+  }, [title, description, dueDate]);
 
   const handleTaskCreateSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();

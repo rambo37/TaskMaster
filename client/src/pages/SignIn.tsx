@@ -8,7 +8,7 @@ import SignInForm from "../components/SignInForm";
 import Verify from "../components/Verify";
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
-import { useSetSignedIn } from "../components/Layout";
+import { useLayoutContext } from "../components/Layout";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -17,7 +17,7 @@ const SignIn = () => {
   const [isVerificationMode, setIsVerificationMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [setSignedIn] = useSetSignedIn();
+  const [setSignedIn] = useLayoutContext();
 
   useEffect(() => {
     clearErrors();

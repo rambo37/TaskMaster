@@ -1,10 +1,11 @@
-import { forwardRef, Ref } from "react";
+import React, { forwardRef, Ref } from "react";
 import { NavLink } from "react-router-dom";
 import AccountDropdown from "./AccountDropdown";
 
 type NavBarProps = {
   signedIn: boolean;
   setSignedIn: React.Dispatch<boolean>;
+  checkAndWarnForUnsavedChanges: (e: React.MouseEvent) => boolean;
 };
 
 const NavBar = forwardRef((props: NavBarProps, ref: Ref<HTMLDivElement>) => {
@@ -25,12 +26,21 @@ const NavBar = forwardRef((props: NavBarProps, ref: Ref<HTMLDivElement>) => {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <NavLink className="nav-link" to="/">
+              <NavLink
+                className="nav-link"
+                to="/"
+                onClick={(e) => props.checkAndWarnForUnsavedChanges(e)}
+              >
                 Home
               </NavLink>
             </li>
             {props.signedIn ? (
-                <AccountDropdown setSignedIn={props.setSignedIn} />
+              <AccountDropdown
+                setSignedIn={props.setSignedIn}
+                checkAndWarnForUnsavedChanges={
+                  props.checkAndWarnForUnsavedChanges
+                }
+              />
             ) : (
               <>
                 <li className="nav-item">

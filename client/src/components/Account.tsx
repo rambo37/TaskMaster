@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import Loading from "../components/Loading";
 import { Task } from "../taskUtils";
 import { getUserId, isSignedIn } from "../utils";
-import { useSetSignedIn } from "./Layout";
+import { useLayoutContext } from "./Layout";
 
 export interface User {
   name: string;
@@ -20,7 +20,7 @@ export interface User {
 const Account = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const [setSignedIn] = useSetSignedIn();
+  const [setSignedIn, unsavedChanges, setUnsavedChanges] = useLayoutContext();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -59,7 +59,7 @@ const Account = () => {
   if (user) {
     return (
       <>
-        <Outlet context={[user, setUser, setSignedIn]} />
+        <Outlet context={[user, setUser, setSignedIn, setUnsavedChanges]} />
       </>
     );
   }
@@ -71,6 +71,11 @@ export default Account;
 
 export function useAccountContext() {
   return useOutletContext<
-    [User, React.Dispatch<User>, React.Dispatch<boolean>]
+    [
+      User,
+      React.Dispatch<User>,
+      React.Dispatch<boolean>,
+      React.Dispatch<boolean>
+    ]
   >();
 }

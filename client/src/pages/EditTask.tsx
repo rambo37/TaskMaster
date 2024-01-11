@@ -11,7 +11,7 @@ import { Task } from "../taskUtils";
 
 const EditTask = () => {
   const { taskId } = useParams();
-  const [user, setUser] = useAccountContext();
+  const [user, setUser, setSignedIn, setUnsavedChanges] = useAccountContext();
   const [task, setTask] = useState<Task | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -32,10 +32,17 @@ const EditTask = () => {
         setSelectedOption(
           userTask.completed ? statusCompleted : statusNotCompleted
         );
-        console.log(userTask);
       }
     });
   }, []);
+
+  // Update the unsavedChanges state variable in the Layout component
+  // whenever the task gets changed so that the user will be warned
+  // of losing unsaved changes if they attempt to leave the site.
+  useEffect(() => {
+    if (!task) return;
+    setUnsavedChanges(taskHasChanges());
+  }, [title, description, dueDate, selectedOption]);
 
   if (!task) {
     return (
@@ -48,6 +55,13 @@ const EditTask = () => {
   const taskHasChanges = () => {
     if (task.title !== title) return true;
     if (task.description !== description) return true;
+    try {
+      if (task.dueDate !== new Date(dueDate).toISOString()) return true;
+    } catch (error) {
+      // If the dueDate is not a valid date, then the user must have changed it
+      // since all tasks must have a valid date
+      return true;
+    }
     if (task.dueDate !== new Date(dueDate).toISOString()) return true;
     return task.completed !== updatedTaskIsCompleted();
   };
@@ -108,6 +122,7 @@ const EditTask = () => {
       };
       setTask(updatedTask);
       setUser(updatedUser);
+      setUnsavedChanges(false);
     } catch (error: any) {
       console.error(error);
       setError("Something went wrong. Please try again later.");

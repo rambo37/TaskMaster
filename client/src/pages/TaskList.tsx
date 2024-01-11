@@ -32,7 +32,7 @@ const getSortOrderEnumValue = (sortOrder: string) => {
 };
 
 const TaskList = () => {
-  const [user, setUser] = useAccountContext();
+  const [user, setUser, setSignedIn, setUnsavedChanges] = useAccountContext();
   const [tasks, setTasks] = useState(user.tasks);
   const [showLegend, setShowLegend] = useState(false);
   const [showCompleted, setShowCompleted] = useState(true);
@@ -145,6 +145,7 @@ const TaskList = () => {
           setSelectedDateFormat={setSelectedDateFormat}
           selectedTimeFormat={selectedTimeFormat}
           setSelectedTimeFormat={setSelectedTimeFormat}
+          setUnsavedChanges={setUnsavedChanges}
         />
       )}
       <TaskListOptions
