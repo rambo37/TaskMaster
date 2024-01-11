@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 type AccountDropdownProps = {
@@ -20,7 +20,7 @@ const AccountDropdown = ({
     ["/tasks/create", "Create task"],
   ]);
   const userPages = Array.from(userPagesMap);
-  
+
   const isOnUserPage = () => {
     return Array.from(userPagesMap.keys()).includes(location.pathname);
   };
@@ -38,6 +38,11 @@ const AccountDropdown = ({
       setSignedIn(false);
       navigate("/");
     }
+  };
+
+  const handleNavLinkClick = (e: React.MouseEvent, to: string) => {
+    if (location.pathname === to) return;
+    checkAndWarnForUnsavedChanges(e);
   };
 
   return (
@@ -58,7 +63,7 @@ const AccountDropdown = ({
                 className="dropdown-item"
                 to={page[0]}
                 end
-                onClick={(e) => checkAndWarnForUnsavedChanges(e)}
+                onClick={(e) => handleNavLinkClick(e, page[0])}
               >
                 {page[1]}
               </NavLink>
