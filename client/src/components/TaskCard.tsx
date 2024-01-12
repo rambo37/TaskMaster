@@ -16,6 +16,7 @@ type TaskCardProps = {
   setExpandedTask: React.Dispatch<Task | null>;
   selectedDateFormat: string;
   selectedTimeFormat: string;
+  checkAndWarnForUnsavedChanges: (e: React.MouseEvent) => boolean;
 };
 
 const TaskCard = ({
@@ -28,10 +29,16 @@ const TaskCard = ({
   setExpandedTask,
   selectedDateFormat,
   selectedTimeFormat,
+  checkAndWarnForUnsavedChanges,
 }: TaskCardProps) => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleEditIconClick = (event: React.MouseEvent) => {
+    if (checkAndWarnForUnsavedChanges(event)) navigate(`/tasks/${task._id}`);
+    else event.stopPropagation();
+  };
 
   const handleDeleteIconClick = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -95,10 +102,7 @@ const TaskCard = ({
     >
       <div className="title-div">
         <h3>{task.title}</h3>
-        <i
-          className="bi bi-pencil"
-          onClick={() => navigate(`/tasks/${task._id}`)}
-        ></i>
+        <i className="bi bi-pencil" onClick={(e) => handleEditIconClick(e)}></i>
         <i
           className="bi bi-trash"
           onClick={(e) => handleDeleteIconClick(e)}

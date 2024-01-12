@@ -32,7 +32,8 @@ const getSortOrderEnumValue = (sortOrder: string) => {
 };
 
 const TaskList = () => {
-  const { user, setUser, setUnsavedChanges } = useAccountContext();
+  const { user, setUser, setUnsavedChanges, checkAndWarnForUnsavedChanges } =
+    useAccountContext();
   const [tasks, setTasks] = useState(user.tasks);
   const [showCompleted, setShowCompleted] = useState(true);
   const [showMoreThanThresholdHours, setShowMoreThanThresholdHours] =
@@ -191,6 +192,7 @@ const TaskList = () => {
                   setExpandedTask={setExpandedTask}
                   selectedDateFormat={selectedDateFormat}
                   selectedTimeFormat={selectedTimeFormat}
+                  checkAndWarnForUnsavedChanges={checkAndWarnForUnsavedChanges}
                 />
               );
             })}
@@ -208,6 +210,7 @@ const TaskList = () => {
           setExpandedTask={setExpandedTask}
           selectedDateFormat={selectedDateFormat}
           selectedTimeFormat={selectedTimeFormat}
+          checkAndWarnForUnsavedChanges={checkAndWarnForUnsavedChanges}
         />
       )}
     </div>

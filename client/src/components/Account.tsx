@@ -21,7 +21,8 @@ export interface User {
 const Account = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const { setSignedIn, setUnsavedChanges } = useLayoutContext();
+  const { setSignedIn, setUnsavedChanges, checkAndWarnForUnsavedChanges } =
+    useLayoutContext();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -60,7 +61,15 @@ const Account = () => {
   if (user) {
     return (
       <>
-        <Outlet context={{ user, setUser, setSignedIn, setUnsavedChanges }} />
+        <Outlet
+          context={{
+            user,
+            setUser,
+            setSignedIn,
+            setUnsavedChanges,
+            checkAndWarnForUnsavedChanges,
+          }}
+        />
       </>
     );
   }
@@ -76,5 +85,6 @@ export function useAccountContext() {
     setUser: React.Dispatch<User>;
     setSignedIn: React.Dispatch<boolean>;
     setUnsavedChanges: React.Dispatch<boolean>;
+    checkAndWarnForUnsavedChanges: (e: React.MouseEvent) => boolean;
   }>();
 }
