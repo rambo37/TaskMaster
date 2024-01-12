@@ -42,17 +42,17 @@ const TaskListSettings = ({
   // whenever the settings are changed so that the user will be warned
   // of losing unsaved changes if they attempt to leave the site.
   useEffect(() => {
-    if (
+    setUnsavedChanges(taskListSettingsHaveChanges());
+  }, [thresholdHours, selectedDateFormat, selectedTimeFormat, showLegend]);
+
+  const taskListSettingsHaveChanges = () => {
+    return (
       user.thresholdHours !== thresholdHours ||
       user.dateFormat !== selectedDateFormat ||
       user.timeFormat !== selectedTimeFormat ||
       user.showLegend !== showLegend
-    ) {
-      setUnsavedChanges(true);
-    } else {
-      setUnsavedChanges(false);
-    }
-  }, [thresholdHours, selectedDateFormat, selectedTimeFormat, showLegend]);
+    );
+  };
 
   const handleSettingsSaveSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -60,11 +60,17 @@ const TaskListSettings = ({
     setError("");
 
     try {
+      if (!taskListSettingsHaveChanges()) {
+        setError("No changes have been made.");
+        setLoading(false);
+        return;
+      }
+
       const updates = {
         thresholdHours: thresholdHours,
         dateFormat: selectedDateFormat,
         timeFormat: selectedTimeFormat,
-        showLegend: showLegend
+        showLegend: showLegend,
       };
 
       await axios.patch(`/users/${user._id}`, updates);
@@ -75,7 +81,7 @@ const TaskListSettings = ({
         thresholdHours: thresholdHours,
         dateFormat: selectedDateFormat,
         timeFormat: selectedTimeFormat,
-        showLegend: showLegend
+        showLegend: showLegend,
       };
       setUser(updatedUser);
       setUnsavedChanges(false);
