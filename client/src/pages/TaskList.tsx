@@ -34,7 +34,6 @@ const getSortOrderEnumValue = (sortOrder: string) => {
 const TaskList = () => {
   const { user, setUser, setUnsavedChanges } = useAccountContext();
   const [tasks, setTasks] = useState(user.tasks);
-  const [showLegend, setShowLegend] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
   const [showMoreThanThresholdHours, setShowMoreThanThresholdHours] =
     useState(true);
@@ -47,6 +46,7 @@ const TaskList = () => {
   const [thresholdHours, setThresholdHours] = useState(user.thresholdHours);
   const [selectedDateFormat, setSelectedDateFormat] = useState(user.dateFormat);
   const [selectedTimeFormat, setSelectedTimeFormat] = useState(user.timeFormat);
+  const [showLegend, setShowLegend] = useState(user.showLegend);
   const [selectedSortCriterion, setSelectedSortCriterion] = useState(
     SortCriteria.dateAdded
   );

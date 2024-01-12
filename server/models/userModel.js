@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   thresholdHours: Number,
   dateFormat: String,
   timeFormat: String,
+  showLegend: Boolean,
   tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
 });
 

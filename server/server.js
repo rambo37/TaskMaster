@@ -358,6 +358,7 @@ app.post("/users", async (req, res) => {
       thresholdHours: 6,
       dateFormat: "Numeric",
       timeFormat: "24 hours",
+      showLegend: true,
       tasks: [],
     });
 

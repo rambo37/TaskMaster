@@ -15,6 +15,7 @@ export interface User {
   thresholdHours: number;
   dateFormat: string;
   timeFormat: string;
+  showLegend: boolean;
 }
 
 const Account = () => {

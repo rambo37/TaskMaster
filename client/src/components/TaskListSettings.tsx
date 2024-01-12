@@ -45,13 +45,14 @@ const TaskListSettings = ({
     if (
       user.thresholdHours !== thresholdHours ||
       user.dateFormat !== selectedDateFormat ||
-      user.timeFormat !== selectedTimeFormat
+      user.timeFormat !== selectedTimeFormat ||
+      user.showLegend !== showLegend
     ) {
       setUnsavedChanges(true);
     } else {
       setUnsavedChanges(false);
     }
-  }, [thresholdHours, selectedDateFormat, selectedTimeFormat]);
+  }, [thresholdHours, selectedDateFormat, selectedTimeFormat, showLegend]);
 
   const handleSettingsSaveSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -63,6 +64,7 @@ const TaskListSettings = ({
         thresholdHours: thresholdHours,
         dateFormat: selectedDateFormat,
         timeFormat: selectedTimeFormat,
+        showLegend: showLegend
       };
 
       await axios.patch(`/users/${user._id}`, updates);
@@ -73,8 +75,10 @@ const TaskListSettings = ({
         thresholdHours: thresholdHours,
         dateFormat: selectedDateFormat,
         timeFormat: selectedTimeFormat,
+        showLegend: showLegend
       };
       setUser(updatedUser);
+      setUnsavedChanges(false);
     } catch (error: any) {
       console.error(error);
       setError("Something went wrong. Please try again later.");
