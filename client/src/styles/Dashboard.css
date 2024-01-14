@@ -1,0 +1,28 @@
+.dashboard {
+  max-width: 100%;
+}
+
+.dashboard h1 {
+  margin-bottom: 50px;
+}
+
+.dashboard .unfocussed {
+  opacity: 40%;
+  pointer-events: none;
+}
+
+.dashboard section {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: 1px solid var(--dark-gray);
+}
+
+.dashboard section:last-of-type {
+  border-bottom: 1px solid var(--dark-gray);
+}
+
+@media only screen and (max-width: 768px) {
+  .dashboard .no-tasks-message {
+    margin-top: 30px;
+  }
+}
