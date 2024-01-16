@@ -71,6 +71,7 @@ const Layout = () => {
       <div className="content" style={{ minHeight: minContentHeight }}>
         <Outlet
           context={{
+            signedIn,
             setSignedIn,
             unsavedChanges,
             setUnsavedChanges,
@@ -86,6 +87,7 @@ export default Layout;
 
 export function useLayoutContext() {
   return useOutletContext<{
+    signedIn: boolean;
     setSignedIn: React.Dispatch<boolean>;
     unsavedChanges: boolean;
     setUnsavedChanges: React.Dispatch<boolean>;

@@ -4,7 +4,7 @@ import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loading from "../components/Loading";
 import { Task } from "../taskUtils";
-import { getUserId, isSignedIn } from "../utils";
+import { getUserId } from "../utils";
 import { useLayoutContext } from "./Layout";
 
 export interface User {
@@ -21,13 +21,17 @@ export interface User {
 const Account = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const { setSignedIn, setUnsavedChanges, checkAndWarnForUnsavedChanges } =
-    useLayoutContext();
+  const {
+    signedIn,
+    setSignedIn,
+    setUnsavedChanges,
+    checkAndWarnForUnsavedChanges,
+  } = useLayoutContext();
 
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
-      if (await isSignedIn()) {
+      if (signedIn) {
         const id = getUserId();
         try {
           const response = await axios.get(`/users/${id}`);
