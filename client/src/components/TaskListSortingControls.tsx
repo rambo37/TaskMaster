@@ -24,6 +24,7 @@ const TaskListSortingControls = ({
         >
           <option>{SortCriteria.dateAdded}</option>
           <option>{SortCriteria.dueDate}</option>
+          <option>{SortCriteria.priority}</option>
         </Form.Select>
       </FloatingLabel>
       <FloatingLabel label="Sorting order">

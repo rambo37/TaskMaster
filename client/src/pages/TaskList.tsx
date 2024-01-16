@@ -11,6 +11,7 @@ import TaskListSortingControls from "../components/TaskListSortingControls";
 export enum SortCriteria {
   dateAdded = "Date added",
   dueDate = "Due date",
+  priority = "Priority",
 }
 
 // Records the order of the sorting.
@@ -76,11 +77,14 @@ const TaskList = () => {
     // according to the date added criterion. This means nothing needs to
     // be done if the selectedSortCriterion is dateAdded.
 
-    // Sorts the tasks in ascending order according to dueDate, if required
+    // Sorts the tasks in ascending order according to dueDate/priority, if
+    // required
     if (selectedSortCriterion === SortCriteria.dueDate) {
       newTasks.sort((a: Task, b: Task) =>
         new Date(a.dueDate) < new Date(b.dueDate) ? -1 : 1
       );
+    } else if (selectedSortCriterion === SortCriteria.priority) {
+      newTasks.sort((a: Task, b: Task) => (a.priority < b.priority ? -1 : 1));
     }
 
     // Now the tasks are sorted according to the correct criterion in

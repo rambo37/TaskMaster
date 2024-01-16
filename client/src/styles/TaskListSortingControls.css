@@ -1,4 +1,3 @@
-
 .task-list-sorting-controls {
   display: flex;
   justify-content: center;
@@ -9,9 +8,17 @@
   margin-right: 20px;
 }
 
+.task-list-sorting-controls > p {
+  margin-bottom: 0px;
+}
+
 @media only screen and (max-width: 768px) {
   .task-list-sorting-controls {
     flex-direction: column;
+  }
+
+  .task-list-sorting-controls > p {
+    margin-bottom: 15px;
   }
 
   .task-list-sorting-controls > * {
