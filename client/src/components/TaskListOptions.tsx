@@ -6,10 +6,10 @@ type TaskListOptionsProps = {
   thresholdHours: number;
   showCompleted: boolean;
   setShowCompleted: React.Dispatch<boolean>;
-  showMoreThanThresholdHours: boolean;
-  setShowMoreThanThresholdHours: React.Dispatch<boolean>;
-  showLessThanThresholdHours: boolean;
-  setShowLessThanThresholdHours: React.Dispatch<boolean>;
+  showUpcoming: boolean;
+  setShowUpcoming: React.Dispatch<boolean>;
+  showUrgent: boolean;
+  setShowUrgent: React.Dispatch<boolean>;
   showExpired: boolean;
   setShowExpired: React.Dispatch<boolean>;
   searchText: string;
@@ -21,10 +21,10 @@ const TaskListOptions = ({
   thresholdHours,
   showCompleted,
   setShowCompleted,
-  showMoreThanThresholdHours,
-  setShowMoreThanThresholdHours,
-  showLessThanThresholdHours,
-  setShowLessThanThresholdHours,
+  showUpcoming,
+  setShowUpcoming,
+  showUrgent,
+  setShowUrgent,
   showExpired,
   setShowExpired,
   searchText,
@@ -42,23 +42,15 @@ const TaskListOptions = ({
         />
         <Form.Check
           type="checkbox"
-          label={`Show more than ${thresholdHours} hour${
-            thresholdHours !== 1 ? "s" : ""
-          } left`}
-          checked={showMoreThanThresholdHours}
-          onChange={() =>
-            setShowMoreThanThresholdHours(!showMoreThanThresholdHours)
-          }
+          label="Upcoming"
+          checked={showUpcoming}
+          onChange={() => setShowUpcoming(!showUpcoming)}
         />
         <Form.Check
           type="checkbox"
-          label={`Show less than ${thresholdHours} hour${
-            thresholdHours !== 1 ? "s" : ""
-          } left`}
-          checked={showLessThanThresholdHours}
-          onChange={() =>
-            setShowLessThanThresholdHours(!showLessThanThresholdHours)
-          }
+          label="Urgent"
+          checked={showUrgent}
+          onChange={() => setShowUrgent(!showUrgent)}
         />
         <Form.Check
           type="checkbox"

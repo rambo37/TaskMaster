@@ -8,7 +8,7 @@ export interface Task {
 }
 
 export const getTaskStatus = (task: Task, thresholdHours: number) => {
-  let status = "neutral";
+  let status = "upcoming";
   if (task.completed) {
     status = "completed";
   } else {

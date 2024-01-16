@@ -7,19 +7,19 @@ const Dashboard = () => {
   const { user, setUser, checkAndWarnForUnsavedChanges } = useAccountContext();
   const [expandedTask, setExpandedTask] = useState<Task | null>(null);
   const tasks = user.tasks;
-  const neutralTasks: Task[] = [];
+  const upcomingTasks: Task[] = [];
   const urgentTasks: Task[] = [];
   const expiredTasks: Task[] = [];
 
   // Populate and sort the task arrays by due date (ascending)
   tasks.forEach((task) => {
     const taskStatus = getTaskStatus(task, user.thresholdHours);
-    if (taskStatus === "neutral") neutralTasks.push(task);
+    if (taskStatus === "upcoming") upcomingTasks.push(task);
     if (taskStatus === "urgent") urgentTasks.push(task);
     if (taskStatus === "expired") expiredTasks.push(task);
   });
 
-  neutralTasks.sort((a: Task, b: Task) =>
+  upcomingTasks.sort((a: Task, b: Task) =>
     new Date(a.dueDate) < new Date(b.dueDate) ? -1 : 1
   );
 
@@ -119,7 +119,7 @@ const Dashboard = () => {
 
       <section className={`${expandedTask ? "unfocussed" : ""}`}>
         <h3>Upcoming tasks</h3>
-        {neutralTasks.length === 0 ? (
+        {upcomingTasks.length === 0 ? (
           <p className="no-tasks-message">
             {user.tasks.length === 0
               ? "You do not have any tasks yet."
@@ -132,7 +132,7 @@ const Dashboard = () => {
               until they are due.
             </p>
             <div className="task-list">
-              {neutralTasks.map((task) => {
+              {upcomingTasks.map((task) => {
                 return (
                   <TaskCard
                     user={user}

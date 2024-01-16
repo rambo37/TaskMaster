@@ -37,10 +37,8 @@ const TaskList = () => {
     useAccountContext();
   const [tasks, setTasks] = useState(user.tasks);
   const [showCompleted, setShowCompleted] = useState(true);
-  const [showMoreThanThresholdHours, setShowMoreThanThresholdHours] =
-    useState(true);
-  const [showLessThanThresholdHours, setShowLessThanThresholdHours] =
-    useState(true);
+  const [showUpcoming, setShowUpcoming] = useState(true);
+  const [showUrgent, setShowUrgent] = useState(true);
   const [showExpired, setShowExpired] = useState(true);
   const [expandedTask, setExpandedTask] = useState<Task | null>(null);
   const [searchText, setSearchText] = useState("");
@@ -58,14 +56,14 @@ const TaskList = () => {
     const newTasks = user.tasks.filter((task) => {
       const taskStatus = getTaskStatus(task, thresholdHours);
       const isCompleted = taskStatus === "completed";
-      const isMoreThanThresholdHours = taskStatus === "neutral";
-      const isLessThanThresholdHours = taskStatus === "urgent";
+      const isUpcoming = taskStatus === "upcoming";
+      const isUrgent = taskStatus === "urgent";
       const isExpired = taskStatus === "expired";
 
       return (
         (showCompleted || !isCompleted) &&
-        (showMoreThanThresholdHours || !isMoreThanThresholdHours) &&
-        (showLessThanThresholdHours || !isLessThanThresholdHours) &&
+        (showUpcoming || !isUpcoming) &&
+        (showUrgent || !isUrgent) &&
         (showExpired || !isExpired) &&
         taskContainsSearchText(task)
       );
@@ -97,8 +95,8 @@ const TaskList = () => {
     user.tasks,
     thresholdHours,
     showCompleted,
-    showMoreThanThresholdHours,
-    showLessThanThresholdHours,
+    showUpcoming,
+    showUrgent,
     showExpired,
     searchText,
     selectedSortCriterion,
@@ -158,16 +156,16 @@ const TaskList = () => {
         thresholdHours={thresholdHours}
         showCompleted={showCompleted}
         setShowCompleted={setShowCompleted}
-        showMoreThanThresholdHours={showMoreThanThresholdHours}
-        setShowMoreThanThresholdHours={setShowMoreThanThresholdHours}
-        showLessThanThresholdHours={showLessThanThresholdHours}
-        setShowLessThanThresholdHours={setShowLessThanThresholdHours}
+        showUpcoming={showUpcoming}
+        setShowUpcoming={setShowUpcoming}
+        showUrgent={showUrgent}
+        setShowUrgent={setShowUrgent}
         showExpired={showExpired}
         setShowExpired={setShowExpired}
         searchText={searchText}
         setSearchText={setSearchText}
       />
-      {showLegend && <Legend thresholdHours={thresholdHours} />}
+      {showLegend && <Legend />}
       <div className={`task-list-wrapper ${expandedTask ? "unfocussed" : ""}`}>
         <TaskListSortingControls
           selectedSortCriterion={selectedSortCriterion}

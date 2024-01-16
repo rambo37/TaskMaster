@@ -1,8 +1,4 @@
-type LegendProps = {
-  thresholdHours: number;
-};
-
-const Legend = ({ thresholdHours }: LegendProps) => {
+const Legend = () => {
   return (
     <div className="legend">
       <h4>Legend</h4>
@@ -13,17 +9,13 @@ const Legend = ({ thresholdHours }: LegendProps) => {
         </div>
 
         <div className="legend-item">
-          <div className="square neutral"></div>
-          <p>{`More than ${thresholdHours} hour${
-            thresholdHours !== 1 ? "s" : ""
-          } left`}</p>
+          <div className="square upcoming"></div>
+          <p>Upcoming</p>
         </div>
 
         <div className="legend-item">
           <div className="square urgent"></div>
-          <p>{`Less than ${thresholdHours} hour${
-            thresholdHours !== 1 ? "s" : ""
-          } left`}</p>
+          <p>Urgent</p>
         </div>
 
         <div className="legend-item">
