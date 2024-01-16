@@ -21,6 +21,10 @@
   display: flex;
 }
 
+.task-list-options > h4 {
+  margin-bottom: 20px;
+}
+
 .task-list-options > div > * {
   margin: 20px;
 }
@@ -31,8 +35,15 @@
 }
 
 @media only screen and (max-width: 768px) {
+  .task-list-options {
+    width: 80%;
+  }
+
   .task-list-options > div {
+    width: 100%;
     flex-direction: column;
+    align-content: flex-start;
+    padding: 10px;
   }
 
   .task-list-options > h4 {
@@ -44,7 +55,7 @@
   }
 
   .task-list-options .search-bar {
-    width: 100%;
-    margin: 10px 0;
+    width: calc(100% - 20px);
+    margin-top: 0px;
   }
 }

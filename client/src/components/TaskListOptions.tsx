@@ -42,13 +42,13 @@ const TaskListOptions = ({
         />
         <Form.Check
           type="checkbox"
-          label="Upcoming"
+          label="Show upcoming"
           checked={showUpcoming}
           onChange={() => setShowUpcoming(!showUpcoming)}
         />
         <Form.Check
           type="checkbox"
-          label="Urgent"
+          label="Show urgent"
           checked={showUrgent}
           onChange={() => setShowUrgent(!showUrgent)}
         />
