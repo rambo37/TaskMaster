@@ -2,6 +2,7 @@ export interface Task {
   title: string;
   description: string;
   dueDate: string;
+  priority: number;
   completed: boolean;
   _id: string;
 }

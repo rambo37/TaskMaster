@@ -126,6 +126,9 @@ const TaskCard = ({
               {task.description || "No description provided."}
             </p>
             <p>Due: {getDateTimeString()}</p>
+            <p>{`Priority: ${
+              task.priority === -1 ? "Unspecified." : task.priority
+            }`}</p>
             <p>{`Status: ${
               task.completed ? "Completed" : "Not completed"
             }.`}</p>

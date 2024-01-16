@@ -588,7 +588,7 @@ app.patch("/users/:userId/password", authMiddleware, async (req, res) => {
 
 // Create task
 app.post("/users/:userId/tasks/", authMiddleware, async (req, res) => {
-  const { title, description, dueDate } = req.body;
+  const { title, description, dueDate, priority } = req.body;
   try {
     let user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found." });
@@ -597,6 +597,7 @@ app.post("/users/:userId/tasks/", authMiddleware, async (req, res) => {
       title: title,
       description: description,
       dueDate: dueDate,
+      priority: priority,
       completed: false,
       user: req.params.userId,
     });

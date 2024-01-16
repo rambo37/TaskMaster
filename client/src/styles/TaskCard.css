@@ -1,5 +1,5 @@
 .task-card {
-  height: 200px;
+  height: 230px;
   width: 400px;
   padding: 10px 15px;
   border: 1px solid var(--dark-gray);
@@ -59,6 +59,7 @@
 
 .task-card .title-div h3 {
   flex: 1;
+  line-height: normal;
 }
 
 .task-card .title-div i {

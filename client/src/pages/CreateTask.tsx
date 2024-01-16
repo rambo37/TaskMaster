@@ -11,6 +11,7 @@ const CreateTask = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [priority, setPriority] = useState(-1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { user, setUser, setUnsavedChanges } = useAccountContext();
@@ -50,6 +51,7 @@ const CreateTask = () => {
         title: title,
         description: description,
         dueDate: date,
+        priority: priority,
       };
 
       const response = await axios.post(
@@ -108,6 +110,20 @@ const CreateTask = () => {
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
           />
+        </FloatingLabel>
+        <FloatingLabel label="Task priority">
+          <Form.Select
+            value={priority}
+            onChange={(e) => setPriority(Number(e.target.value))}
+            className="max-width-input"
+          >
+            <option value={-1}>Unspecified</option>
+            <option value={1}>1 (lowest)</option>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+            <option value={4}>4</option>
+            <option value={5}>5 (highest)</option>
+          </Form.Select>
         </FloatingLabel>
         <input
           type="submit"

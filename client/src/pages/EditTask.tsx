@@ -16,6 +16,7 @@ const EditTask = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [priority, setPriority] = useState(-1);
   const [selectedOption, setSelectedOption] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,6 +29,7 @@ const EditTask = () => {
         setTask(userTask);
         setTitle(userTask.title);
         setDescription(userTask.description);
+        setPriority(userTask.priority);
         setDueDate(userTask.dueDate.slice(0, -1));
         setSelectedOption(
           userTask.completed ? statusCompleted : statusNotCompleted
@@ -62,6 +64,7 @@ const EditTask = () => {
       // since all tasks must have a valid date
       return true;
     }
+    if (task.priority !== priority) return true;
     if (task.dueDate !== new Date(dueDate).toISOString()) return true;
     return task.completed !== updatedTaskIsCompleted();
   };
@@ -100,6 +103,7 @@ const EditTask = () => {
         title: title,
         description: description,
         dueDate: date,
+        priority: priority,
         completed: updatedTaskIsCompleted(),
       };
 
@@ -160,6 +164,20 @@ const EditTask = () => {
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
           />
+        </FloatingLabel>
+        <FloatingLabel label="Task priority">
+          <Form.Select
+            value={priority}
+            onChange={(e) => setPriority(Number(e.target.value))}
+            className="max-width-input"
+          >
+            <option value={-1}>Unspecified</option>
+            <option value={1}>1 (lowest)</option>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+            <option value={4}>4</option>
+            <option value={5}>5 (highest)</option>
+          </Form.Select>
         </FloatingLabel>
         <FloatingLabel label="Task status">
           <Form.Select
