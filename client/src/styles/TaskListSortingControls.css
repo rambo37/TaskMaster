@@ -12,6 +12,10 @@
   margin-bottom: 0px;
 }
 
+.task-list-sorting-controls > div.form-floating > select.form-select {
+  padding-right: 50px;
+}
+
 @media only screen and (max-width: 768px) {
   .task-list-sorting-controls {
     flex-direction: column;
