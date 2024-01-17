@@ -40,6 +40,9 @@ const TaskList = () => {
   const [showUpcoming, setShowUpcoming] = useState(true);
   const [showUrgent, setShowUrgent] = useState(true);
   const [showExpired, setShowExpired] = useState(true);
+  const [showUnspecifiedPriority, setShowUnspecifiedPriority] = useState(true);
+  const [minimumPriority, setMinimumPriority] = useState(1);
+  const [maximumPriority, setMaximumPriority] = useState(5);
   const [expandedTask, setExpandedTask] = useState<Task | null>(null);
   const [searchText, setSearchText] = useState("");
   const [showSettings, setShowSettings] = useState(false);
@@ -59,12 +62,19 @@ const TaskList = () => {
       const isUpcoming = taskStatus === "upcoming";
       const isUrgent = taskStatus === "urgent";
       const isExpired = taskStatus === "expired";
+      const isUnspecifiedPriority = task.priority === -1;
 
       return (
         (showCompleted || !isCompleted) &&
         (showUpcoming || !isUpcoming) &&
         (showUrgent || !isUrgent) &&
         (showExpired || !isExpired) &&
+        (showUnspecifiedPriority || !isUnspecifiedPriority) &&
+        // If isUnspecifiedPriority is true for the next 2 lines, then skip the
+        // priority check as it would return false and thus the task would not
+        // be shown even though it should (as showUnspecifiedPriority is true).
+        (isUnspecifiedPriority || task.priority >= minimumPriority) &&
+        (isUnspecifiedPriority || task.priority <= maximumPriority) &&
         taskContainsSearchText(task)
       );
     });
@@ -98,6 +108,9 @@ const TaskList = () => {
     showUpcoming,
     showUrgent,
     showExpired,
+    showUnspecifiedPriority,
+    minimumPriority,
+    maximumPriority,
     searchText,
     selectedSortCriterion,
     selectedSortOrder,
@@ -153,7 +166,6 @@ const TaskList = () => {
       )}
       <TaskListOptions
         expandedTask={expandedTask}
-        thresholdHours={thresholdHours}
         showCompleted={showCompleted}
         setShowCompleted={setShowCompleted}
         showUpcoming={showUpcoming}
@@ -162,6 +174,12 @@ const TaskList = () => {
         setShowUrgent={setShowUrgent}
         showExpired={showExpired}
         setShowExpired={setShowExpired}
+        showUnspecifiedPriority={showUnspecifiedPriority}
+        setShowUnspecifiedPriority={setShowUnspecifiedPriority}
+        minimumPriority={minimumPriority}
+        setMinimumPriority={setMinimumPriority}
+        maximumPriority={maximumPriority}
+        setMaximumPriority={setMaximumPriority}
         searchText={searchText}
         setSearchText={setSearchText}
       />

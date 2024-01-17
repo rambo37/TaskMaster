@@ -1,9 +1,9 @@
-import { Form } from "react-bootstrap";
+import React from "react";
+import { FloatingLabel, Form } from "react-bootstrap";
 import { Task } from "../taskUtils";
 
 type TaskListOptionsProps = {
   expandedTask: Task | null;
-  thresholdHours: number;
   showCompleted: boolean;
   setShowCompleted: React.Dispatch<boolean>;
   showUpcoming: boolean;
@@ -12,13 +12,18 @@ type TaskListOptionsProps = {
   setShowUrgent: React.Dispatch<boolean>;
   showExpired: boolean;
   setShowExpired: React.Dispatch<boolean>;
+  showUnspecifiedPriority: boolean;
+  setShowUnspecifiedPriority: React.Dispatch<boolean>;
+  minimumPriority: number;
+  setMinimumPriority: React.Dispatch<number>;
+  maximumPriority: number;
+  setMaximumPriority: React.Dispatch<number>;
   searchText: string;
   setSearchText: React.Dispatch<string>;
 };
 
 const TaskListOptions = ({
   expandedTask,
-  thresholdHours,
   showCompleted,
   setShowCompleted,
   showUpcoming,
@@ -27,9 +32,31 @@ const TaskListOptions = ({
   setShowUrgent,
   showExpired,
   setShowExpired,
+  showUnspecifiedPriority,
+  setShowUnspecifiedPriority,
+  minimumPriority,
+  setMinimumPriority,
+  maximumPriority,
+  setMaximumPriority,
   searchText,
   setSearchText,
 }: TaskListOptionsProps) => {
+  const handleMinimumPriorityChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newValue = Number(event.target.value);
+    if (newValue >= 1 && newValue <= maximumPriority)
+      setMinimumPriority(newValue);
+  };
+
+  const handleMaximumPriorityChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newValue = Number(event.target.value);
+    if (newValue <= 5 && newValue >= minimumPriority)
+      setMaximumPriority(newValue);
+  };
+
   return (
     <div className={`task-list-options ${expandedTask ? "unfocussed" : ""}`}>
       <h4>Search options</h4>
@@ -58,14 +85,38 @@ const TaskListOptions = ({
           checked={showExpired}
           onChange={() => setShowExpired(!showExpired)}
         />
+        <Form.Check
+          type="checkbox"
+          label="Show unspecified priority"
+          checked={showUnspecifiedPriority}
+          onChange={() => setShowUnspecifiedPriority(!showUnspecifiedPriority)}
+        />
+        <FloatingLabel label="Minimum priority" className="mb-3">
+          <Form.Control
+            type="number"
+            placeholder="Minimum priority"
+            value={minimumPriority}
+            onChange={handleMinimumPriorityChange}
+          />
+        </FloatingLabel>
+        <FloatingLabel label="Maximum priority" className="mb-3">
+          <Form.Control
+            type="number"
+            placeholder="Maximum priority"
+            value={maximumPriority}
+            onChange={handleMaximumPriorityChange}
+          />
+        </FloatingLabel>
+        <FloatingLabel label="Search tasks" className="mb-3 w-100">
+          <Form.Control
+            type="search"
+            placeholder="Search tasks"
+            className="form-control search-bar"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+          />
+        </FloatingLabel>
       </div>
-      <input
-        className="form-control search-bar"
-        type="search"
-        placeholder="Search tasks"
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
-      ></input>
     </div>
   );
 };
