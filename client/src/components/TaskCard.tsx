@@ -51,16 +51,34 @@ const TaskCard = ({
     try {
       await axios.delete(`/users/${user._id}/tasks/${task._id}`);
 
-      // Remove this task in the frontend by updating the tasks array
-      // of the user object
+      // Work out the new array of tags to be stored for the user using a Set
+      // to avoid duplicates
+      const tagsSet = new Set<string>();
+      // Add the tags of all user tasks excluding this one that is to be deleted
+      user.tasks.forEach((userTask) => {
+        if (userTask._id !== task._id)
+          userTask.tags.forEach((tag) => tagsSet.add(tag));
+      });
+      const newTags = Array.from(tagsSet);
+
+      // Remove this task in the frontend by updating the tasks array of the
+      // user object. Also update the tags array so that tags that were only
+      // used in this task are no longer stored after this task was deleted.
       const updatedTasks = user.tasks.slice();
       updatedTasks.splice(user.tasks.indexOf(task), 1);
       const updatedUser = {
         ...user,
         tasks: updatedTasks,
+        tags: newTags,
       };
       setUser(updatedUser);
       setExpandedTask(null); // Hide the expanded task in case it was showing
+
+      // Update the user asynchronously so that their new tags will be saved
+      // for when they next log in, but without creating longer wait times
+      if (JSON.stringify(user.tags) !== JSON.stringify(newTags)) {
+        axios.patch(`/users/${user._id}`, { tags: newTags });
+      }
     } catch (error: any) {
       console.error(error);
       toast.error("Failed to delete task. Please try again later.");
@@ -132,6 +150,22 @@ const TaskCard = ({
             <p>{`Status: ${
               task.completed ? "Completed" : "Not completed"
             }.`}</p>
+            {task.tags.length ? (
+              <div className="tags-wrapper">
+                <div>{"Tags: "}</div>
+                <div className="tags-div">
+                  {task.tags.map((tag) => {
+                    return (
+                      <div key={tag} className="react-tags__tag">
+                        {tag}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <p>Tags: None.</p>
+            )}
           </>
         )}
         {expanded && (

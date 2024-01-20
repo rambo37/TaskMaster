@@ -359,6 +359,7 @@ app.post("/users", async (req, res) => {
       dateFormat: "Numeric",
       timeFormat: "24 hours",
       showLegend: true,
+      tags: [],
       tasks: [],
     });
 
@@ -588,7 +589,7 @@ app.patch("/users/:userId/password", authMiddleware, async (req, res) => {
 
 // Create task
 app.post("/users/:userId/tasks/", authMiddleware, async (req, res) => {
-  const { title, description, dueDate, priority } = req.body;
+  const { title, description, dueDate, priority, tags } = req.body;
   try {
     let user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: "User not found." });
@@ -598,6 +599,7 @@ app.post("/users/:userId/tasks/", authMiddleware, async (req, res) => {
       description: description,
       dueDate: dueDate,
       priority: priority,
+      tags: tags,
       completed: false,
       user: req.params.userId,
     });

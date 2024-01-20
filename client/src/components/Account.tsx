@@ -16,6 +16,7 @@ export interface User {
   dateFormat: string;
   timeFormat: string;
   showLegend: boolean;
+  tags: string[];
 }
 
 const Account = () => {

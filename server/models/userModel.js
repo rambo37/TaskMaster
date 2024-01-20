@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
   dateFormat: String,
   timeFormat: String,
   showLegend: Boolean,
+  tags: [String],
   tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
 });
 

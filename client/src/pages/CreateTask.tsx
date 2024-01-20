@@ -3,9 +3,15 @@ import React, { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { useAccountContext } from "../components/Account";
-import { isInvalidDate } from "../utils";
+import {
+  isInvalidDate,
+  stringArrayToTagArray,
+  tagArrayToStringArray,
+} from "../utils";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
+import { Tag } from "react-tag-autocomplete";
+import TagSelector from "../components/TagSelector";
 
 const CreateTask = () => {
   const [title, setTitle] = useState("");
@@ -15,17 +21,23 @@ const CreateTask = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { user, setUser, setUnsavedChanges } = useAccountContext();
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [suggestions, setSuggestions] = useState<Tag[]>(
+    stringArrayToTagArray(user.tags)
+  );
 
   // Update the unsavedChanges state variable in the Layout component
   // whenever the input fields are changed so that the user will be warned
-  // of losing unsaved changes if they attempt to leave the site.
+  // of losing unsaved changes if they attempt to leave the page.
   useEffect(() => {
-    if (title || description || dueDate) {
-      setUnsavedChanges(true);
-    } else {
-      setUnsavedChanges(false);
-    }
-  }, [title, description, dueDate]);
+    setUnsavedChanges(taskHasChanges());
+  }, [title, description, dueDate, priority, tags]);
+
+  const taskHasChanges = () => {
+    return title || description || dueDate || priority !== -1 || tags.length
+      ? true
+      : false;
+  };
 
   const handleTaskCreateSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -52,6 +64,7 @@ const CreateTask = () => {
         description: description,
         dueDate: date,
         priority: priority,
+        tags: tagArrayToStringArray(tags),
       };
 
       const response = await axios.post(
@@ -63,6 +76,21 @@ const CreateTask = () => {
       setTitle("");
       setDescription("");
       setDueDate("");
+      setPriority(-1);
+      setTags([]);
+
+      // Work out the new array of tags to be stored for the user using a Set
+      // to avoid duplicates
+      const tagsSet = new Set<string>();
+      // First add all the current tags of this task
+      tags.forEach((tag) => tagsSet.add(tag.label));
+      // Now add the tags of all other user tasks
+      user.tasks.forEach((userTask) => {
+        userTask.tags.forEach((tag) => tagsSet.add(tag));
+      });
+      const newTags = Array.from(tagsSet);
+      setSuggestions(stringArrayToTagArray(newTags));
+
       // Update the user's task array with the details of this newly created
       // task so it is visible throughout the application without the user
       // having to refresh their browser
@@ -71,8 +99,15 @@ const CreateTask = () => {
       const updatedUser = {
         ...user,
         tasks: [...user.tasks, response.data],
+        tags: newTags,
       };
       setUser(updatedUser);
+
+      // Update the user asynchronously so that their new tags will be saved
+      // for when they next log in, but without creating longer wait times
+      if (JSON.stringify(user.tags) !== JSON.stringify(newTags)) {
+        axios.patch(`/users/${user._id}`, { tags: newTags });
+      }
     } catch (error: any) {
       console.error(error);
       setError("Something went wrong. Please try again later.");
@@ -125,6 +160,13 @@ const CreateTask = () => {
             <option value={5}>5 (highest)</option>
           </Form.Select>
         </FloatingLabel>
+        <TagSelector
+          user={user}
+          tags={tags}
+          setTags={setTags}
+          suggestions={suggestions}
+          setSuggestions={setSuggestions}
+        />
         <input
           type="submit"
           className="submit-button"

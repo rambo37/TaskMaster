@@ -2,12 +2,18 @@ import React, { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { useAccountContext } from "../components/Account";
 import { useParams } from "react-router-dom";
-import { isInvalidDate } from "../utils";
+import {
+  isInvalidDate,
+  stringArrayToTagArray,
+  tagArrayToStringArray,
+} from "../utils";
 import axios from "axios";
 import { toast } from "react-toastify";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import { Task } from "../taskUtils";
+import { Tag } from "react-tag-autocomplete";
+import TagSelector from "../components/TagSelector";
 
 const EditTask = () => {
   const { taskId } = useParams();
@@ -22,6 +28,10 @@ const EditTask = () => {
   const [error, setError] = useState("");
   const statusCompleted = "Completed";
   const statusNotCompleted = "Not completed";
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [suggestions, setSuggestions] = useState<Tag[]>(
+    stringArrayToTagArray(user.tags)
+  );
 
   useEffect(() => {
     user.tasks.forEach((userTask) => {
@@ -31,6 +41,7 @@ const EditTask = () => {
         setDescription(userTask.description);
         setPriority(userTask.priority);
         setDueDate(userTask.dueDate.slice(0, -1));
+        setTags(stringArrayToTagArray(userTask.tags));
         setSelectedOption(
           userTask.completed ? statusCompleted : statusNotCompleted
         );
@@ -44,7 +55,7 @@ const EditTask = () => {
   useEffect(() => {
     if (!task) return;
     setUnsavedChanges(taskHasChanges());
-  }, [title, description, dueDate, selectedOption]);
+  }, [title, description, dueDate, priority, tags, selectedOption]);
 
   if (!task) {
     return (
@@ -66,6 +77,11 @@ const EditTask = () => {
     }
     if (task.priority !== priority) return true;
     if (task.dueDate !== new Date(dueDate).toISOString()) return true;
+    if (
+      JSON.stringify(task.tags) !== JSON.stringify(tagArrayToStringArray(tags))
+    )
+      return true;
+
     return task.completed !== updatedTaskIsCompleted();
   };
 
@@ -104,6 +120,7 @@ const EditTask = () => {
         description: description,
         dueDate: date,
         priority: priority,
+        tags: tagArrayToStringArray(tags),
         completed: updatedTaskIsCompleted(),
       };
 
@@ -114,6 +131,21 @@ const EditTask = () => {
 
       toast.success("Task updated successfully.");
 
+      // Work out the new array of tags to be stored for the user using a Set
+      // to avoid duplicates
+      const tagsSet = new Set<string>();
+      // First add all the current tags of this task
+      tags.forEach((tag) => tagsSet.add(tag.label));
+      // Now add the tags of all other user tasks - we cannot add the tags from
+      // this task that is being edited from the user.tasks array since that may
+      // not be the same as the currently selected tags.
+      user.tasks.forEach((userTask) => {
+        if (userTask._id !== task._id)
+          userTask.tags.forEach((tag) => tagsSet.add(tag));
+      });
+      const newTags = Array.from(tagsSet);
+      setSuggestions(stringArrayToTagArray(newTags));
+
       // Update the user's task array with the details of this edited task so
       // the changes are visible throughout the application without the user
       // having to refresh their browser
@@ -123,10 +155,17 @@ const EditTask = () => {
       const updatedUser = {
         ...user,
         tasks: updatedTasks,
+        tags: newTags,
       };
       setTask(updatedTask);
       setUser(updatedUser);
       setUnsavedChanges(false);
+
+      // Update the user asynchronously so that their new tags will be saved
+      // for when they next log in, but without creating longer wait times
+      if (JSON.stringify(user.tags) !== JSON.stringify(newTags)) {
+        axios.patch(`/users/${user._id}`, { tags: newTags });
+      }
     } catch (error: any) {
       console.error(error);
       setError("Something went wrong. Please try again later.");
@@ -179,6 +218,13 @@ const EditTask = () => {
             <option value={5}>5 (highest)</option>
           </Form.Select>
         </FloatingLabel>
+        <TagSelector
+          user={user}
+          tags={tags}
+          setTags={setTags}
+          suggestions={suggestions}
+          setSuggestions={setSuggestions}
+        />
         <FloatingLabel label="Task status">
           <Form.Select
             value={selectedOption}

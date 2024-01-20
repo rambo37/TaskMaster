@@ -5,6 +5,7 @@ export interface Task {
   priority: number;
   completed: boolean;
   _id: string;
+  tags: string[];
 }
 
 export const getTaskStatus = (task: Task, thresholdHours: number) => {

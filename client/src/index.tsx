@@ -12,6 +12,7 @@ import "./styles/TaskListSettings.css";
 import "./styles/TaskListOptions.css";
 import "./styles/TaskListSortingControls.css";
 import "./styles/Dashboard.css";
+import "./styles/ReactTags.css";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
