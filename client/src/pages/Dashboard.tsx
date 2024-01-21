@@ -41,6 +41,9 @@ const Dashboard = () => {
 
       <section className={`${expandedTask ? "unfocussed" : ""}`}>
         <h3>Expired tasks</h3>
+        <p>
+          These tasks passed their due date without being marked as completed.
+        </p>
         {expiredTasks.length === 0 ? (
           <p className="no-tasks-message">
             {user.tasks.length === 0
@@ -49,10 +52,6 @@ const Dashboard = () => {
           </p>
         ) : (
           <>
-            <p>
-              These tasks passed their due date without being marked as
-              completed.
-            </p>
             <div className="task-list">
               {expiredTasks.map((task) => {
                 return (
@@ -80,6 +79,10 @@ const Dashboard = () => {
 
       <section className={`${expandedTask ? "unfocussed" : ""}`}>
         <h3>Urgent tasks</h3>
+        <p>
+          These tasks have fewer than {user.thresholdHours} hours remaining
+          until they are due.
+        </p>
         {urgentTasks.length === 0 ? (
           <p className="no-tasks-message">
             {user.tasks.length === 0
@@ -88,10 +91,6 @@ const Dashboard = () => {
           </p>
         ) : (
           <>
-            <p>
-              These tasks have fewer than {user.thresholdHours} hours remaining
-              until they are due.
-            </p>
             <div className="task-list">
               {urgentTasks.map((task) => {
                 return (
@@ -119,6 +118,10 @@ const Dashboard = () => {
 
       <section className={`${expandedTask ? "unfocussed" : ""}`}>
         <h3>Upcoming tasks</h3>
+        <p>
+          These tasks have more than {user.thresholdHours} hours remaining until
+          they are due.
+        </p>
         {upcomingTasks.length === 0 ? (
           <p className="no-tasks-message">
             {user.tasks.length === 0
@@ -127,10 +130,6 @@ const Dashboard = () => {
           </p>
         ) : (
           <>
-            <p>
-              These tasks have more than {user.thresholdHours} hours remaining
-              until they are due.
-            </p>
             <div className="task-list">
               {upcomingTasks.map((task) => {
                 return (
