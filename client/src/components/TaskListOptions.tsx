@@ -1,6 +1,9 @@
 import React from "react";
 import { FloatingLabel, Form } from "react-bootstrap";
+import { Tag } from "react-tag-autocomplete";
 import { Task } from "../taskUtils";
+import { User } from "./Account";
+import TagSelector from "./TagSelector";
 
 type TaskListOptionsProps = {
   expandedTask: Task | null;
@@ -20,6 +23,11 @@ type TaskListOptionsProps = {
   setMaximumPriority: React.Dispatch<number>;
   searchText: string;
   setSearchText: React.Dispatch<string>;
+  user: User;
+  tags: Tag[];
+  setTags: React.Dispatch<Tag[]>;
+  suggestions: Tag[];
+  setSuggestions: React.Dispatch<Tag[]>;
 };
 
 const TaskListOptions = ({
@@ -40,6 +48,11 @@ const TaskListOptions = ({
   setMaximumPriority,
   searchText,
   setSearchText,
+  user,
+  tags,
+  setTags,
+  suggestions,
+  setSuggestions,
 }: TaskListOptionsProps) => {
   const handleMinimumPriorityChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -107,7 +120,10 @@ const TaskListOptions = ({
             onChange={handleMaximumPriorityChange}
           />
         </FloatingLabel>
-        <FloatingLabel label="Search tasks" className="mb-3 w-100">
+        <FloatingLabel
+          label="Search in title/description"
+          className="mb-3 w-100"
+        >
           <Form.Control
             type="search"
             placeholder="Search tasks"
@@ -116,6 +132,15 @@ const TaskListOptions = ({
             onChange={(e) => setSearchText(e.target.value)}
           />
         </FloatingLabel>
+        <TagSelector
+          user={user}
+          tags={tags}
+          setTags={setTags}
+          suggestions={suggestions}
+          setSuggestions={setSuggestions}
+          allowNew={false}
+          placeholderText="Search by tags"
+        />
       </div>
     </div>
   );

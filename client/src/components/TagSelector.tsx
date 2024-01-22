@@ -8,6 +8,8 @@ type TagSelectorProps = {
   setTags: React.Dispatch<Tag[]>;
   suggestions: Tag[];
   setSuggestions: React.Dispatch<Tag[]>;
+  allowNew: boolean;
+  placeholderText: string;
 };
 
 const TagSelector = ({
@@ -16,6 +18,8 @@ const TagSelector = ({
   setTags,
   suggestions,
   setSuggestions,
+  allowNew,
+  placeholderText
 }: TagSelectorProps) => {
   const onAdd = useCallback(
     (newTag: Tag) => {
@@ -47,8 +51,8 @@ const TagSelector = ({
       suggestions={suggestions}
       onAdd={onAdd}
       onDelete={onDelete}
-      placeholderText="Tags (optional)"
-      allowNew
+      placeholderText={placeholderText}
+      allowNew={allowNew}
       allowBackspace={false}
       newOptionText="Create new tag: %value%"
     />

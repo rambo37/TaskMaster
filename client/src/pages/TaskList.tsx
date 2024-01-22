@@ -6,6 +6,8 @@ import { getTaskStatus, Task } from "../taskUtils";
 import TaskListSettings from "../components/TaskListSettings";
 import TaskListOptions from "../components/TaskListOptions";
 import TaskListSortingControls from "../components/TaskListSortingControls";
+import { Tag } from "react-tag-autocomplete";
+import { stringArrayToTagArray, tagArrayToStringArray } from "../utils";
 
 // Records the sorting criterion.
 export enum SortCriteria {
@@ -45,6 +47,10 @@ const TaskList = () => {
   const [maximumPriority, setMaximumPriority] = useState(5);
   const [expandedTask, setExpandedTask] = useState<Task | null>(null);
   const [searchText, setSearchText] = useState("");
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [suggestions, setSuggestions] = useState<Tag[]>(
+    stringArrayToTagArray(user.tags)
+  );
   const [showSettings, setShowSettings] = useState(false);
   const [thresholdHours, setThresholdHours] = useState(user.thresholdHours);
   const [selectedDateFormat, setSelectedDateFormat] = useState(user.dateFormat);
@@ -75,7 +81,8 @@ const TaskList = () => {
         // be shown even though it should (as showUnspecifiedPriority is true).
         (isUnspecifiedPriority || task.priority >= minimumPriority) &&
         (isUnspecifiedPriority || task.priority <= maximumPriority) &&
-        taskContainsSearchText(task)
+        taskContainsSearchText(task) &&
+        taskContainsAllSelectedTags(task)
       );
     });
 
@@ -112,6 +119,7 @@ const TaskList = () => {
     minimumPriority,
     maximumPriority,
     searchText,
+    tags,
     selectedSortCriterion,
     selectedSortOrder,
   ]);
@@ -130,6 +138,11 @@ const TaskList = () => {
       task.title.toLowerCase().includes(searchText.toLowerCase()) ||
       task.description.toLowerCase().includes(searchText.toLowerCase())
     );
+  };
+
+  const taskContainsAllSelectedTags = (task: Task) => {
+    if (!tags.length) return true;
+    return tagArrayToStringArray(tags).every((tag) => task.tags.includes(tag));
   };
 
   const handleSortCriteriaChange = (sortCriterion: string) => {
@@ -182,6 +195,11 @@ const TaskList = () => {
         setMaximumPriority={setMaximumPriority}
         searchText={searchText}
         setSearchText={setSearchText}
+        user={user}
+        tags={tags}
+        setTags={setTags}
+        suggestions={suggestions}
+        setSuggestions={setSuggestions}
       />
       {showLegend && <Legend />}
       <div className={`task-list-wrapper ${expandedTask ? "unfocussed" : ""}`}>

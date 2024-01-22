@@ -15,6 +15,10 @@
   padding-top: 20px;
   padding-bottom: 20px;
   border-top: 1px solid var(--dark-gray);
+}
+
+.dashboard section > h3,
+.dashboard section > p {
   text-align: center;
 }
 

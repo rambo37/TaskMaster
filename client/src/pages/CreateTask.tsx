@@ -166,6 +166,8 @@ const CreateTask = () => {
           setTags={setTags}
           suggestions={suggestions}
           setSuggestions={setSuggestions}
+          allowNew
+          placeholderText="Tags (optional)"
         />
         <input
           type="submit"

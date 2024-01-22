@@ -224,6 +224,8 @@ const EditTask = () => {
           setTags={setTags}
           suggestions={suggestions}
           setSuggestions={setSuggestions}
+          allowNew
+          placeholderText="Tags (optional)"
         />
         <FloatingLabel label="Task status">
           <Form.Select
