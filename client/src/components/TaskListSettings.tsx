@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FloatingLabel, Form } from "react-bootstrap";
+import { FloatingLabel, Form, InputGroup } from "react-bootstrap";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { Task } from "../taskUtils";
@@ -37,6 +37,7 @@ const TaskListSettings = ({
 }: TaskListSettingsProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showHelp, setShowHelp] = useState(false);
 
   // Update the unsavedChanges state variable in the Layout component
   // whenever the settings are changed so that the user will be warned
@@ -98,15 +99,34 @@ const TaskListSettings = ({
       className={`task-list-page-settings ${expandedTask ? "unfocussed" : ""}`}
     >
       <h4>Settings</h4>
-      <FloatingLabel label="Threshold hours">
-        <Form.Control
-          type="number"
-          placeholder="Threshold hours"
-          min={0}
-          value={thresholdHours}
-          onChange={(e) => setThresholdHours(Number(e.target.value))}
-        />
-      </FloatingLabel>
+      <InputGroup className={`${showHelp ? "help-visible" : ""}`}>
+        <FloatingLabel label="Urgency threshold (hours)">
+          <Form.Control
+            type="number"
+            placeholder="Urgency threshold (hours)"
+            min={0}
+            value={thresholdHours}
+            onChange={(e) => setThresholdHours(Number(e.target.value))}
+          />
+        </FloatingLabel>
+        <InputGroup.Text>
+          <i
+            className="bi bi-question-circle-fill"
+            onClick={() => {
+              setShowHelp(!showHelp);
+            }}
+          ></i>
+        </InputGroup.Text>
+      </InputGroup>
+      {showHelp && (
+        <div className="help-div">
+          Determines the point at which a task changes from being labeled as
+          'Upcoming' to being labeled as 'Urgent'. Tasks with less than the
+          specified number of hours remaining until their due date will be
+          labeled as 'Urgent', while those with more than that number of hours
+          remaining will be labeled as 'Upcoming'.
+        </div>
+      )}
       <FloatingLabel label="Date format">
         <Form.Select
           value={selectedDateFormat}
