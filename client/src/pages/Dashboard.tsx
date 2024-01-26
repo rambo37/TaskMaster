@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Accordion } from "react-bootstrap";
 import { useAccountContext } from "../components/Account";
 import TaskCard from "../components/TaskCard";
 import { getTaskStatus, Task } from "../taskUtils";
@@ -39,121 +40,132 @@ const Dashboard = () => {
     <div className="dashboard">
       <h1>Welcome, {user.name || user.email}!</h1>
 
-      <section className={`${expandedTask ? "unfocussed" : ""}`}>
-        <h3>Expired tasks</h3>
-        <p>
-          These tasks passed their due date without being marked as completed.
-        </p>
-        {expiredTasks.length === 0 ? (
-          <p className="no-tasks-message">
-            {user.tasks.length === 0
-              ? "You do not have any tasks yet."
-              : "You do not have any expired tasks."}
-          </p>
-        ) : (
-          <>
-            <div className="task-list">
-              {expiredTasks.map((task) => {
-                return (
-                  <TaskCard
-                    user={user}
-                    setUser={setUser}
-                    task={task}
-                    key={task._id}
-                    thresholdHours={user.thresholdHours}
-                    expanded={false}
-                    handleClick={() => updateExpandedTask(task)}
-                    setExpandedTask={setExpandedTask}
-                    selectedDateFormat={user.dateFormat}
-                    selectedTimeFormat={user.timeFormat}
-                    checkAndWarnForUnsavedChanges={
-                      checkAndWarnForUnsavedChanges
-                    }
-                  />
-                );
-              })}
-            </div>
-          </>
-        )}
-      </section>
-
-      <section className={`${expandedTask ? "unfocussed" : ""}`}>
-        <h3>Urgent tasks</h3>
-        <p>
-          These tasks have fewer than {user.thresholdHours} hours remaining
-          until they are due.
-        </p>
-        {urgentTasks.length === 0 ? (
-          <p className="no-tasks-message">
-            {user.tasks.length === 0
-              ? "You do not have any tasks yet."
-              : "You do not have any urgent tasks."}
-          </p>
-        ) : (
-          <>
-            <div className="task-list">
-              {urgentTasks.map((task) => {
-                return (
-                  <TaskCard
-                    user={user}
-                    setUser={setUser}
-                    task={task}
-                    key={task._id}
-                    thresholdHours={user.thresholdHours}
-                    expanded={false}
-                    handleClick={() => updateExpandedTask(task)}
-                    setExpandedTask={setExpandedTask}
-                    selectedDateFormat={user.dateFormat}
-                    selectedTimeFormat={user.timeFormat}
-                    checkAndWarnForUnsavedChanges={
-                      checkAndWarnForUnsavedChanges
-                    }
-                  />
-                );
-              })}
-            </div>
-          </>
-        )}
-      </section>
-
-      <section className={`${expandedTask ? "unfocussed" : ""}`}>
-        <h3>Upcoming tasks</h3>
-        <p>
-          These tasks have more than {user.thresholdHours} hours remaining until
-          they are due.
-        </p>
-        {upcomingTasks.length === 0 ? (
-          <p className="no-tasks-message">
-            {user.tasks.length === 0
-              ? "You do not have any tasks yet."
-              : "You do not have any upcoming tasks."}
-          </p>
-        ) : (
-          <>
-            <div className="task-list">
-              {upcomingTasks.map((task) => {
-                return (
-                  <TaskCard
-                    user={user}
-                    setUser={setUser}
-                    task={task}
-                    key={task._id}
-                    thresholdHours={user.thresholdHours}
-                    expanded={false}
-                    handleClick={() => updateExpandedTask(task)}
-                    setExpandedTask={setExpandedTask}
-                    selectedDateFormat={user.dateFormat}
-                    selectedTimeFormat={user.timeFormat}
-                    checkAndWarnForUnsavedChanges={
-                      checkAndWarnForUnsavedChanges
-                    }
-                  />
-                );
-              })}
-            </div>
-          </>
-        )}
-      </section>
+      <Accordion
+        defaultActiveKey={["0", "1", "2"]}
+        alwaysOpen
+        className={`${expandedTask ? "unfocussed" : ""}`}
+      >
+        <Accordion.Item eventKey="0">
+          <Accordion.Header>Expired tasks</Accordion.Header>
+          <Accordion.Body>
+            <p>
+              These tasks passed their due date without being marked as
+              completed.
+            </p>
+            {expiredTasks.length === 0 ? (
+              <p className="no-tasks-message">
+                {user.tasks.length === 0
+                  ? "You do not have any tasks yet."
+                  : "You do not have any expired tasks."}
+              </p>
+            ) : (
+              <>
+                <div className="task-list">
+                  {expiredTasks.map((task) => {
+                    return (
+                      <TaskCard
+                        user={user}
+                        setUser={setUser}
+                        task={task}
+                        key={task._id}
+                        thresholdHours={user.thresholdHours}
+                        expanded={false}
+                        handleClick={() => updateExpandedTask(task)}
+                        setExpandedTask={setExpandedTask}
+                        selectedDateFormat={user.dateFormat}
+                        selectedTimeFormat={user.timeFormat}
+                        checkAndWarnForUnsavedChanges={
+                          checkAndWarnForUnsavedChanges
+                        }
+                      />
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </Accordion.Body>
+        </Accordion.Item>
+        <Accordion.Item eventKey="1">
+          <Accordion.Header>Urgent tasks</Accordion.Header>
+          <Accordion.Body>
+            <p>
+              These tasks have fewer than {user.thresholdHours} hours remaining
+              until they are due.
+            </p>
+            {urgentTasks.length === 0 ? (
+              <p className="no-tasks-message">
+                {user.tasks.length === 0
+                  ? "You do not have any tasks yet."
+                  : "You do not have any urgent tasks."}
+              </p>
+            ) : (
+              <>
+                <div className="task-list">
+                  {urgentTasks.map((task) => {
+                    return (
+                      <TaskCard
+                        user={user}
+                        setUser={setUser}
+                        task={task}
+                        key={task._id}
+                        thresholdHours={user.thresholdHours}
+                        expanded={false}
+                        handleClick={() => updateExpandedTask(task)}
+                        setExpandedTask={setExpandedTask}
+                        selectedDateFormat={user.dateFormat}
+                        selectedTimeFormat={user.timeFormat}
+                        checkAndWarnForUnsavedChanges={
+                          checkAndWarnForUnsavedChanges
+                        }
+                      />
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </Accordion.Body>
+        </Accordion.Item>
+        <Accordion.Item eventKey="2">
+          <Accordion.Header>Upcoming tasks</Accordion.Header>
+          <Accordion.Body>
+            <p>
+              These tasks have more than {user.thresholdHours} hours remaining
+              until they are due.
+            </p>
+            {upcomingTasks.length === 0 ? (
+              <p className="no-tasks-message">
+                {user.tasks.length === 0
+                  ? "You do not have any tasks yet."
+                  : "You do not have any upcoming tasks."}
+              </p>
+            ) : (
+              <>
+                <div className="task-list">
+                  {upcomingTasks.map((task) => {
+                    return (
+                      <TaskCard
+                        user={user}
+                        setUser={setUser}
+                        task={task}
+                        key={task._id}
+                        thresholdHours={user.thresholdHours}
+                        expanded={false}
+                        handleClick={() => updateExpandedTask(task)}
+                        setExpandedTask={setExpandedTask}
+                        selectedDateFormat={user.dateFormat}
+                        selectedTimeFormat={user.timeFormat}
+                        checkAndWarnForUnsavedChanges={
+                          checkAndWarnForUnsavedChanges
+                        }
+                      />
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </Accordion.Body>
+        </Accordion.Item>
+      </Accordion>
 
       {expandedTask && (
         <TaskCard
