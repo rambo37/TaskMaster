@@ -7,6 +7,36 @@
   pointer-events: none;
 }
 
+.dashboard > .button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.dashboard > .button-container > button:first-of-type {
+  margin-right: 10px;
+}
+
+.dashboard > .button-container > button {
+  padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+  background-color: var(--bs-body-bg);
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+}
+
+.expand-all {
+  --down-arrow: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e);
+  background-image: var(--down-arrow);
+}
+
+.collapse-all {
+  --up-arrow: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' style='transform: rotate%28180deg%29'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e);
+  background-image: var(--up-arrow);
+}
+
 .accordion {
   --bs-accordion-active-bg: var(--primary-color);
 }

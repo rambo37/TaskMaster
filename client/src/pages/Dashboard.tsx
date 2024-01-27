@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Accordion } from "react-bootstrap";
 import { useAccountContext } from "../components/Account";
 import TaskCard from "../components/TaskCard";
@@ -11,6 +11,7 @@ const Dashboard = () => {
   const upcomingTasks: Task[] = [];
   const urgentTasks: Task[] = [];
   const expiredTasks: Task[] = [];
+  const [activeKeys, setActiveKeys] = useState(["0", "1", "2"]);
 
   // Populate and sort the task arrays by due date (ascending)
   tasks.forEach((task) => {
@@ -36,17 +37,48 @@ const Dashboard = () => {
     if (!expandedTask) setExpandedTask(task);
   };
 
+  const handleExpand = () => {
+    setActiveKeys(["0", "1", "2"]);
+  };
+
+  const handleCollapse = () => {
+    setActiveKeys([]);
+  };
+
+  const handleToggle = (key: string) => {
+    let newActiveKeys;
+    if (activeKeys.includes(key)) {
+      // Exclude the given key if it was already in the list of active keys
+      newActiveKeys = activeKeys.filter((activeKey) => activeKey !== key);
+    } else {
+      // Else append the given key to the list of active keys
+      newActiveKeys = activeKeys.slice();
+      newActiveKeys.push(key);
+    }
+    setActiveKeys(newActiveKeys);
+  };
+
   return (
     <div className="dashboard">
       <h1>Welcome, {user.name || user.email}!</h1>
-
+      <div className="button-container">
+        <button onClick={handleExpand} className="expand-all">
+          Expand all
+        </button>
+        <button onClick={handleCollapse} className="collapse-all">
+          Collapse all
+        </button>
+      </div>
       <Accordion
-        defaultActiveKey={["0", "1", "2"]}
+        defaultActiveKey={activeKeys}
+        activeKey={activeKeys}
         alwaysOpen
         className={`${expandedTask ? "unfocussed" : ""}`}
       >
         <Accordion.Item eventKey="0">
-          <Accordion.Header>Expired tasks</Accordion.Header>
+          <Accordion.Header onClick={() => handleToggle("0")}>
+            Expired tasks
+          </Accordion.Header>
           <Accordion.Body>
             <p>
               These tasks passed their due date without being marked as
@@ -86,7 +118,9 @@ const Dashboard = () => {
           </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item eventKey="1">
-          <Accordion.Header>Urgent tasks</Accordion.Header>
+          <Accordion.Header onClick={() => handleToggle("1")}>
+            Urgent tasks
+          </Accordion.Header>
           <Accordion.Body>
             <p>
               These tasks have fewer than {user.thresholdHours} hours remaining
@@ -126,7 +160,9 @@ const Dashboard = () => {
           </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item eventKey="2">
-          <Accordion.Header>Upcoming tasks</Accordion.Header>
+          <Accordion.Header onClick={() => handleToggle("2")}>
+            Upcoming tasks
+          </Accordion.Header>
           <Accordion.Body>
             <p>
               These tasks have more than {user.thresholdHours} hours remaining
