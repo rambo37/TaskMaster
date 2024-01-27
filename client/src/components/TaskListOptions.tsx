@@ -70,6 +70,18 @@ const TaskListOptions = ({
       setMaximumPriority(newValue);
   };
 
+  const resetSearchOptions = () => {
+    setShowCompleted(true);
+    setShowUpcoming(true);
+    setShowUrgent(true);
+    setShowExpired(true);
+    setShowUnspecifiedPriority(true);
+    setMinimumPriority(1);
+    setMaximumPriority(5);
+    setSearchText("");
+    setTags([]);
+  };
+
   return (
     <div className={`task-list-options ${expandedTask ? "unfocussed" : ""}`}>
       <h4>Search options</h4>
@@ -141,6 +153,9 @@ const TaskListOptions = ({
           allowNew={false}
           placeholderText="Search by tags"
         />
+        <button className="submit-button" onClick={resetSearchOptions}>
+          Reset search options
+        </button>
       </div>
     </div>
   );
