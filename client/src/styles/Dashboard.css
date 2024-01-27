@@ -9,7 +9,13 @@
 
 .accordion {
   --bs-accordion-active-bg: var(--primary-color);
-  --bs-accordion-border-color: var(--dark-gray);
+}
+
+.accordion .collapse:not(.show) {
+  display: block;
+  height: 0px;
+  overflow: hidden;
+  visibility: hidden;
 }
 
 .accordion > .accordion-item > .accordion-header > button:focus {
