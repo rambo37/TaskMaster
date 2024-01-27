@@ -96,7 +96,7 @@ const Dashboard = () => {
       >
         {taskSections.map((taskSection, index) => {
           return (
-            <Accordion.Item eventKey={String(index)}>
+            <Accordion.Item eventKey={String(index)} key={taskSection.type}>
               <Accordion.Header onClick={() => handleToggle(String(index))}>
                 {`${taskSection.type} tasks`}
               </Accordion.Header>
