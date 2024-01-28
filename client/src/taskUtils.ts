@@ -3,14 +3,14 @@ export interface Task {
   description: string;
   dueDate: string;
   priority: number;
-  completed: boolean;
+  status: string;
   _id: string;
   tags: string[];
 }
 
 export const getTaskStatus = (task: Task, thresholdHours: number) => {
   let status = "upcoming";
-  if (task.completed) {
+  if (task.status === "Completed") {
     status = "completed";
   } else {
     const currentDate = new Date().valueOf();

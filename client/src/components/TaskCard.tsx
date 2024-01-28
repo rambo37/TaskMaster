@@ -147,9 +147,7 @@ const TaskCard = ({
             <p>{`Priority: ${
               task.priority === -1 ? "Unspecified." : task.priority
             }`}</p>
-            <p>{`Status: ${
-              task.completed ? "Completed" : "Not completed"
-            }.`}</p>
+            <p>{`Status: ${task.status}.`}</p>
             {task.tags.length ? (
               <div className="tags-wrapper">
                 <div>{"Tags: "}</div>

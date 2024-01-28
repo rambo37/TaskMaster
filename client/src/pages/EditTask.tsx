@@ -23,11 +23,9 @@ const EditTask = () => {
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState(-1);
-  const [selectedOption, setSelectedOption] = useState("");
+  const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const statusCompleted = "Completed";
-  const statusNotCompleted = "Not completed";
   const [tags, setTags] = useState<Tag[]>([]);
   const [suggestions, setSuggestions] = useState<Tag[]>(
     stringArrayToTagArray(user.tags)
@@ -42,9 +40,7 @@ const EditTask = () => {
         setPriority(userTask.priority);
         setDueDate(userTask.dueDate.slice(0, -1));
         setTags(stringArrayToTagArray(userTask.tags));
-        setSelectedOption(
-          userTask.completed ? statusCompleted : statusNotCompleted
-        );
+        setStatus(userTask.status);
       }
     });
   }, []);
@@ -55,7 +51,7 @@ const EditTask = () => {
   useEffect(() => {
     if (!task) return;
     setUnsavedChanges(taskHasChanges());
-  }, [title, description, dueDate, priority, tags, selectedOption]);
+  }, [title, description, dueDate, priority, tags, status]);
 
   if (!task) {
     return (
@@ -82,11 +78,7 @@ const EditTask = () => {
     )
       return true;
 
-    return task.completed !== updatedTaskIsCompleted();
-  };
-
-  const updatedTaskIsCompleted = () => {
-    return selectedOption === statusCompleted;
+    return task.status !== status;
   };
 
   const handleTaskUpdateSubmit = async (e: React.MouseEvent) => {
@@ -121,7 +113,7 @@ const EditTask = () => {
         dueDate: date,
         priority: priority,
         tags: tagArrayToStringArray(tags),
-        completed: updatedTaskIsCompleted(),
+        status: status,
       };
 
       const response = await axios.patch(
@@ -229,12 +221,13 @@ const EditTask = () => {
         />
         <FloatingLabel label="Task status">
           <Form.Select
-            value={selectedOption}
-            onChange={(e) => setSelectedOption(e.target.value)}
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
             className="max-width-input"
           >
-            <option>{statusCompleted}</option>
-            <option>{statusNotCompleted}</option>
+            <option>{"Completed"}</option>
+            <option>{"In progress"}</option>
+            <option>{"Not started"}</option>
           </Form.Select>
         </FloatingLabel>
         <input

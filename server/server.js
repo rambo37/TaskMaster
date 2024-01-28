@@ -600,7 +600,7 @@ app.post("/users/:userId/tasks/", authMiddleware, async (req, res) => {
       dueDate: dueDate,
       priority: priority,
       tags: tags,
-      completed: false,
+      status: "Not started",
       user: req.params.userId,
     });
 
