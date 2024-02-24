@@ -42,14 +42,7 @@
 
 .task-card .title-div i:hover {
   cursor: pointer;
-}
-
-.bi-pencil:hover {
-  border-bottom: 2px solid blue;
-}
-
-.bi-trash:hover {
-  border-bottom: 2px solid red;
+  border-bottom: 2px solid black;
 }
 
 .task-card .content-div button {
