@@ -7,6 +7,7 @@ type SettingsPageSectionProps = {
   user: User;
   setUser: React.Dispatch<User>;
   setSignedIn: React.Dispatch<boolean>;
+  setUnsavedChanges: React.Dispatch<boolean>;
 };
 
 export type ContentProps = {
@@ -15,13 +16,15 @@ export type ContentProps = {
   user: User;
   setUser: React.Dispatch<User>;
   setSignedIn: React.Dispatch<boolean>;
+  setUnsavedChanges: React.Dispatch<boolean>;
 };
 
 const SettingsPageSection = ({
   Content,
   user,
   setUser,
-  setSignedIn
+  setSignedIn,
+  setUnsavedChanges,
 }: SettingsPageSectionProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -34,6 +37,7 @@ const SettingsPageSection = ({
         user={user}
         setUser={setUser}
         setSignedIn={setSignedIn}
+        setUnsavedChanges={setUnsavedChanges}
       />
       {loading && (
         <div style={{ textAlign: "center" }}>

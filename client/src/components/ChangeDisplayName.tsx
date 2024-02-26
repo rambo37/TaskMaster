@@ -39,7 +39,7 @@ const ChangeDisplayName = ({
 
   return (
     <>
-      <h3>Set display name</h3>
+      <h3>Change display name</h3>
       <p>Your current display name is: {user.name ? user.name : user.email}</p>
       <FloatingLabel label="Display name" className="mb-3">
         <Form.Control

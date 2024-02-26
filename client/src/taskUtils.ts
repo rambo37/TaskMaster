@@ -28,3 +28,26 @@ export const getTaskStatus = (task: Task, thresholdHours: number) => {
   }
   return status;
 };
+
+export const getDateTimeString = (
+  dueDate: string,
+  selectedTimeFormat: string,
+  selectedDateFormat: string
+) => {
+  const date = new Date(dueDate);
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: selectedTimeFormat === "12 hours" ? true : false,
+  };
+
+  if (selectedDateFormat === "Written") {
+    options.weekday = "long";
+    options.month = "long";
+  }
+
+  return date.toLocaleString(undefined, options);
+};

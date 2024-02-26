@@ -13,11 +13,6 @@
   margin: auto;
 }
 
-.task-list-page > .heading-div > button {
-  position: absolute;
-  right: 5%;
-}
-
 .task-list-wrapper {
   margin-top: 50px;
 }
@@ -47,12 +42,6 @@
 @media only screen and (max-width: 768px) {
   .task-list-page > .heading-div {
     justify-content: space-between;
-  }
-
-  .task-list-page > .heading-div > button {
-    margin-right: 0;
-    position: initial;
-    right: initial;
   }
 
   .task-list {

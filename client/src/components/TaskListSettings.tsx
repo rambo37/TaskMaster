@@ -1,43 +1,22 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FloatingLabel, Form, InputGroup } from "react-bootstrap";
-import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
-import { Task } from "../taskUtils";
-import { User } from "./Account";
-
-type TaskListSettingsProps = {
-  user: User;
-  setUser: React.Dispatch<User>;
-  expandedTask: Task | null;
-  showLegend: boolean;
-  setShowLegend: React.Dispatch<boolean>;
-  thresholdHours: number;
-  setThresholdHours: React.Dispatch<number>;
-  selectedDateFormat: string;
-  setSelectedDateFormat: React.Dispatch<string>;
-  selectedTimeFormat: string;
-  setSelectedTimeFormat: React.Dispatch<string>;
-  setUnsavedChanges: React.Dispatch<boolean>;
-};
+import { getDateTimeString } from "../taskUtils";
+import { ContentProps } from "./SettingsPageSection";
 
 const TaskListSettings = ({
+  setLoading,
+  setError,
   user,
   setUser,
-  expandedTask,
-  showLegend,
-  setShowLegend,
-  thresholdHours,
-  setThresholdHours,
-  selectedDateFormat,
-  setSelectedDateFormat,
-  selectedTimeFormat,
-  setSelectedTimeFormat,
   setUnsavedChanges,
-}: TaskListSettingsProps) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+}: ContentProps) => {
   const [showHelp, setShowHelp] = useState(false);
+  const [thresholdHours, setThresholdHours] = useState(user.thresholdHours);
+  const [selectedDateFormat, setSelectedDateFormat] = useState(user.dateFormat);
+  const [selectedTimeFormat, setSelectedTimeFormat] = useState(user.timeFormat);
+  const [showLegend, setShowLegend] = useState(user.showLegend);
 
   // Update the unsavedChanges state variable in the Layout component
   // whenever the settings are changed so that the user will be warned
@@ -95,10 +74,8 @@ const TaskListSettings = ({
   };
 
   return (
-    <div
-      className={`task-list-page-settings ${expandedTask ? "unfocussed" : ""}`}
-    >
-      <h4>Settings</h4>
+    <div className="task-settings">
+      <h3>Task settings</h3>
       <InputGroup className={`${showHelp ? "help-visible" : ""}`}>
         <FloatingLabel label="Urgency threshold (hours)">
           <Form.Control
@@ -154,18 +131,21 @@ const TaskListSettings = ({
           <option value="false">No</option>
         </Form.Select>
       </FloatingLabel>
+      <p>
+        Example date and time with selected settings:
+        <br />
+        {getDateTimeString(
+          new Date().toString(),
+          selectedTimeFormat,
+          selectedDateFormat
+        )}
+      </p>
       <button
         className="submit-button"
         onClick={(e) => handleSettingsSaveSubmit(e)}
       >
-        Save settings
+        Save task settings
       </button>
-      {loading && (
-        <div style={{ textAlign: "center" }}>
-          <ClipLoader />
-        </div>
-      )}
-      {error && <div className="status error">{error}</div>}
     </div>
   );
 };

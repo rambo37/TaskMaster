@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { User } from "./Account";
-import { getTaskStatus, Task } from "../taskUtils";
+import { getDateTimeString, getTaskStatus, Task } from "../taskUtils";
 
 type TaskCardProps = {
   user: User;
@@ -94,25 +94,6 @@ const TaskCard = ({
 
   const status = getTaskStatus(task, thresholdHours);
 
-  const getDateTimeString = () => {
-    const date = new Date(task.dueDate);
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: selectedTimeFormat === "12 hours" ? true : false,
-    };
-
-    if (selectedDateFormat === "Written") {
-      options.weekday = "long";
-      options.month = "long";
-    }
-
-    return date.toLocaleString(undefined, options);
-  };
-
   return (
     <div
       className={`task-card ${status} ${expanded ? "expanded" : ""}`}
@@ -143,7 +124,14 @@ const TaskCard = ({
             <p className="description">
               {task.description || "No description provided."}
             </p>
-            <p>Due: {getDateTimeString()}</p>
+            <p>
+              Due:{" "}
+              {getDateTimeString(
+                task.dueDate,
+                selectedTimeFormat,
+                selectedDateFormat
+              )}
+            </p>
             <p>{`Priority: ${
               task.priority === -1 ? "Unspecified." : task.priority
             }`}</p>

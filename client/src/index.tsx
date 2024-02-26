@@ -8,7 +8,7 @@ import "./styles/TaskPage.css";
 import "./styles/TaskList.css";
 import "./styles/TaskCard.css";
 import "./styles/Legend.css";
-import "./styles/TaskListSettings.css";
+import "./styles/TaskSettings.css";
 import "./styles/TaskListOptions.css";
 import "./styles/TaskListSortingControls.css";
 import "./styles/Dashboard.css";

@@ -3,7 +3,6 @@ import { useAccountContext } from "../components/Account";
 import Legend from "../components/Legend";
 import TaskCard from "../components/TaskCard";
 import { getTaskStatus, Task } from "../taskUtils";
-import TaskListSettings from "../components/TaskListSettings";
 import TaskListOptions from "../components/TaskListOptions";
 import TaskListSortingControls from "../components/TaskListSortingControls";
 import { Tag } from "react-tag-autocomplete";
@@ -35,8 +34,7 @@ const getSortOrderEnumValue = (sortOrder: string) => {
 };
 
 const TaskList = () => {
-  const { user, setUser, setUnsavedChanges, checkAndWarnForUnsavedChanges } =
-    useAccountContext();
+  const { user, setUser, checkAndWarnForUnsavedChanges } = useAccountContext();
   const [tasks, setTasks] = useState(user.tasks);
   const [showCompleted, setShowCompleted] = useState(true);
   const [showUpcoming, setShowUpcoming] = useState(true);
@@ -51,11 +49,6 @@ const TaskList = () => {
   const [suggestions, setSuggestions] = useState<Tag[]>(
     stringArrayToTagArray(user.tags)
   );
-  const [showSettings, setShowSettings] = useState(false);
-  const [thresholdHours, setThresholdHours] = useState(user.thresholdHours);
-  const [selectedDateFormat, setSelectedDateFormat] = useState(user.dateFormat);
-  const [selectedTimeFormat, setSelectedTimeFormat] = useState(user.timeFormat);
-  const [showLegend, setShowLegend] = useState(user.showLegend);
   const [selectedSortCriterion, setSelectedSortCriterion] = useState(
     SortCriteria.dateAdded
   );
@@ -63,7 +56,7 @@ const TaskList = () => {
 
   const filterAndSortTasks = useCallback(() => {
     const newTasks = user.tasks.filter((task) => {
-      const taskStatus = getTaskStatus(task, thresholdHours);
+      const taskStatus = getTaskStatus(task, user.thresholdHours);
       const isCompleted = taskStatus === "completed";
       const isUpcoming = taskStatus === "upcoming";
       const isUrgent = taskStatus === "urgent";
@@ -110,7 +103,7 @@ const TaskList = () => {
     setTasks(newTasks);
   }, [
     user.tasks,
-    thresholdHours,
+    user.thresholdHours,
     showCompleted,
     showUpcoming,
     showUrgent,
@@ -159,24 +152,7 @@ const TaskList = () => {
     <div className="task-list-page">
       <div className={`heading-div ${expandedTask ? "unfocussed" : ""}`}>
         <h1>Tasks</h1>
-        <button onClick={() => setShowSettings(!showSettings)}>Settings</button>
       </div>
-      {showSettings && (
-        <TaskListSettings
-          user={user}
-          setUser={setUser}
-          expandedTask={expandedTask}
-          showLegend={showLegend}
-          setShowLegend={setShowLegend}
-          thresholdHours={thresholdHours}
-          setThresholdHours={setThresholdHours}
-          selectedDateFormat={selectedDateFormat}
-          setSelectedDateFormat={setSelectedDateFormat}
-          selectedTimeFormat={selectedTimeFormat}
-          setSelectedTimeFormat={setSelectedTimeFormat}
-          setUnsavedChanges={setUnsavedChanges}
-        />
-      )}
       <TaskListOptions
         expandedTask={expandedTask}
         showCompleted={showCompleted}
@@ -201,7 +177,7 @@ const TaskList = () => {
         suggestions={suggestions}
         setSuggestions={setSuggestions}
       />
-      {showLegend && <Legend />}
+      {user.showLegend && <Legend />}
       <div className={`task-list-wrapper ${expandedTask ? "unfocussed" : ""}`}>
         <TaskListSortingControls
           selectedSortCriterion={selectedSortCriterion}
@@ -224,12 +200,12 @@ const TaskList = () => {
                   setUser={setUser}
                   task={task}
                   key={task._id}
-                  thresholdHours={thresholdHours}
+                  thresholdHours={user.thresholdHours}
                   expanded={false}
                   handleClick={() => updateExpandedTask(task)}
                   setExpandedTask={setExpandedTask}
-                  selectedDateFormat={selectedDateFormat}
-                  selectedTimeFormat={selectedTimeFormat}
+                  selectedDateFormat={user.dateFormat}
+                  selectedTimeFormat={user.timeFormat}
                   checkAndWarnForUnsavedChanges={checkAndWarnForUnsavedChanges}
                 />
               );
@@ -242,12 +218,12 @@ const TaskList = () => {
           user={user}
           setUser={setUser}
           task={expandedTask}
-          thresholdHours={thresholdHours}
+          thresholdHours={user.thresholdHours}
           expanded={true}
           handleClick={() => updateExpandedTask(expandedTask)}
           setExpandedTask={setExpandedTask}
-          selectedDateFormat={selectedDateFormat}
-          selectedTimeFormat={selectedTimeFormat}
+          selectedDateFormat={user.dateFormat}
+          selectedTimeFormat={user.timeFormat}
           checkAndWarnForUnsavedChanges={checkAndWarnForUnsavedChanges}
         />
       )}
