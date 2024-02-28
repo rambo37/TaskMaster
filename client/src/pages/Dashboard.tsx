@@ -189,33 +189,34 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       <h1>Welcome, {user.name || user.email}!</h1>
-
-      <Carousel className="carousel-root" data-bs-theme="dark">
-        <Carousel.Item>
-          <div className="chart-container">
-            <Doughnut data={taskStatusData} />
-          </div>
-          <Carousel.Caption>
-            <h3>Tasks by status</h3>
-          </Carousel.Caption>
-        </Carousel.Item>
-        <Carousel.Item>
-          <div className="chart-container">
-            <Doughnut data={taskPriorityData} />
-          </div>
-          <Carousel.Caption>
-            <h3>Tasks by priority</h3>
-          </Carousel.Caption>
-        </Carousel.Item>
-        <Carousel.Item>
-          <div className="chart-container">
-            <Doughnut data={taskProgressData} />
-          </div>
-          <Carousel.Caption>
-            <h3>Tasks by progress</h3>
-          </Carousel.Caption>
-        </Carousel.Item>
-      </Carousel>
+      {user.tasks.length > 0 && (
+        <Carousel className="carousel-root" data-bs-theme="dark">
+          <Carousel.Item>
+            <div className="chart-container">
+              <Doughnut data={taskStatusData} />
+            </div>
+            <Carousel.Caption>
+              <h3>Tasks by status</h3>
+            </Carousel.Caption>
+          </Carousel.Item>
+          <Carousel.Item>
+            <div className="chart-container">
+              <Doughnut data={taskPriorityData} />
+            </div>
+            <Carousel.Caption>
+              <h3>Tasks by priority</h3>
+            </Carousel.Caption>
+          </Carousel.Item>
+          <Carousel.Item>
+            <div className="chart-container">
+              <Doughnut data={taskProgressData} />
+            </div>
+            <Carousel.Caption>
+              <h3>Tasks by progress</h3>
+            </Carousel.Caption>
+          </Carousel.Item>
+        </Carousel>
+      )}
       <div className="button-container">
         <button onClick={handleExpand} className="expand-all">
           Expand all
