@@ -217,65 +217,66 @@ const Dashboard = () => {
           </Carousel.Item>
         </Carousel>
       )}
-      <div className="button-container">
-        <button onClick={handleExpand} className="expand-all">
-          Expand all
-        </button>
-        <button onClick={handleCollapse} className="collapse-all">
-          Collapse all
-        </button>
+      <div className="accordion-wrapper">
+        <div className="button-container">
+          <button onClick={handleExpand} className="expand-all">
+            Expand all
+          </button>
+          <button onClick={handleCollapse} className="collapse-all">
+            Collapse all
+          </button>
+        </div>
+        <Accordion
+          defaultActiveKey={activeKeys}
+          activeKey={activeKeys}
+          alwaysOpen
+          className={`${expandedTask ? "unfocussed" : ""}`}
+        >
+          {taskSections.map((taskSection, index) => {
+            return (
+              <Accordion.Item eventKey={String(index)} key={taskSection.type}>
+                <Accordion.Header onClick={() => handleToggle(String(index))}>
+                  {`${taskSection.type} tasks`}
+                </Accordion.Header>
+                <Accordion.Body>
+                  <p>{taskSection.description}</p>
+                  {taskSection.collection.length === 0 ? (
+                    <p className="no-tasks-message">
+                      {user.tasks.length === 0
+                        ? "You do not have any tasks yet."
+                        : `You do not have any ${taskSection.type.toLowerCase()} tasks.`}
+                    </p>
+                  ) : (
+                    <>
+                      <div className="task-list">
+                        {taskSection.collection.map((task) => {
+                          return (
+                            <TaskCard
+                              user={user}
+                              setUser={setUser}
+                              task={task}
+                              key={task._id}
+                              thresholdHours={user.thresholdHours}
+                              expanded={false}
+                              handleClick={() => updateExpandedTask(task)}
+                              setExpandedTask={setExpandedTask}
+                              selectedDateFormat={user.dateFormat}
+                              selectedTimeFormat={user.timeFormat}
+                              checkAndWarnForUnsavedChanges={
+                                checkAndWarnForUnsavedChanges
+                              }
+                            />
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
+            );
+          })}
+        </Accordion>
       </div>
-      <Accordion
-        defaultActiveKey={activeKeys}
-        activeKey={activeKeys}
-        alwaysOpen
-        className={`${expandedTask ? "unfocussed" : ""}`}
-      >
-        {taskSections.map((taskSection, index) => {
-          return (
-            <Accordion.Item eventKey={String(index)} key={taskSection.type}>
-              <Accordion.Header onClick={() => handleToggle(String(index))}>
-                {`${taskSection.type} tasks`}
-              </Accordion.Header>
-              <Accordion.Body>
-                <p>{taskSection.description}</p>
-                {taskSection.collection.length === 0 ? (
-                  <p className="no-tasks-message">
-                    {user.tasks.length === 0
-                      ? "You do not have any tasks yet."
-                      : `You do not have any ${taskSection.type.toLowerCase()} tasks.`}
-                  </p>
-                ) : (
-                  <>
-                    <div className="task-list">
-                      {taskSection.collection.map((task) => {
-                        return (
-                          <TaskCard
-                            user={user}
-                            setUser={setUser}
-                            task={task}
-                            key={task._id}
-                            thresholdHours={user.thresholdHours}
-                            expanded={false}
-                            handleClick={() => updateExpandedTask(task)}
-                            setExpandedTask={setExpandedTask}
-                            selectedDateFormat={user.dateFormat}
-                            selectedTimeFormat={user.timeFormat}
-                            checkAndWarnForUnsavedChanges={
-                              checkAndWarnForUnsavedChanges
-                            }
-                          />
-                        );
-                      })}
-                    </div>
-                  </>
-                )}
-              </Accordion.Body>
-            </Accordion.Item>
-          );
-        })}
-      </Accordion>
-
       {expandedTask && (
         <TaskCard
           user={user}
