@@ -35,6 +35,13 @@
   border-radius: var(--bs-border-radius);
 }
 
+.dashboard > div > .chart-type-selector {
+  margin-bottom: 30px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .dashboard > .carousel-root {
   margin-bottom: 30px;
 }

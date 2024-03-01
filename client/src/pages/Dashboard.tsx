@@ -1,10 +1,18 @@
 import { useState } from "react";
-import { Accordion, Carousel } from "react-bootstrap";
+import { Accordion, Carousel, FloatingLabel, Form } from "react-bootstrap";
 import { useAccountContext } from "../components/Account";
 import TaskCard from "../components/TaskCard";
 import { getTaskStatus, Task } from "../taskUtils";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+} from "chart.js";
+import { Doughnut, Bar } from "react-chartjs-2";
 
 const Dashboard = () => {
   const { user, setUser, checkAndWarnForUnsavedChanges } = useAccountContext();
@@ -14,6 +22,7 @@ const Dashboard = () => {
   const urgentTasks: Task[] = [];
   const expiredTasks: Task[] = [];
   const [activeKeys, setActiveKeys] = useState(["0", "1", "2"]);
+  const [selectedChartType, setSelectedChartType] = useState("Doughnut");
 
   const taskSections = [
     {
@@ -76,7 +85,37 @@ const Dashboard = () => {
     new Date(a.dueDate) < new Date(b.dueDate) ? -1 : 1
   );
 
-  ChartJS.register(ArcElement, Tooltip, Legend);
+  ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Tooltip);
+
+  if (selectedChartType === "Bar") ChartJS.unregister(Legend);
+  else ChartJS.register(Legend);
+
+  const options = {
+    responsive: true,
+    scales: {
+      x: {
+        grid: {
+          display: false,
+          drawTicks: false,
+        },
+        ticks: {
+          padding: 4,
+        },
+        gridLines: { drawBorder: true, lineWidth: 0 },
+      },
+      y: {
+        grid: {
+          display: false,
+        },
+        min: 0,
+        max: Math.max(tasks.length, 5),
+        ticks: {
+          stepSize: 1,
+        },
+        gridLines: { drawBorder: true, lineWidth: 0 },
+      },
+    },
+  };
 
   const taskStatusData = {
     labels: ["Completed", "Upcoming", "Urgent", "Expired"],
@@ -190,32 +229,55 @@ const Dashboard = () => {
     <div className="dashboard">
       <h1>Welcome, {user.name || user.email}!</h1>
       {user.tasks.length > 0 && (
-        <Carousel className="carousel-root" data-bs-theme="dark">
-          <Carousel.Item>
-            <div className="chart-container">
-              <Doughnut data={taskStatusData} />
-            </div>
-            <Carousel.Caption>
-              <h3>Tasks by status</h3>
-            </Carousel.Caption>
-          </Carousel.Item>
-          <Carousel.Item>
-            <div className="chart-container">
-              <Doughnut data={taskPriorityData} />
-            </div>
-            <Carousel.Caption>
-              <h3>Tasks by priority</h3>
-            </Carousel.Caption>
-          </Carousel.Item>
-          <Carousel.Item>
-            <div className="chart-container">
-              <Doughnut data={taskProgressData} />
-            </div>
-            <Carousel.Caption>
-              <h3>Tasks by progress</h3>
-            </Carousel.Caption>
-          </Carousel.Item>
-        </Carousel>
+        <div>
+          <FloatingLabel label="Chart type" className="chart-type-selector">
+            <Form.Select
+              value={selectedChartType}
+              onChange={(e) => setSelectedChartType(e.target.value)}
+            >
+              <option>{"Doughnut"}</option>
+              <option>{"Bar"}</option>
+            </Form.Select>
+          </FloatingLabel>
+          <Carousel className="carousel-root" data-bs-theme="dark">
+            <Carousel.Item>
+              <div className="chart-container">
+                {selectedChartType === "Doughnut" ? (
+                  <Doughnut data={taskStatusData} />
+                ) : (
+                  <Bar options={options} data={taskStatusData} />
+                )}
+              </div>
+              <Carousel.Caption>
+                <h3>Tasks by status</h3>
+              </Carousel.Caption>
+            </Carousel.Item>
+            <Carousel.Item>
+              <div className="chart-container">
+                {selectedChartType === "Doughnut" ? (
+                  <Doughnut data={taskPriorityData} />
+                ) : (
+                  <Bar options={options} data={taskPriorityData} />
+                )}
+              </div>
+              <Carousel.Caption>
+                <h3>Tasks by priority</h3>
+              </Carousel.Caption>
+            </Carousel.Item>
+            <Carousel.Item>
+              <div className="chart-container">
+                {selectedChartType === "Doughnut" ? (
+                  <Doughnut data={taskProgressData} />
+                ) : (
+                  <Bar options={options} data={taskProgressData} />
+                )}
+              </div>
+              <Carousel.Caption>
+                <h3>Tasks by progress</h3>
+              </Carousel.Caption>
+            </Carousel.Item>
+          </Carousel>
+        </div>
       )}
       <div className="accordion-wrapper">
         <div className="button-container">
