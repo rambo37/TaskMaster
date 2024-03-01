@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { getDateTimeString } from "../taskUtils";
 import { ContentProps } from "./SettingsPageSection";
 
-const TaskListSettings = ({
+const TaskSettings = ({
   setLoading,
   setError,
   user,
@@ -22,10 +22,10 @@ const TaskListSettings = ({
   // whenever the settings are changed so that the user will be warned
   // of losing unsaved changes if they attempt to leave the site.
   useEffect(() => {
-    setUnsavedChanges(taskListSettingsHaveChanges());
+    setUnsavedChanges(taskSettingsHaveChanges());
   }, [thresholdHours, selectedDateFormat, selectedTimeFormat, showLegend]);
 
-  const taskListSettingsHaveChanges = () => {
+  const taskSettingsHaveChanges = () => {
     return (
       user.thresholdHours !== thresholdHours ||
       user.dateFormat !== selectedDateFormat ||
@@ -40,7 +40,7 @@ const TaskListSettings = ({
     setError("");
 
     try {
-      if (!taskListSettingsHaveChanges()) {
+      if (!taskSettingsHaveChanges()) {
         setError("No changes have been made.");
         setLoading(false);
         return;
@@ -150,4 +150,4 @@ const TaskListSettings = ({
   );
 };
 
-export default TaskListSettings;
+export default TaskSettings;

@@ -3,7 +3,7 @@ import ChangeDisplayName from "../components/ChangeDisplayName";
 import ChangePassword from "../components/ChangePassword";
 import DeleteAccount from "../components/DeleteAccount";
 import SettingsPageSection from "../components/SettingsPageSection";
-import TaskListSettings from "../components/TaskListSettings";
+import TaskListSettings from "../components/TaskSettings";
 
 const Settings = () => {
   const { user, setUser, setSignedIn, setUnsavedChanges } = useAccountContext();
