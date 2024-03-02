@@ -42,7 +42,7 @@
   margin-right: auto;
 }
 
-.dashboard > .carousel-root {
+.dashboard > div > .carousel-root {
   margin-bottom: 30px;
 }
 
@@ -113,8 +113,12 @@
     margin-top: 30px;
   }
 
+  .dashboard > div > .carousel-root > a {
+    display: none;
+  }
+
   .dashboard .chart-container > * {
-    max-width: 70%;
+    max-width: 100%;
   }
 
   .accordion-wrapper {
@@ -126,3 +130,4 @@
     width: initial;
   }
 }
+
