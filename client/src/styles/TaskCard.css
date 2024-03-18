@@ -42,7 +42,6 @@
 
 .task-card .title-div i:hover {
   cursor: pointer;
-  border-bottom: 2px solid black;
 }
 
 .task-card .content-div button {

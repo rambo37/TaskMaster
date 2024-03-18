@@ -33,6 +33,8 @@ const TaskCard = ({
 }: TaskCardProps) => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hoveredOverEditIcon, setHoveredOverEditIcon] = useState(false);
+  const [hoveredOverDeleteIcon, setHoveredOverDeleteIcon] = useState(false);
   const navigate = useNavigate();
 
   const handleEditIconClick = (event: React.MouseEvent) => {
@@ -101,10 +103,17 @@ const TaskCard = ({
     >
       <div className="title-div">
         <h3>{task.title}</h3>
-        <i className="bi bi-pencil" onClick={(e) => handleEditIconClick(e)}></i>
         <i
-          className="bi bi-trash"
+          className={`bi bi-pencil${hoveredOverEditIcon ? "-fill" : ""}`}
+          onClick={(e) => handleEditIconClick(e)}
+          onMouseEnter={() => setHoveredOverEditIcon(true)}
+          onMouseLeave={() => setHoveredOverEditIcon(false)}
+        ></i>
+        <i
+          className={`bi bi-trash${hoveredOverDeleteIcon ? "-fill" : ""}`}
           onClick={(e) => handleDeleteIconClick(e)}
+          onMouseEnter={() => setHoveredOverDeleteIcon(true)}
+          onMouseLeave={() => setHoveredOverDeleteIcon(false)}
         ></i>
       </div>
       <div className="content-div">
