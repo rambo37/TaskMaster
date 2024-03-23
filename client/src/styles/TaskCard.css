@@ -5,21 +5,21 @@
   border-radius: 10px;
 }
 
-.task-card::-webkit-scrollbar-thumb {
+.task-card > .content-div::-webkit-scrollbar-thumb {
   background: #888;
   border: 4px solid transparent;
   border-radius: 8px;
   background-clip: padding-box;
 }
 
-.task-card::-webkit-scrollbar-thumb:hover {
+.task-card > .content-div::-webkit-scrollbar-thumb:hover {
   background: #555;
   border: 4px solid transparent;
   border-radius: 8px;
   background-clip: padding-box;
 }
 
-.task-card::-webkit-scrollbar {
+.task-card > .content-div::-webkit-scrollbar {
   width: 16px;
 }
 
@@ -44,7 +44,7 @@
   cursor: pointer;
 }
 
-.task-card .content-div button {
+.task-card > .task-card-footer > .close-button {
   min-width: 50px;
   margin-right: 20px;
   border: 2px solid var(--dark-gray);
@@ -57,7 +57,7 @@
   text-overflow: ellipsis;
 }
 
-.task-card >.content-div .task-property-label {
+.task-card > .content-div .task-property-label {
   font-weight: 500;
 }
 
@@ -94,6 +94,8 @@
 }
 
 .task-card.expanded {
+  display: flex;
+  flex-direction: column;
   height: auto;
   width: 500px;
   max-height: 70%;
@@ -118,6 +120,16 @@
   overflow: initial;
   white-space: initial;
   text-overflow: initial;
+}
+
+.task-card.expanded > .content-div {
+  flex: 1;
+  margin-bottom: 1rem;
+  overflow-y: auto;
+}
+
+.task-card.expanded > .task-card-footer {
+  flex-shrink: 0;
 }
 
 .task-card.expanded > .content-div > .description {

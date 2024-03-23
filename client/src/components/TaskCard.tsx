@@ -172,10 +172,17 @@ const TaskCard = ({
             )}
           </>
         )}
-        {expanded && (
-          <button onClick={() => setExpandedTask(null)}>Close</button>
-        )}
       </div>
+      {expanded && (
+        <div className="task-card-footer">
+          <button
+            className="close-button"
+            onClick={() => setExpandedTask(null)}
+          >
+            Close
+          </button>
+        </div>
+      )}
     </div>
   );
 };
