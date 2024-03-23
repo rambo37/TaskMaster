@@ -131,23 +131,30 @@ const TaskCard = ({
         ) : (
           <>
             <p className="description">
+              <span className="task-property-label">Description: </span>
               {task.description || "No description provided."}
             </p>
             <p>
-              Due:{" "}
+              <span className="task-property-label">Due: </span>
               {getDateTimeString(
                 task.dueDate,
                 selectedTimeFormat,
                 selectedDateFormat
               )}
             </p>
-            <p>{`Priority: ${
-              task.priority === -1 ? "Unspecified." : task.priority
-            }`}</p>
-            <p>{`Status: ${task.status}.`}</p>
+            <p>
+              <span className="task-property-label">Priority: </span>
+              {`${task.priority === -1 ? "Unspecified." : task.priority}`}
+            </p>
+            <p>
+              <span className="task-property-label">Status: </span>
+              {`${task.status}.`}
+            </p>
             {task.tags.length ? (
               <div className="tags-wrapper">
-                <div>{"Tags: "}</div>
+                <div>
+                  <span className="task-property-label">Tags: </span>
+                </div>
                 <div className="tags-div">
                   {task.tags.map((tag) => {
                     return (
@@ -159,7 +166,9 @@ const TaskCard = ({
                 </div>
               </div>
             ) : (
-              <p>Tags: None.</p>
+              <p>
+                <span className="task-property-label">Tags: </span>None.
+              </p>
             )}
           </>
         )}

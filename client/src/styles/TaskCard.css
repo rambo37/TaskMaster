@@ -57,6 +57,10 @@
   text-overflow: ellipsis;
 }
 
+.task-card >.content-div .task-property-label {
+  font-weight: 500;
+}
+
 .task-card > .content-div > .tags-wrapper {
   display: flex;
 }
@@ -118,6 +122,10 @@
 
 .task-card.expanded > .content-div > .description {
   white-space: break-spaces;
+}
+
+.task-card.expanded > .content-div > .description span {
+  display: block;
 }
 
 .task-card.expanded > .content-div > .tags-wrapper {
