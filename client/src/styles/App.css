@@ -60,6 +60,15 @@ h1 {
   align-items: center;
 }
 
+.no-scroll {
+  overflow: hidden;
+}
+
+.unfocussed {
+  opacity: 40%;
+  pointer-events: none;
+}
+
 div.status {
   display: flex;
   justify-content: center;

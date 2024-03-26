@@ -29,11 +29,6 @@
   margin: 20px;
 }
 
-.task-list-page .unfocussed {
-  opacity: 40%;
-  pointer-events: none;
-}
-
 .no-tasks-message {
   margin-top: 50px;
   text-align: center;

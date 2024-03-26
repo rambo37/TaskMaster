@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Accordion, Carousel, FloatingLabel, Form } from "react-bootstrap";
 import { useAccountContext } from "../components/Account";
 import TaskCard from "../components/TaskCard";
@@ -23,6 +23,17 @@ const Dashboard = () => {
   const expiredTasks: Task[] = [];
   const [activeKeys, setActiveKeys] = useState(["0", "1", "2"]);
   const [selectedChartType, setSelectedChartType] = useState("Doughnut");
+
+  useEffect(() => {
+    const body = document.querySelector("body");
+    if (!body) return;
+
+    if (expandedTask) {
+      body.classList.add("no-scroll");
+    } else {
+      body.classList.remove("no-scroll");
+    }
+  }, [expandedTask]);
 
   const taskSections = [
     {
@@ -229,7 +240,7 @@ const Dashboard = () => {
     <div className="dashboard">
       <h1>Welcome, {user.name || user.email}!</h1>
       {user.tasks.length > 0 && (
-        <div>
+        <div className={`${expandedTask ? "unfocussed" : ""}`}>
           <FloatingLabel label="Chart type" className="chart-type-selector">
             <Form.Select
               value={selectedChartType}
@@ -279,7 +290,7 @@ const Dashboard = () => {
           </Carousel>
         </div>
       )}
-      <div className="accordion-wrapper">
+      <div className={`accordion-wrapper${expandedTask ? " unfocussed" : ""}`}>
         <div className="button-container">
           <button onClick={handleExpand} className="expand-all">
             Expand all
@@ -292,7 +303,6 @@ const Dashboard = () => {
           defaultActiveKey={activeKeys}
           activeKey={activeKeys}
           alwaysOpen
-          className={`${expandedTask ? "unfocussed" : ""}`}
         >
           {taskSections.map((taskSection, index) => {
             return (
