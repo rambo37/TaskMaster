@@ -1,5 +1,5 @@
 .task-card {
-  height: 270px;
+  height: 280px;
   width: 450px;
   padding: 10px 15px;
   border-radius: 10px;
@@ -71,7 +71,28 @@
 
 .task-card > .content-div > .tags-wrapper > .tags-div {
   display: flex;
+  margin-left: 0.5rem;
   flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.task-card > .content-div > .tags-wrapper > .tags-div::-webkit-scrollbar-thumb {
+  background: #888;
+  border: 4px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.task-card > .content-div > .tags-wrapper > .tags-div::-webkit-scrollbar-thumb:hover {
+  background: #555;
+  border: 4px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.task-card > .content-div > .tags-wrapper > .tags-div::-webkit-scrollbar {
+  height: 14px;
 }
 
 .task-card > .content-div > .tags-wrapper > .tags-div > .react-tags__tag {
@@ -82,6 +103,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.task-card > .content-div > .tags-wrapper > .tags-div > .react-tags__tag:first-child {
+  margin: 0;
 }
 
 .task-card > .content-div > .tags-wrapper > .tags-div > .react-tags__tag:hover {
