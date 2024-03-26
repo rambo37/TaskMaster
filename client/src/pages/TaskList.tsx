@@ -7,6 +7,7 @@ import TaskListOptions from "../components/TaskListOptions";
 import TaskListSortingControls from "../components/TaskListSortingControls";
 import { Tag } from "react-tag-autocomplete";
 import { stringArrayToTagArray, tagArrayToStringArray } from "../utils";
+import useBodyScrollLock from "../hooks/useBodyScrollLock";
 
 // Records the sorting criterion.
 export enum SortCriteria {
@@ -54,16 +55,7 @@ const TaskList = () => {
   );
   const [selectedSortOrder, setSelectedSortOrder] = useState(SortOrder.asc);
 
-  useEffect(() => {
-    const body = document.querySelector("body");
-    if (!body) return;
-
-    if (expandedTask) {
-      body.classList.add("no-scroll");
-    } else {
-      body.classList.remove("no-scroll");
-    }
-  }, [expandedTask]);
+  useBodyScrollLock(expandedTask);
 
   const filterAndSortTasks = useCallback(() => {
     const newTasks = user.tasks.filter((task) => {

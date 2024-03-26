@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Accordion, Carousel, FloatingLabel, Form } from "react-bootstrap";
 import { useAccountContext } from "../components/Account";
 import TaskCard from "../components/TaskCard";
@@ -13,6 +13,7 @@ import {
   BarElement,
 } from "chart.js";
 import { Doughnut, Bar } from "react-chartjs-2";
+import useBodyScrollLock from "../hooks/useBodyScrollLock";
 
 const Dashboard = () => {
   const { user, setUser, checkAndWarnForUnsavedChanges } = useAccountContext();
@@ -24,16 +25,7 @@ const Dashboard = () => {
   const [activeKeys, setActiveKeys] = useState(["0", "1", "2"]);
   const [selectedChartType, setSelectedChartType] = useState("Doughnut");
 
-  useEffect(() => {
-    const body = document.querySelector("body");
-    if (!body) return;
-
-    if (expandedTask) {
-      body.classList.add("no-scroll");
-    } else {
-      body.classList.remove("no-scroll");
-    }
-  }, [expandedTask]);
+  useBodyScrollLock(expandedTask);
 
   const taskSections = [
     {
