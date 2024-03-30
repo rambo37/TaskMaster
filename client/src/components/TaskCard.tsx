@@ -119,9 +119,13 @@ const TaskCard = ({
       <div className="content-div">
         {showDeleteConfirmation ? (
           <>
-            <p>Are you sure you want to delete this task?</p>
-            <button onClick={(e) => handleTaskDelete(e)}>Yes</button>
-            <button onClick={(e) => handleTaskDeleteCancel(e)}>No</button>
+            <div className="delete-confirm-text">
+              Are you sure you want to delete this task?
+            </div>
+            <div className="delete-options">
+              <button onClick={(e) => handleTaskDelete(e)}>Yes</button>
+              <button onClick={(e) => handleTaskDeleteCancel(e)}>No</button>
+            </div>
             {loading && (
               <div style={{ textAlign: "center" }}>
                 <ClipLoader />

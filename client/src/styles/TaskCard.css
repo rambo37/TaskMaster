@@ -62,6 +62,22 @@
   font-weight: 500;
 }
 
+.delete-confirm-text {
+  white-space: initial;
+}
+
+.task-card > .content-div > .delete-options {
+  margin-top: 10px;
+}
+
+.task-card > .content-div > .delete-options > button {
+  background-color: white;
+  width: 50px;
+  margin-right: 20px;
+  border: 2px solid var(--dark-gray);
+  border-radius: 5px;
+}
+
 .task-card > .content-div > .tags-wrapper {
   display: flex;
 }
