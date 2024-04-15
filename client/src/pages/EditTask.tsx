@@ -38,7 +38,7 @@ const EditTask = () => {
         setTitle(userTask.title);
         setDescription(userTask.description);
         setPriority(userTask.priority);
-        setDueDate(userTask.dueDate.slice(0, -1));
+        setDueDate(userTask.dueDate.slice(0, -8));
         setTags(stringArrayToTagArray(userTask.tags));
         setStatus(userTask.status);
       }
@@ -65,14 +65,13 @@ const EditTask = () => {
     if (task.title !== title) return true;
     if (task.description !== description) return true;
     try {
-      if (task.dueDate !== new Date(dueDate).toISOString()) return true;
+      if (task.dueDate.slice(0, -8) !== dueDate) return true;
     } catch (error) {
       // If the dueDate is not a valid date, then the user must have changed it
       // since all tasks must have a valid date
       return true;
     }
     if (task.priority !== priority) return true;
-    if (task.dueDate !== new Date(dueDate).toISOString()) return true;
     if (
       JSON.stringify(task.tags) !== JSON.stringify(tagArrayToStringArray(tags))
     )
