@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   padding: 0.25rem 0;
-  border: 1px solid #ccc;
+  border: var(--bs-border-width) solid var(--bs-border-color);
   border-radius: 5px;
   background: #ffffff;
   cursor: text;

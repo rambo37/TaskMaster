@@ -36,7 +36,7 @@
 
 @media only screen and (max-width: 768px) {
   .task-list-options {
-    width: 80%;
+    width: auto;
   }
 
   .task-list-options > div {
