@@ -35,7 +35,7 @@ const Account = () => {
       if (signedIn) {
         const id = getUserId();
         try {
-          const response = await axios.get(`/users/${id}`);
+          const response = await axios.get(`/api/users/${id}`);
           setUser(response.data);
         } catch (error) {
           console.error(error);
@@ -45,7 +45,7 @@ const Account = () => {
       } else {
         sessionStorage.removeItem("userId");
         try {
-          await axios.get("/logout");
+          await axios.get("/api/logout");
         } catch (error) {
           console.error(error);
         }

@@ -64,7 +64,7 @@ const SignUp = () => {
         email: email,
         password: password,
       };
-      await axios.post("/users", accountInfo);
+      await axios.post("/api/users", accountInfo);
       // Show the verification form
       setIsVerificationMode(true);
     } catch (error: any) {

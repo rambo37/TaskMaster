@@ -21,7 +21,7 @@ const ChangeDisplayName = ({
       const updates = {
         name: displayName,
       };
-      await axios.patch(`/users/${user._id}`, updates);
+      await axios.patch(`/api/users/${user._id}`, updates);
       const updatedUser = {
         ...user,
         name: displayName,

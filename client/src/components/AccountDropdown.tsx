@@ -34,7 +34,7 @@ const AccountDropdown = ({
   const logOut = (event: React.MouseEvent) => {
     if (checkAndWarnForUnsavedChanges(event)) {
       sessionStorage.removeItem("userId");
-      axios.get("/logout");
+      axios.get("/api/logout");
       setSignedIn(false);
       navigate("/");
     }

@@ -116,7 +116,7 @@ const EditTask = () => {
       };
 
       const response = await axios.patch(
-        `/users/${user._id}/tasks/${taskId}`,
+        `/api/users/${user._id}/tasks/${taskId}`,
         updates
       );
 
@@ -155,7 +155,7 @@ const EditTask = () => {
       // Update the user asynchronously so that their new tags will be saved
       // for when they next log in, but without creating longer wait times
       if (JSON.stringify(user.tags) !== JSON.stringify(newTags)) {
-        axios.patch(`/users/${user._id}`, { tags: newTags });
+        axios.patch(`/api/users/${user._id}`, { tags: newTags });
       }
     } catch (error: any) {
       console.error(error);

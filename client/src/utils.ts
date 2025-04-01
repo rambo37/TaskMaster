@@ -5,7 +5,7 @@ export const isSignedIn = async () => {
   // Reduce the number of requests sent to the server
   if (!getUserId()) return false;
   try {
-    await axios.get("/check-auth");
+    await axios.get("/api/check-auth");
     return true;
   } catch (error) {
     console.error(error);

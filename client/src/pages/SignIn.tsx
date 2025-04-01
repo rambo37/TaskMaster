@@ -52,7 +52,7 @@ const SignIn = () => {
         email: email,
         password: password,
       };
-      const response = await axios.post("/login", credentials);
+      const response = await axios.post("/api/login", credentials);
       const { userId } = response.data;
       sessionStorage.setItem("userId", userId);
       setSignedIn(true);

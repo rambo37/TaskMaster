@@ -66,7 +66,7 @@ const ResetPassword = () => {
         resetToken: resetToken,
         newPassword: password,
       };
-      await axios.post("/password/update", passwordResetInfo);
+      await axios.post("/api/password/update", passwordResetInfo);
       navigate("/login");
       toast.success("Password successfully reset.");
     } catch (error: any) {

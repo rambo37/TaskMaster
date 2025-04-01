@@ -54,7 +54,7 @@ const ChangePassword = ({ setLoading, setError, user }: ContentProps) => {
         currentPassword: currentPassword,
         newPassword: newPassword,
       };
-      await axios.patch(`/users/${user._id}/password`, passwordInfo);
+      await axios.patch(`/api/users/${user._id}/password`, passwordInfo);
       toast.success("Password updated.");
       setCurrentPassword("");
       setNewPassword("");

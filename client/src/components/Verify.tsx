@@ -39,7 +39,7 @@ const Verify = ({
         email: email,
         code: Number(verificationCode),
       };
-      const response = await axios.post("/users/verify", verificationInfo);
+      const response = await axios.post("/api/users/verify", verificationInfo);
       const { userId } = response.data
       sessionStorage.setItem("userId", userId)
       toast.success("Successfully verified account.");
@@ -64,7 +64,7 @@ const Verify = ({
       const accountInfo = {
         email: email,
       };
-      await axios.post("/users/resend-verification", accountInfo);
+      await axios.post("/api/users/resend-verification", accountInfo);
       toast.success("Successfully resent verification code.");
     } catch (error: any) {
       console.error(error);

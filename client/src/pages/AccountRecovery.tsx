@@ -27,7 +27,7 @@ const AccountRecovery = () => {
       const userEmail = {
         email: email,
       };
-      await axios.post("/password/reset", userEmail);
+      await axios.post("/api/password/reset", userEmail);
       setEmailSentMessage(
         `An email with a link to reset your password has been sent to ${email}.`
       );

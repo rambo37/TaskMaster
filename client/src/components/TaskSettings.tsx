@@ -53,7 +53,7 @@ const TaskSettings = ({
         showLegend: showLegend,
       };
 
-      await axios.patch(`/users/${user._id}`, updates);
+      await axios.patch(`/api/users/${user._id}`, updates);
       toast.success("Settings updated successfully.");
 
       const updatedUser = {

@@ -34,7 +34,7 @@ const ChangePassword = ({
         email: user.email,
         password: password,
       };
-      await axios.post("/login", credentials);
+      await axios.post("/api/login", credentials);
     } catch (error: any) {
       console.error(error);
       setError("Incorrect password.");
@@ -44,7 +44,7 @@ const ChangePassword = ({
 
     // Now attempt to delete the account as the password is correct
     try {
-      await axios.delete(`/users/${user._id}`);
+      await axios.delete(`/api/users/${user._id}`);
       sessionStorage.removeItem("token");
       setSignedIn(false);
       toast.success("Account deleted.");

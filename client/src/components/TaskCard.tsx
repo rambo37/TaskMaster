@@ -51,7 +51,7 @@ const TaskCard = ({
     event.stopPropagation();
     setLoading(true);
     try {
-      await axios.delete(`/users/${user._id}/tasks/${task._id}`);
+      await axios.delete(`/api/users/${user._id}/tasks/${task._id}`);
 
       // Work out the new array of tags to be stored for the user using a Set
       // to avoid duplicates
@@ -79,7 +79,7 @@ const TaskCard = ({
       // Update the user asynchronously so that their new tags will be saved
       // for when they next log in, but without creating longer wait times
       if (JSON.stringify(user.tags) !== JSON.stringify(newTags)) {
-        axios.patch(`/users/${user._id}`, { tags: newTags });
+        axios.patch(`/api/users/${user._id}`, { tags: newTags });
       }
     } catch (error: any) {
       console.error(error);
