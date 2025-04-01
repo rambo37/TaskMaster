@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { isEmailValid } from "../shared/sharedUtils.mjs";
+import { isEmailValid } from "shared-utils";
 import { ClipLoader } from "react-spinners";
 import axios from "axios";
 import FloatingLabel from "react-bootstrap/FloatingLabel";

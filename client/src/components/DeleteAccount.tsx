@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { adequatePasswordComplexity } from "../shared/sharedUtils.mjs";
+import { adequatePasswordComplexity } from "shared-utils";
 import { useNavigate } from "react-router-dom";
 import { ContentProps } from "./SettingsPageSection";
 import FloatingLabel from "react-bootstrap/FloatingLabel";

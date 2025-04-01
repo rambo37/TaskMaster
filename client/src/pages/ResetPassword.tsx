@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { adequatePasswordComplexity } from "../shared/sharedUtils.mjs";
+import { adequatePasswordComplexity } from "shared-utils";
 import { ClipLoader } from "react-spinners";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";

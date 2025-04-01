@@ -10,10 +10,7 @@ import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import {
-  isEmailValid,
-  adequatePasswordComplexity,
-} from "../client/src/shared/sharedUtils.mjs";
+import { isEmailValid, adequatePasswordComplexity } from "shared-utils";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, "../.env") });
@@ -655,6 +652,7 @@ app.delete("/users/:userId/tasks/:taskId", authMiddleware, async (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+  console.log('process.env:', process.env);
 });
 
 export default app;
