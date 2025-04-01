@@ -19,4 +19,4 @@ RUN npm install
 COPY ./server /app/server
 
 # Start the app in development mode
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
