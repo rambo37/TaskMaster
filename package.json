@@ -8,12 +8,9 @@
     "client-install": "cd client && npm install",
     "client-start": "cd client && npm start",
     "server-install": "cd server && npm install",
-    "server-start": "cd server && nodemon server.js"
+    "server-start": "cd server && npm run dev"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "nodemon": "^3.0.2"
-  }
+  "license": "ISC"
 }
