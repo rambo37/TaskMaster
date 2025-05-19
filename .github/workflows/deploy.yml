@@ -8,6 +8,7 @@ on:
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  IMAGE_TAG: ${{ github.sha }}  # Create an environment variable for commit hash
 
 jobs:
   build-and-push:
@@ -28,4 +29,6 @@ jobs:
       - name: Push images
         run: |
           docker push $DOCKERHUB_USERNAME/taskmaster-client:latest
+          docker push $DOCKERHUB_USERNAME/taskmaster-client:${{ env.IMAGE_TAG }}
           docker push $DOCKERHUB_USERNAME/taskmaster-server:latest
+          docker push $DOCKERHUB_USERNAME/taskmaster-server:${{ env.IMAGE_TAG }}
