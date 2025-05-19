@@ -10,6 +10,8 @@ env:
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
   IMAGE_TAG: ${{ github.sha }}  # Create an environment variable for commit hash
 
+# Eventualy add a job to run some tests - that would probably be a prerequisite for the build-and-push job
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
