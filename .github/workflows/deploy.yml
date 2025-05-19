@@ -21,10 +21,10 @@ jobs:
         run: echo "${DOCKERHUB_TOKEN}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
 
       - name: Build client image
-        run: docker build -f client/Dockerfile --target prod -t $DOCKERHUB_USERNAME/taskmaster-client:latest .
+        run: docker build -f client/Dockerfile --target prod -t $DOCKERHUB_USERNAME/taskmaster-client:latest -t $DOCKERHUB_USERNAME/taskmaster-client:${{ env.IMAGE_TAG }} .
 
       - name: Build server image
-        run: docker build -f server/Dockerfile --target prod -t $DOCKERHUB_USERNAME/taskmaster-server:latest .
+        run: docker build -f server/Dockerfile --target prod -t $DOCKERHUB_USERNAME/taskmaster-server:latest -t $DOCKERHUB_USERNAME/taskmaster-server:${{ env.IMAGE_TAG }} .
 
       - name: Push images
         run: |
