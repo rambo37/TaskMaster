@@ -1,0 +1,27 @@
+services:
+  client:
+    build:
+      context: .                           # Root directory, so that the Dockerfile can pick up the shared-utils directory
+      dockerfile: ./client/Dockerfile      # Explicitly reference the client Dockerfile
+      target: prod                         # Use the prod stage
+    ports:
+      - "80:80"                            # Expose client app on port 80
+    environment:
+      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL_DOCKER}
+
+  server:
+    build:
+      context: .                           # Root directory, so that the Dockerfile can pick up the shared-utils directory
+      dockerfile: ./server/Dockerfile      # Explicitly reference the server Dockerfile
+      target: prod                         # Use the prod stage
+    ports:
+      - "5000:5000"                        # Expose server app on port 5000
+    environment:
+      - MONGODB_URI=${MONGODB_URI}         # This is the prod uri atm
+      - PORT=${PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - REACT_APP_FRONTEND_URL=${REACT_APP_FRONTEND_URL_DOCKER}
+      - MAIL_SERVICE=${MAIL_SERVICE}
+      - MAIL_USER=${MAIL_USER}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+  

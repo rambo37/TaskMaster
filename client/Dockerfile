@@ -1,20 +1,23 @@
-FROM node:20 AS build
-
+# Base layer
+FROM node:20-slim AS base
 WORKDIR /app
-
-RUN mkdir -p /app/shared-utils
-RUN mkdir -p /app/client
-
-# First copy the shared-utils since it is a dependency used by the client
 COPY ./shared-utils /app/shared-utils
-
-# Then copy the package.json and package-lock.json and install dependencies
-COPY ./client/package*.json /app/client
+COPY ./client/package*.json /app/client/
 WORKDIR /app/client
 RUN npm install
-
-# Copy the application source code
 COPY ./client /app/client
 
-# Start the app in development mode
+# Dev stage
+FROM base AS dev
 CMD ["npm", "start"]
+
+# Build stage (for production)
+FROM base AS build
+RUN npm run build
+
+# Production: serve with NGINX
+FROM nginx:alpine AS prod
+COPY --from=build /app/client/build /usr/share/nginx/html
+COPY ./client/nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
