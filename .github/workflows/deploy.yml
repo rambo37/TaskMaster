@@ -48,6 +48,7 @@ jobs:
       - name: Create deployment files
         run: |
           # Create .env file from secrets
+          echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> .env
           echo "SERVER_HOST=${{ secrets.SERVER_HOST }}" >> .env
           echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
           echo "PORT=${{ secrets.PORT }}" >> .env
