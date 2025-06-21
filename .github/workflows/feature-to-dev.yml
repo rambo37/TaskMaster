@@ -65,7 +65,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "docker-compose.prod.yml,.env,deploy.sh"
+          source: "docker-compose.deploy.yml,.env,deploy.sh"
           target: "~/taskmaster"
 
       - name: Deploy to server
