@@ -10,6 +10,10 @@ echo "Pulling latest images..."
 docker pull ${DOCKERHUB_USERNAME}/taskmaster-client:latest || exit 1
 docker pull ${DOCKERHUB_USERNAME}/taskmaster-server:latest || exit 1
 
+# Stop the old containers
+echo "Stopping old containers..."
+docker-compose -f docker-compose.deploy.yml down
+
 # Start the containers using docker-compose
 echo "Starting containers..."
 docker-compose -f docker-compose.deploy.yml up -d || exit 1
