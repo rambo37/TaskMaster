@@ -12,7 +12,7 @@ docker pull ${DOCKERHUB_USERNAME}/taskmaster-server:latest || exit 1
 
 # Start the containers using docker-compose
 echo "Starting containers..."
-docker-compose -f docker-compose.prod.yml up -d || exit 1
+docker-compose -f docker-compose.deploy.yml up -d || exit 1
 
 # Check if containers are running
 echo "Checking container status..."
