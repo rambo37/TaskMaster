@@ -31,4 +31,4 @@ docker image prune -f
 
 echo "Deployment complete! Your application should be accessible at:"
 echo "Frontend: http://${SERVER_HOST}:80"
-echo "Backend: http://${SERVER_HOST}:5000" 
+echo "Backend: http://${SERVER_HOST}:5000"
