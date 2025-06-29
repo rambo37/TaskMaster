@@ -5,10 +5,29 @@ set -a
 source .env
 set +a
 
+# Validate required environment variables
+if [ -z "$CLIENT_IMAGE_TAG" ]; then
+    echo "Error: CLIENT_IMAGE_TAG environment variable is not set"
+    exit 1
+fi
+
+if [ -z "$SERVER_IMAGE_TAG" ]; then
+    echo "Error: SERVER_IMAGE_TAG environment variable is not set"
+    exit 1
+fi
+
+if [ -z "$DOCKERHUB_USERNAME" ]; then
+    echo "Error: DOCKERHUB_USERNAME environment variable is not set"
+    exit 1
+fi
+
 # Pull the latest images
-echo "Pulling latest images..."
-docker pull ${DOCKERHUB_USERNAME}/taskmaster-client:latest || exit 1
-docker pull ${DOCKERHUB_USERNAME}/taskmaster-server:latest || exit 1
+echo "Pulling images with tags:"
+echo "Client: ${DOCKERHUB_USERNAME}/taskmaster-client:${CLIENT_IMAGE_TAG}"
+echo "Server: ${DOCKERHUB_USERNAME}/taskmaster-server:${SERVER_IMAGE_TAG}"
+
+docker pull ${DOCKERHUB_USERNAME}/taskmaster-client:${CLIENT_IMAGE_TAG} || exit 1
+docker pull ${DOCKERHUB_USERNAME}/taskmaster-server:${SERVER_IMAGE_TAG} || exit 1
 
 # Stop the old containers
 echo "Stopping old containers..."
@@ -30,5 +49,5 @@ echo "Cleaning up old images..."
 docker image prune -f
 
 echo "Deployment complete! Your application should be accessible at:"
-echo "Frontend: http://${SERVER_HOST}:80"
-echo "Backend: http://${SERVER_HOST}:5000"
+echo "Frontend: http://${SERVER_HOST}:${CLIENT_PORT:-80}"
+echo "Backend: http://${SERVER_HOST}:${SERVER_PORT:-5000}"
