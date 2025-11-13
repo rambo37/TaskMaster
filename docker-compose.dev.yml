@@ -26,6 +26,7 @@ services:
     build:
       context: .                           # Root directory, so that the Dockerfile can pick up the shared-utils directory
       dockerfile: ./server/Dockerfile      # Explicitly reference the server Dockerfile
+      target: dev                          # Use the dev stage
     ports:
       - "5000:5000"                        # Expose server app on port 5000
     develop:
