@@ -3,6 +3,7 @@ services:
     build:
       context: .                           # Root directory, so that the Dockerfile can pick up the shared-utils directory
       dockerfile: ./client/Dockerfile      # Explicitly reference the client Dockerfile
+      target: dev                          # Use the dev stage
     ports:
       - "3000:3000"                        # Expose client app on port 3000
     develop:

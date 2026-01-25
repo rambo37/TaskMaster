@@ -5,6 +5,7 @@ import { hash, compare } from "bcrypt";
 import User from "./models/userModel.js";
 import Task from "./models/taskModel.js";
 import express, { json } from "express";
+import { connect } from "mongoose";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
@@ -28,7 +29,6 @@ app.use(
   })
 );
 
-import { connect } from "mongoose";
 connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((error) => console.error(error));
